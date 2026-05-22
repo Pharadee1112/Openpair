@@ -32,8 +32,9 @@
 └────────────────────────┬────────────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────────────┐
-│  Layer 3 — Binding Layer   ← lib.rs ทำหน้าที่นี้           │
-│  PyO3 + Maturin                                             │
+│  Layer 3 — Binding Layer   ← lib.rs ทำหน้าที่นี้           │    
+│  PyO3 + Maturin = ทำหน้าที่ แปลงโค้ด Rust ของแก้มให้กลายเป็น      |
+                    Python Library แบบสมบูรณ์               |
 │  สะพานเชื่อม Python ↔ Rust                                 │
 └────────────────────────┬────────────────────────────────────┘
                          │
@@ -239,7 +240,7 @@ cargo run --bin openpair-demo -- "Design a microservices system"
         │  │         └────┬────┘           │   │
         │  │  [BERT ❌] [Cache ❌] [Judge ❌]│  │
         │  └─────────────┬────────────────-┘   │
-        │                │                     │
+        │                │ API call            │
         │   ┌────────────┼────────────┐        │
         │   ▼            ▼            ▼        │
         │ OpenAI     Anthropic     Google      │
@@ -293,6 +294,65 @@ cargo run --bin openpair-demo -- "Design a microservices system"
 | Starter | $29/mo | Web Dashboard, 5M tokens/mo, 3 Users |
 | Pro | $99/mo | Unlimited Routing, Analytics, 10 Users, SLA 99.9% |
 | Enterprise | Custom | On-Premise, SSO, Dedicated Support, SLA 99.99% |
+
+---
+
+## 🤔 Tech Stack Decisions — ทำไมถึงเลือก Tech นี้?
+
+### ทำไมถึงใช้ทั้ง Python และ Rust พร้อมกัน?
+
+Python กับ Rust **ไม่ได้ใช้แทนกัน** — แต่ทำคนละหน้าที่:
+
+```
+User พิมพ์ prompt
+       ↓
+  [ Python ]  ← รับ input, เรียก API, แสดงผล (ขอบนอก)
+       ↓  PyO3 bridge
+  [ Rust   ]  ← ตัดสินใจว่าส่งไป model ไหน < 5ms (สมองกลาง)
+       ↓
+  [ OpenAI / Claude / Gemini ]
+```
+
+| ภาษา | ทำไมต้องมี | ทำไมอีกภาษาทำแทนไม่ได้ |
+|---|---|---|
+| **Rust** | routing < 5ms, ไม่มี GC pause, 1,000 req/sec | Python มี GIL + GC pause ควบคุมเวลาไม่ได้ |
+| **Python** | `pip install`, ML ecosystem, AI SDK ทั้งหมด | Rust ไม่มี PyTorch / HuggingFace / LangChain |
+
+### ทำไมไม่ใช้ JavaScript แทน Python?
+
+OpenPair คือ **Python Library Middleware** ไม่ใช่ Web App:
+
+```python
+# นี่คือ product จริง — ลูกค้า import ใน Python codebase ของตัวเอง
+import openpair
+result = openpair.route("Design a database schema")
+```
+
+เหตุผลที่ Python ไม่ใช่ JS:
+1. **ลูกค้าเขียน Python** — AI Engineer ใช้ LangChain, PyTorch, HuggingFace ทั้งหมดอยู่ใน Python
+2. **Phase 3 ต้องการ ML libs** — BERT, sentence-transformers, NumPy/FAISS มีเฉพาะใน Python
+3. **AI SDK ดีที่สุดอยู่ใน Python** — OpenAI, Anthropic, LangChain เต็ม feature
+
+> JavaScript จะถูกใช้ใน **Phase 4 Web Dashboard (React + TypeScript)** — แต่นั่นคือ "หน้าบ้านสำหรับ CTO ดู Analytics" ไม่ใช่ core product
+
+### pip-only = ใช้ได้แค่ Python ใช่ไหม? เป็น painpoint ไหม?
+
+**ใช่ ระยะสั้น — แต่ Phase 4 แก้ด้วย REST API:**
+
+```
+ตอนนี้ (Phase 1-2):        Phase 4:
+Python dev  ✅              Python dev  ✅ pip install
+Node.js dev ❌              Node.js dev ✅ fetch("api.openpair.io")
+Go dev      ❌              Go dev      ✅ http.Get(...)
+                            ทุกภาษา    ✅ REST API
+```
+
+Pattern นี้คือ standard ของ dev tools ทั่วไป (OpenAI, Stripe ก็เริ่มแบบนี้)
+
+**painpoint ที่ใหญ่กว่า pip-only ตอนนี้คือ:**
+- ❌ ยังไม่ได้ call AI API จริง (แค่บอกว่า "ควรส่งไปที่ไหน" แต่ส่งให้ไม่ได้)
+- ❌ ยังไม่มี Python library สำหรับ user install
+- ❌ ยังไม่มี API key management
 
 ---
 
