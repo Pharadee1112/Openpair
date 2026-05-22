@@ -55,6 +55,69 @@ Python developers ทั้งหมด     ~  15 ล้านคน (2024)
 
 ---
 
+## 🔥 Pain Points ที่ OpenPair แก้ — และหลักฐานที่รองรับ
+
+### Pain Point 1: จ่ายเงินไม่คุ้ม ส่งงานง่ายไปหา model แพงทุกครั้ง
+
+> คนส่วนใหญ่ default ไปที่ GPT-4 / Claude ทุก request โดยไม่คิด
+> ทั้งที่งาน 70–80% เป็นแค่ summarize, classify, Q&A ง่าย ๆ
+
+**หลักฐานจากงานวิจัย:**
+| Paper | สำนัก | สิ่งที่พิสูจน์ |
+|---|---|---|
+| **FrugalGPT** (2023) | Stanford | routing ลดค่าใช้จ่ายได้ถึง 98% โดยคุณภาพไม่ตก |
+| **RouteLLM** (2024) | LMSys / Berkeley | framework routing Strong↔Weak model ได้จริงใน production |
+| **AutoMix** (2023) | CMU | model ตรวจตัวเองก่อน escalate — ลด unnecessary calls |
+
+> 🔍 อ่านเพิ่ม: [arxiv.org](https://arxiv.org) ค้น `LLM routing`, `LLM cost optimization`, `model selection`
+
+---
+
+### Pain Point 2: ไม่รู้ว่า model ไหนเก่งเรื่องอะไร
+
+> Developer ส่วนใหญ่รู้แค่ "GPT-4 แพงแต่เก่ง" "Haiku ถูกแต่โง่"
+> ไม่มีเครื่องมือบอกว่า task นี้ควรใช้ model ไหน เพราะอะไร
+
+**หลักฐานจาก Industry:**
+| แหล่ง | Report | ข้อมูลที่ได้ |
+|---|---|---|
+| **a16z** | "Who Owns the Generative AI Stack?" | cost หายไปที่ model layer มากที่สุด, margin บาง |
+| **Sequoia Capital** | "Generative AI: A Creative New World" | $600B revenue gap — ROI ยังไม่คุ้มสำหรับหลายบริษัท |
+| **McKinsey** | "The State of AI" (ออกทุกปี) | % บริษัทที่ใช้ AI จริง vs แค่ทดลอง, barrier คือ cost |
+
+> 🔍 อ่านเพิ่ม: เว็บโดยตรง `a16z.com`, `sequoiacap.com`, `mckinsey.com/ai` — ดาวน์โหลดฟรี
+
+---
+
+### Pain Point 3: Developer ไม่รู้ตัวว่าตัวเองเปลืองเงินอยู่
+
+> ไม่มี visibility ว่า request ไหนแพง request ไหนถูก
+> จนกว่าจะได้รับ bill ปลายเดือน
+
+**หลักฐานจาก Developer Community:**
+| แหล่ง | วิธีหาข้อมูล |
+|---|---|
+| **Stack Overflow Developer Survey** | `survey.stackoverflow.co` — อายุ, tools, AI adoption, pain points |
+| **JetBrains State of Developer Ecosystem** | `jetbrains.com/lp/devecosystem` — workflow จริงของ developer |
+| **GitHub Octoverse** | `octoverse.github.com` — พฤติกรรมการใช้ AI tools |
+| **Reddit** r/MachineLearning, r/LocalLLaMA | ค้น "API cost", "too expensive", "which model should I use" |
+| **Hacker News** | `news.ycombinator.com` ค้น "LLM cost", "GPT-4 expensive" |
+
+---
+
+### Pain Point 4: Vendor Lock-in กลัวย้าย provider ไม่ได้
+
+> เขียน code ผูกกับ OpenAI SDK → ถ้าอยากลอง Claude ต้อง refactor ใหม่ทั้งหมด
+
+**หลักฐานจาก UX Research:**
+| แหล่ง | ประเภท | ข้อมูลที่ได้ |
+|---|---|---|
+| **Nielsen Norman Group** | UX research firm | cognitive load ของ developer เวลาเปลี่ยน tool |
+| **KPMG AI Quarterly Pulse** | Survey รายไตรมาส | adoption barrier, ROI perception, switching cost |
+| **Pew Research Center** | Social research | demographics ของคนใช้ AI จริงในชีวิตประจำวัน |
+
+---
+
 ## ❌ ข้อเสีย / ความเสี่ยง (Weaknesses & Risks)
 
 ### Technical Risks
