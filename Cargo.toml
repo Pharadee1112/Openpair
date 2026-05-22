@@ -1,0 +1,22 @@
+[package]
+name = "openpair"
+version = "0.1.0"
+edition = "2021"
+description = "Intelligent AI Routing Engine — Core"
+
+[lib]
+name = "openpair_core"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "openpair-demo"
+path = "src/main.rs"
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
+
+[dev-dependencies]
+# cargo test uses rlib, not cdylib — no extension-module needed
+
+[features]
+extension-module = ["pyo3/extension-module"]
