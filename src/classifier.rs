@@ -33,7 +33,7 @@ pub fn score_complexity(prompt: &str) -> u8 {
 
     // ── 1. Length component (0–3 pts) ──────────────────────────────
     score += match word_count {
-        0..=15  => 0.5,
+        0..=15  => 1.0,
         16..=50 => 1.0,
         51..=150 => 1.8,
         151..=400 => 2.5,
@@ -51,7 +51,7 @@ pub fn score_complexity(prompt: &str) -> u8 {
 
     // ── 3. Complex/analytical keywords (0–2 pts) ────────────────────
     let complex_hits = COMPLEX_KEYWORDS.iter().filter(|k| lower.contains(**k)).count();
-    score += (complex_hits as f64 * 0.5).min(2.0);
+    score += (complex_hits as f64 * 0.5).min(2.5);
 
     // ── 4. Code/technical keywords (0–2 pts) ────────────────────────
     let code_hits = CODE_KEYWORDS.iter().filter(|k| lower.contains(**k)).count();
