@@ -1,11 +1,13 @@
 """
 Unit tests สำหรับ Thai Benchmark System
-ไม่ต้องการ API key — test เฉพาะ scorer และ dataset
+ไม่ต้องการ API key — test เฉพาะ scorer, dataset, และ retry logic
 """
 
 import pytest
+from unittest.mock import patch, MagicMock
 from openpair.benchmark.dataset import THAI_TEST_CASES, ThaiTestCase, CATEGORIES
 from openpair.benchmark.scorer import score_response, _thai_ratio, _keyword_score
+from openpair.benchmark.runner import _is_rate_limit, _extract_retry_delay, _call_with_retry
 
 
 # ── Dataset tests ─────────────────────────────────────────────────────────────
@@ -125,3 +127,91 @@ class TestScoreResponse:
             model_id="test", model_name="Test", provider="test", scores=scores
         )
         assert 1 <= result.suggested_thai_score <= 10
+
+
+# ── Retry logic tests ─────────────────────────────────────────────────────────
+
+class TestRetryHelpers:
+    def test_is_rate_limit_google_429(self):
+        err = Exception("429 RESOURCE_EXHAUSTED quota exceeded")
+        assert _is_rate_limit(err)
+
+    def test_is_rate_limit_openai(self):
+        err = Exception("rate_limit_exceeded: too many requests")
+        assert _is_rate_limit(err)
+
+    def test_is_rate_limit_false_for_other(self):
+        err = Exception("500 Internal Server Error")
+        assert not _is_rate_limit(err)
+
+    def test_extract_retry_delay_google_format(self):
+        err = Exception('"retryDelay": "44.5s"')
+        assert _extract_retry_delay(err) == pytest.approx(44.5)
+
+    def test_extract_retry_delay_generic_format(self):
+        err = Exception("Please retry in 30s after this message")
+        assert _extract_retry_delay(err) == pytest.approx(30.0)
+
+    def test_extract_retry_delay_default(self):
+        err = Exception("some other error with no delay info")
+        assert _extract_retry_delay(err, default=60.0) == 60.0
+
+
+class TestCallWithRetry:
+    def test_success_on_first_try(self):
+        with patch("openpair.benchmark.runner.make_call", return_value=("ok", 5, 10, 100.0)):
+            result = _call_with_retry(
+                provider="google", model_id="m", prompt="p",
+                api_key="k", verbose=False,
+            )
+        assert result == ("ok", 5, 10, 100.0)
+
+    def test_retries_on_rate_limit_then_succeeds(self):
+        """ครั้งแรก 429 → retry → สำเร็จ"""
+        call_count = 0
+
+        def fake_call(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise Exception('429 RESOURCE_EXHAUSTED "retryDelay": "1s"')
+            return ("ok after retry", 5, 10, 200.0)
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call):
+            with patch("openpair.benchmark.runner.time.sleep"):  # ไม่ให้รอจริง
+                result = _call_with_retry(
+                    provider="google", model_id="m", prompt="p",
+                    api_key="k", max_retries=3, verbose=False,
+                )
+
+        assert result[0] == "ok after retry"
+        assert call_count == 2  # เรียก 2 ครั้ง (1 fail + 1 success)
+
+    def test_raises_after_max_retries(self):
+        """429 ทุกครั้ง → raise หลังครบ max_retries"""
+        with patch("openpair.benchmark.runner.make_call",
+                   side_effect=Exception('429 RESOURCE_EXHAUSTED "retryDelay": "1s"')):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                with pytest.raises(Exception, match="429"):
+                    _call_with_retry(
+                        provider="google", model_id="m", prompt="p",
+                        api_key="k", max_retries=2, verbose=False,
+                    )
+
+    def test_non_rate_limit_error_raises_immediately(self):
+        """error ที่ไม่ใช่ rate limit ต้อง raise ทันที ไม่ retry"""
+        call_count = 0
+
+        def fake_call(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            raise ValueError("invalid model id")
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call):
+            with pytest.raises(ValueError):
+                _call_with_retry(
+                    provider="google", model_id="m", prompt="p",
+                    api_key="k", max_retries=3, verbose=False,
+                )
+
+        assert call_count == 1  # raise ทันที ไม่ retry
