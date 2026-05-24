@@ -40,6 +40,23 @@ pub struct ModelMeta {
     pub context_window:      u32,
     pub cost_per_1k_input:   f64,   // USD
     pub cost_per_1k_output:  f64,   // USD
+    /// Thai language capability score 1–10 (10 = best Thai support).
+    /// Based on known benchmark data; updated when empirical results arrive.
+    pub thai_score:          u8,
+}
+
+/// Thai routing priority — preferred model IDs for each complexity bucket.
+/// Updated after running `openpair benchmark --lang th`.
+pub const THAI_ROUTING_PRIORITY: ThaiRoutingPriority = ThaiRoutingPriority {
+    simple_thai:  "gemini-2.5-flash-lite",        // cheap + acceptable Thai
+    medium_thai:  "claude-3-haiku-20240307",    // balanced + good Thai
+    complex_thai: "claude-3-5-sonnet-20241022", // best Thai quality
+};
+
+pub struct ThaiRoutingPriority {
+    pub simple_thai:  &'static str,
+    pub medium_thai:  &'static str,
+    pub complex_thai: &'static str,
 }
 
 pub struct ModelRegistry {
@@ -50,21 +67,22 @@ impl ModelRegistry {
     pub fn new() -> Self {
         ModelRegistry {
             models: vec![
-                // ── Small / Fast ────────────────────────────────────────────
-                ModelMeta { id: "claude-3-haiku-20240307",   name: "Claude 3 Haiku",    provider: "anthropic", tier: ModelTier::Small,  context_window: 200_000,   cost_per_1k_input: 0.00025,  cost_per_1k_output: 0.00125 },
-                ModelMeta { id: "gpt-4o-mini",               name: "GPT-4o Mini",       provider: "openai",    tier: ModelTier::Small,  context_window: 128_000,   cost_per_1k_input: 0.00015,  cost_per_1k_output: 0.00060 },
-                ModelMeta { id: "gemini-1.5-flash",          name: "Gemini 1.5 Flash",  provider: "google",    tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.000075, cost_per_1k_output: 0.00030 },
+                // ── Small / Fast ──────────────────────────────────────────────────────────────────────
+                //                                                                           thai_score ↓
+                ModelMeta { id: "claude-3-haiku-20240307",    name: "Claude 3 Haiku",    provider: "anthropic", tier: ModelTier::Small,  context_window: 200_000,   cost_per_1k_input: 0.00025,  cost_per_1k_output: 0.00125, thai_score: 7 },
+                ModelMeta { id: "gpt-4o-mini",                name: "GPT-4o Mini",       provider: "openai",    tier: ModelTier::Small,  context_window: 128_000,   cost_per_1k_input: 0.00015,  cost_per_1k_output: 0.00060, thai_score: 6 },
+                ModelMeta { id: "gemini-2.5-flash-lite",      name: "Gemini 2.5 Flash Lite", provider: "google", tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.000075, cost_per_1k_output: 0.00030, thai_score: 6 },
 
-                // ── Mid / Balanced ───────────────────────────────────────────
-                ModelMeta { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet", provider: "anthropic", tier: ModelTier::Mid, context_window: 200_000,   cost_per_1k_input: 0.003,   cost_per_1k_output: 0.01500 },
-                ModelMeta { id: "gemini-1.5-pro",             name: "Gemini 1.5 Pro",    provider: "google",    tier: ModelTier::Mid, context_window: 1_000_000, cost_per_1k_input: 0.00125, cost_per_1k_output: 0.00500 },
+                // ── Mid / Balanced ────────────────────────────────────────────────────────────────────
+                ModelMeta { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet", provider: "anthropic", tier: ModelTier::Mid,    context_window: 200_000,   cost_per_1k_input: 0.003,    cost_per_1k_output: 0.01500, thai_score: 9 },
+                ModelMeta { id: "gemini-2.5-flash",           name: "Gemini 2.5 Flash",  provider: "google",    tier: ModelTier::Mid,    context_window: 1_000_000, cost_per_1k_input: 0.00125,  cost_per_1k_output: 0.00500, thai_score: 7 },
 
-                // ── Top / Quality ────────────────────────────────────────────
-                ModelMeta { id: "gpt-4o",                     name: "GPT-4o",            provider: "openai",    tier: ModelTier::Top, context_window: 128_000,   cost_per_1k_input: 0.005,   cost_per_1k_output: 0.01500 },
-                ModelMeta { id: "claude-3-5-sonnet-top",      name: "Claude 3.5 Sonnet", provider: "anthropic", tier: ModelTier::Top, context_window: 200_000,   cost_per_1k_input: 0.003,   cost_per_1k_output: 0.01500 },
+                // ── Top / Quality ─────────────────────────────────────────────────────────────────────
+                ModelMeta { id: "gpt-4o",                     name: "GPT-4o",            provider: "openai",    tier: ModelTier::Top,    context_window: 128_000,   cost_per_1k_input: 0.005,    cost_per_1k_output: 0.01500, thai_score: 8 },
+                ModelMeta { id: "claude-3-5-sonnet-top",      name: "Claude 3.5 Sonnet", provider: "anthropic", tier: ModelTier::Top,    context_window: 200_000,   cost_per_1k_input: 0.003,    cost_per_1k_output: 0.01500, thai_score: 9 },
 
-                // ── Expert / Long-Context ────────────────────────────────────
-                ModelMeta { id: "gemini-1.5-pro-expert",      name: "Gemini 1.5 Pro",    provider: "google",    tier: ModelTier::Expert, context_window: 1_000_000, cost_per_1k_input: 0.00125, cost_per_1k_output: 0.00500 },
+                // ── Expert / Long-Context ─────────────────────────────────────────────────────────────
+                ModelMeta { id: "gemini-2.5-pro",             name: "Gemini 2.5 Pro",    provider: "google",    tier: ModelTier::Expert, context_window: 1_000_000, cost_per_1k_input: 0.00125,  cost_per_1k_output: 0.00500, thai_score: 7 },
             ],
         }
     }

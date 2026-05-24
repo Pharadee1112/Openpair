@@ -3,8 +3,8 @@
 /// This is the struct exposed to Python via PyO3.
 
 use pyo3::prelude::*;
-use crate::classifier::score_complexity;
-use crate::registry::{ModelRegistry, ModelTier};
+use crate::classifier::{score_complexity, is_thai};
+use crate::registry::{ModelRegistry, ModelTier, THAI_ROUTING_PRIORITY};
 
 #[pyclass]
 #[derive(Debug, Clone)]
@@ -35,17 +35,33 @@ impl RoutingDecision {
     }
 }
 
-/// Core routing function — pure Rust, called from Python via PyO3
+/// Core routing function — pure Rust, called from Python via PyO3.
+///
+/// If the prompt is Thai and no `preferred_provider` is specified,
+/// Thai Routing Priority overrides the normal cheapest-in-tier logic.
 pub fn route_prompt(prompt: &str, preferred_provider: Option<&str>) -> RoutingDecision {
     let registry = ModelRegistry::new();
     let score = score_complexity(prompt);
     let tier = ModelTier::from_score(score);
+    let thai = is_thai(prompt);
 
-    let model = registry
-        .preferred_for_tier(&tier, preferred_provider)
-        .expect("Registry must have at least one model per tier");
+    // Thai routing override (only when caller did not pin a provider)
+    let model = if thai && preferred_provider.is_none() {
+        let preferred_id = match score {
+            1..=3 => THAI_ROUTING_PRIORITY.simple_thai,
+            4..=6 => THAI_ROUTING_PRIORITY.medium_thai,
+            _     => THAI_ROUTING_PRIORITY.complex_thai,
+        };
+        registry.get_by_id(preferred_id)
+            .or_else(|| registry.preferred_for_tier(&tier, None))
+            .expect("Registry must have at least one model per tier")
+    } else {
+        registry
+            .preferred_for_tier(&tier, preferred_provider)
+            .expect("Registry must have at least one model per tier")
+    };
 
-    let reason = build_reason(score, &tier, model.name, preferred_provider);
+    let reason = build_reason(score, &tier, model.name, preferred_provider, thai);
 
     RoutingDecision {
         model_id:          model.id.to_string(),
@@ -58,7 +74,7 @@ pub fn route_prompt(prompt: &str, preferred_provider: Option<&str>) -> RoutingDe
     }
 }
 
-fn build_reason(score: u8, tier: &ModelTier, model_name: &str, preferred: Option<&str>) -> String {
+fn build_reason(score: u8, tier: &ModelTier, model_name: &str, preferred: Option<&str>, thai: bool) -> String {
     let tier_desc = match tier {
         ModelTier::Small  => "Low complexity — using a fast, cost-efficient model",
         ModelTier::Mid    => "Medium complexity — using a balanced quality/cost model",
@@ -68,12 +84,16 @@ fn build_reason(score: u8, tier: &ModelTier, model_name: &str, preferred: Option
 
     let provider_note = if let Some(p) = preferred {
         format!(" (preferred provider: {p})")
+    } else if thai {
+        " (Thai routing priority)".to_string()
     } else {
         " (cheapest in tier)".to_string()
     };
 
+    let lang_tag = if thai { " [Thai]" } else { "" };
+
     format!(
-        "{tier_desc}. Score: {score}/10 → {model_name}{provider_note}."
+        "{tier_desc}{lang_tag}. Score: {score}/10 → {model_name}{provider_note}."
     )
 }
 

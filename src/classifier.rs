@@ -6,6 +6,7 @@
 /// 3. Complex/analytical keywords
 /// 4. Code/technical keywords
 /// 5. Multi-part question indicators
+/// 6. Thai language detection (boosts score slightly — Thai needs stronger models)
 
 const COMPLEX_KEYWORDS: &[&str] = &[
     "analyze", "analyse", "evaluate", "compare", "design",
@@ -19,6 +20,35 @@ const CODE_KEYWORDS: &[&str] = &[
     "api", "database", "sql", "deploy", "microservice",
     "system", "framework", "library", "async", "concurrency",
 ];
+
+/// Thai analytical/complex keywords (written in Thai script)
+const THAI_COMPLEX_KEYWORDS: &[&str] = &[
+    "วิเคราะห์",     // analyze
+    "เปรียบเทียบ",  // compare
+    "ออกแบบ",       // design
+    "อธิบาย",       // explain
+    "สรุป",         // summarize
+    "ประเมิน",      // evaluate
+    "พัฒนา",        // develop
+    "แนะนำ",        // recommend
+    "ขั้นตอน",      // step-by-step
+    "กลยุทธ์",      // strategy
+];
+
+/// Detect whether the prompt contains Thai characters (Unicode U+0E00–U+0E7F).
+pub fn is_thai(text: &str) -> bool {
+    text.chars().any(|c| ('\u{0E00}'..='\u{0E7F}').contains(&c))
+}
+
+/// Return the fraction of characters that are Thai (0.0–1.0).
+pub fn thai_ratio(text: &str) -> f64 {
+    let chars: Vec<char> = text.chars().collect();
+    if chars.is_empty() {
+        return 0.0;
+    }
+    let thai_count = chars.iter().filter(|&&c| ('\u{0E00}'..='\u{0E7F}').contains(&c)).count();
+    thai_count as f64 / chars.len() as f64
+}
 
 pub fn score_complexity(prompt: &str) -> u8 {
     if prompt.trim().is_empty() {
@@ -63,6 +93,18 @@ pub fn score_complexity(prompt: &str) -> u8 {
     if multi_q || has_numbered {
         score += 0.5;
     }
+
+    // ── 6. Thai language boost (0–1.5 pts) ───────────────────────────
+    // Thai prompts are harder for most models → bump the score so routing
+    // picks a more capable model even for "simple-looking" Thai text.
+    let ratio = thai_ratio(prompt);
+    if ratio > 0.3 {
+        score += 0.5 + ratio; // up to +1.5 for fully-Thai prompt
+    }
+
+    // ── 7. Thai complex-keyword hits (0–1 pt) ────────────────────────
+    let thai_hits = THAI_COMPLEX_KEYWORDS.iter().filter(|k| prompt.contains(**k)).count();
+    score += (thai_hits as f64 * 0.25).min(1.0);
 
     (score.round() as u8).clamp(1, 10)
 }

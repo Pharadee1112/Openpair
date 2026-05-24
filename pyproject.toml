@@ -1,0 +1,29 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "openpair"
+version = "0.1.0"
+description = "Intelligent AI Router — route prompts to the best model automatically"
+requires-python = ">=3.9"
+dependencies = [
+    "openai>=1.0",
+    "anthropic>=0.20",
+    "google-generativeai>=0.5",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
+
+[tool.pytest.ini_options]
+markers = [
+    "live: marks tests as requiring real API keys (deselect with '-m not live')",
+]
+
+[tool.maturin]
+# Rust extension is built as openpair._core (importable by the Python package)
+python-source = "python"
+module-name = "openpair._core"
+features = ["pyo3/extension-module"]
