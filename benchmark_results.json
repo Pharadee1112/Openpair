@@ -1,0 +1,429 @@
+{
+  "run_at": "2026-05-24T15:12:36.047480",
+  "models": [
+    {
+      "model_id": "gemini-2.5-flash-lite",
+      "model_name": "Gemini 2.5 Flash Lite",
+      "provider": "google",
+      "avg_final_score": 6.03,
+      "avg_keyword_score": 0.546,
+      "avg_thai_ratio": 0.573,
+      "pass_rate": 0.6,
+      "suggested_thai_score": 6,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 8.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": false,
+          "preview": "กรุงเทพมหานคร"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.827,
+          "passed": true,
+          "preview": "น้ำประกอบด้วยธาตุ 2 ชนิดหลัก ได้แก่ **ไฮโดรเจน (Hydrogen)** และ **ออกซิเจน (Oxyg"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.698,
+          "passed": true,
+          "preview": "## AI vs. Machine Learning: ความแตกต่างที่เข้าใจง่าย  ลองนึกภาพว่าเรากำลังพูดถึง"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 7.0,
+          "keyword_score": 0.4,
+          "thai_ratio": 0.857,
+          "passed": true,
+          "preview": "## ภาวะโลกร้อน คืออะไร?  ภาวะโลกร้อน (Global Warming) หมายถึง การที่อุณหภูมิเฉลี"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.811,
+          "passed": true,
+          "preview": "## เปรียบเทียบระบบเศรษฐกิจแบบทุนนิยมและสังคมนิยม  ระบบเศรษฐกิจแบ่งออกเป็นหลายรูป"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.581,
+          "passed": true,
+          "preview": "ประโยค \"The sun rises in the east.\" แปลเป็นภาษาไทยได้ว่า:  **\"ดวงอาทิตย์ขึ้นทางท"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.691,
+          "passed": true,
+          "preview": "ประโยค \"Artificial intelligence is changing the world.\" แปลเป็นภาษาไทยได้ว่า:  *"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.929,
+          "passed": true,
+          "preview": "ต่อไปนี้คือการแปลที่เป็นธรรมชาติของข้อความที่คุณให้มา:  * **\"โมเดลแมชชีนเลิร์นนิ"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.701,
+          "passed": true,
+          "preview": "นี่คือคำแปลที่เน้นความเป็นธรรมชาติและถูกต้องสำหรับย่อหน้านี้ครับ:  **\"ควอนตัมคอม"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.957,
+          "passed": true,
+          "preview": "ประเทศไทยตั้งอยู่ในเอเชียตะวันออกเฉียงใต้ มีประชากรประมาณ 70 ล้านคน โดยมีกรุงเทพ"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.664,
+          "passed": true,
+          "preview": "ประเด็นสำคัญจากข้อความนี้สรุปเป็น bullet points ได้ดังนี้:  *   **ปัจจัยขับเคลื่"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 4.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 1.0,
+          "passed": false,
+          "preview": "เทคโนโลยี"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.822,
+          "passed": true,
+          "preview": "จากรีวิวนี้ ลูกค้า **ค่อนข้างพอใจแต่ก็มีบางส่วนที่ไม่พอใจ**  **คะแนน:** 3/5  **เ"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.931,
+          "passed": true,
+          "preview": "ดอกบัวผุดงามสง่า กลางธารใส กลีบอ่อนนุ่มแย้มบาน ท้าแดดฉาย กลิ่นหอมฟุ้งกระจาย ชวนใ"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        }
+      ]
+    },
+    {
+      "model_id": "gemini-2.5-flash",
+      "model_name": "Gemini 2.5 Flash",
+      "provider": "google",
+      "avg_final_score": 1.93,
+      "avg_keyword_score": 0.087,
+      "avg_thai_ratio": 0.237,
+      "pass_rate": 0.1,
+      "suggested_thai_score": 2,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 5.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.698,
+          "passed": false,
+          "preview": "น้ำ (H₂O) ประกอบด้วยธาตุหลัก 2 ชนิดคือ **ไฮ"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 5.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.706,
+          "passed": false,
+          "preview": "แน่นอนครับ! มาอธิบายความแตกต่างระหว่าง AI กับ Machine Learning แบบเข้าใจง่ายๆ กั"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 5.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.877,
+          "passed": false,
+          "preview": "ภาวะโลกร้อนคืออะไร และส่งผลกระทบอย่างไรต่อประเทศไทย?  ---"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 7.0,
+          "keyword_score": 0.4,
+          "thai_ratio": 0.957,
+          "passed": true,
+          "preview": "การเปรียบเทียบระบบเศรษฐกิจแบบทุนนิยมและสังคมนิยม:  ระบบเศรษฐกิจเป็นกร"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.593,
+          "passed": true,
+          "preview": "ประโยค \"The sun rises in the east.\" แปลเป็นภาษาไทยได้ว่า:  **พระอาทิตย์ขึ้นทางทิ"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 0.9,
+          "passed": false,
+          "preview": "ประโยคนี้แปลเป็นภาษาไทยได้ดังนี้:  **ปัญญาประดิษฐ์"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '"
+        }
+      ]
+    }
+  ]
+}

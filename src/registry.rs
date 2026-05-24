@@ -1,3 +1,4 @@
+
 /// Model Registry — in-memory store of AI model metadata
 ///
 /// For MVP: hard-coded defaults across 3 providers (OpenAI, Anthropic, Google)
