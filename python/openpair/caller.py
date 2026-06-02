@@ -160,12 +160,52 @@ def call_google(
     return text, input_tokens, output_tokens
 
 
+# ── Groq ─────────────────────────────────────────────────────────────────────
+
+def call_groq(
+    model_id: str,
+    prompt: str,
+    api_key: str,
+    system: Optional[str] = None,
+    max_tokens: int = 2048,
+) -> tuple[str, int, int]:
+    """
+    Call Groq API (OpenAI-compatible endpoint).
+    Returns (response_text, input_tokens, output_tokens).
+    """
+    try:
+        import openai
+    except ImportError:
+        raise ImportError("Install openai: pip install openai")
+
+    client = openai.OpenAI(
+        api_key=api_key,
+        base_url="https://api.groq.com/openai/v1",
+    )
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+
+    resp = client.chat.completions.create(
+        model=model_id,
+        messages=messages,
+        max_tokens=max_tokens,
+    )
+
+    text          = resp.choices[0].message.content or ""
+    input_tokens  = resp.usage.prompt_tokens
+    output_tokens = resp.usage.completion_tokens
+    return text, input_tokens, output_tokens
+
+
 # ── Dispatcher ───────────────────────────────────────────────────────────────
 
 _CALLERS = {
     "openai":    call_openai,
     "anthropic": call_anthropic,
     "google":    call_google,
+    "groq":      call_groq,
 }
 
 

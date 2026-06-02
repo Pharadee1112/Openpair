@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(& \"d:\\\\openpair\\\\.venv\\\\Scripts\\\\Activate.ps1\"; python --version)",
+      "PowerShell(& \"d:\\\\openpair\\\\.venv\\\\Scripts\\\\Activate.ps1\"; python -c \"from openpair import OpenPair; print\\('Import OK'\\)\" 2>&1)"
+    ]
+  }
+}
