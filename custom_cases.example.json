@@ -1,0 +1,30 @@
+[
+  {
+    "id": "custom_qa_01",
+    "category": "qa",
+    "difficulty": "easy",
+    "prompt": "ดอกไม้ประจำชาติไทยคืออะไร? ตอบสั้นๆ เป็นภาษาไทย",
+    "expected_keywords": ["ราชพฤกษ์", "คูน", "ดอกไม้"],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "notes": "ทดสอบความรู้ทั่วไปเกี่ยวกับประเทศไทย"
+  },
+  {
+    "id": "custom_tr_01",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'She sells seashells by the seashore.'",
+    "expected_keywords": ["เปลือกหอย", "ชายหาด", "ขาย"],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3
+  },
+  {
+    "id": "custom_creative_01",
+    "category": "creative",
+    "difficulty": "hard",
+    "prompt": "เขียนโฆษณาภาษาไทยสั้นๆ (2-3 ประโยค) สำหรับกาแฟเย็นที่ทำให้คนรู้สึกตื่นตัวและมีพลัง",
+    "expected_keywords": ["กาแฟ", "พลัง", "ตื่นตัว"],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.5
+  }
+]

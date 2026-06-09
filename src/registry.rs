@@ -86,9 +86,8 @@ impl ModelRegistry {
                 ModelMeta { id: "gemini-2.5-pro",             name: "Gemini 2.5 Pro",    provider: "google",    tier: ModelTier::Expert, context_window: 1_000_000, cost_per_1k_input: 0.00125,  cost_per_1k_output: 0.00500, thai_score: 7 },
 
                 // ── Groq (ultra-fast inference) ───────────────────────────────────────────────────────
-                ModelMeta { id: "llama-3.1-8b-instant",       name: "Llama 3.1 8B",      provider: "groq",      tier: ModelTier::Small,  context_window: 128_000,   cost_per_1k_input: 0.00005,  cost_per_1k_output: 0.00008, thai_score: 5 },
-                ModelMeta { id: "llama-3.3-70b-versatile",    name: "Llama 3.3 70B",     provider: "groq",      tier: ModelTier::Mid,    context_window: 128_000,   cost_per_1k_input: 0.00059,  cost_per_1k_output: 0.00079, thai_score: 6 },
-                ModelMeta { id: "moonshotai/kimi-k2-instruct", name: "Kimi K2",           provider: "groq",      tier: ModelTier::Top,    context_window: 131_072,   cost_per_1k_input: 0.00100,  cost_per_1k_output: 0.00300, thai_score: 6 },
+                ModelMeta { id: "llama-3.1-8b-instant",       name: "Llama 3.1 8B",      provider: "groq",      tier: ModelTier::Small,  context_window: 128_000,   cost_per_1k_input: 0.00005,  cost_per_1k_output: 0.00008, thai_score: 8 },
+                ModelMeta { id: "llama-3.3-70b-versatile",    name: "Llama 3.3 70B",     provider: "groq",      tier: ModelTier::Mid,    context_window: 128_000,   cost_per_1k_input: 0.00059,  cost_per_1k_output: 0.00079, thai_score: 9 },
             ],
         }
     }

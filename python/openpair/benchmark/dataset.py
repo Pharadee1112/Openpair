@@ -13,7 +13,11 @@ benchmark.dataset — Thai test cases
 """
 
 from __future__ import annotations
+
+import json
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Union
 
 
 @dataclass
@@ -323,6 +327,61 @@ def get_cases_by_category(category: str) -> list[ThaiTestCase]:
 
 def get_cases_by_difficulty(difficulty: str) -> list[ThaiTestCase]:
     return [c for c in THAI_TEST_CASES if c.difficulty == difficulty]
+
+
+def load_custom_cases(path: Union[str, Path]) -> list[ThaiTestCase]:
+    """
+    โหลด custom test cases จากไฟล์ JSON
+
+    รูปแบบ JSON (ดูตัวอย่างที่ custom_cases.example.json):
+    [
+      {
+        "id": "my_01",
+        "category": "qa",
+        "difficulty": "easy",
+        "prompt": "คำถาม...",
+        "expected_keywords": ["คำ1", "คำ2"],
+        "keyword_threshold": 0.5,   // optional, default 0.4
+        "min_thai_ratio": 0.2,      // optional, default 0.2
+        "notes": "หมายเหตุ"         // optional
+      }
+    ]
+    """
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(raw, list):
+        raise ValueError(f"Custom cases JSON ต้องเป็น list ของ objects ไม่ใช่ {type(raw).__name__}")
+
+    cases: list[ThaiTestCase] = []
+    required = {"id", "category", "difficulty", "prompt", "expected_keywords"}
+    valid_categories = set(CATEGORIES)
+    valid_difficulties = {"easy", "medium", "hard"}
+
+    for i, item in enumerate(raw):
+        missing = required - set(item)
+        if missing:
+            raise ValueError(f"Custom case [{i}] ขาด fields: {missing}")
+        if item["category"] not in valid_categories:
+            raise ValueError(
+                f"Custom case {item['id']!r}: category {item['category']!r} ไม่รองรับ "
+                f"(ต้องเป็น {sorted(valid_categories)})"
+            )
+        if item["difficulty"] not in valid_difficulties:
+            raise ValueError(
+                f"Custom case {item['id']!r}: difficulty {item['difficulty']!r} ไม่รองรับ "
+                f"(ต้องเป็น easy / medium / hard)"
+            )
+        cases.append(ThaiTestCase(
+            id                = item["id"],
+            category          = item["category"],
+            difficulty        = item["difficulty"],
+            prompt            = item["prompt"],
+            expected_keywords = item["expected_keywords"],
+            keyword_threshold = float(item.get("keyword_threshold", 0.4)),
+            min_thai_ratio    = float(item.get("min_thai_ratio", 0.2)),
+            notes             = item.get("notes", ""),
+        ))
+
+    return cases
 
 
 CATEGORIES = ["qa", "translation", "summarization", "classification", "code_thai", "creative"]

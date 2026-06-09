@@ -1,0 +1,641 @@
+{
+  "run_at": "2026-06-02T18:57:41.952904",
+  "models": [
+    {
+      "model_id": "llama-3.3-70b-versatile",
+      "model_name": "Llama 3.3 70B",
+      "provider": "groq",
+      "avg_final_score": 8.55,
+      "avg_keyword_score": 0.73,
+      "avg_thai_ratio": 0.896,
+      "pass_rate": 0.9,
+      "suggested_thai_score": 9,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 8.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": false,
+          "preview": "กรุงเทพมหานคร"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.88,
+          "passed": true,
+          "preview": "น้ำเป็นของเหลวที่สำคัญที่สุดสำหรับการดำรงชีวิตของสิ่งมีชีวิตบนโลก และประกอบด้วยธ"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.788,
+          "passed": true,
+          "preview": "ความแตกต่างระหว่าง AI (ปัญญาประดิษฐ์) และ Machine Learning (การเรียนรู้ของเครื่อ"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.906,
+          "passed": true,
+          "preview": "ภาวะโลกร้อน (Global Warming) คือ ปรากฏการณ์ที่อุณหภูมิพื้นผิวโลกเพิ่มขึ้นอย่างรว"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.915,
+          "passed": true,
+          "preview": "ระบบเศรษฐกิจแบบทุนนิยมและสังคมนิยมเป็นสองระบบเศรษฐกิจหลักที่ใช้กันอย่างแพร่หลายท"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "ดวงอาทิตย์ขึ้นที่ทิศตะวันออก"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "ปัญญาประดิษฐ์กำลังเปลี่ยนแปลงโลก"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "โมเดลการเรียนรู้ของเครื่องต้องการจำนวนข้อมูลการฝึกอบรมที่มากเพื่อให้ได้ความแม่นย"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.973,
+          "passed": true,
+          "preview": "การคำนวณแบบควอนตัมใช้ปรากฏการณ์ทางกลศาสตร์ควอนตัม เช่น ซูเปอร์พอซิชัน และ เอนแทง"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.962,
+          "passed": true,
+          "preview": "ประเทศไทยเป็นประเทศในเอเชียตะวันออกเฉียงใต้ที่มีประชากรเกือบ 70 ล้านคน โดยมีกรุง"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.919,
+          "passed": true,
+          "preview": "ประเด็นสำคัญในการพัฒนาปัญญาประดิษฐ์ (AI) และการใช้งานสามารถสรุปได้ดังนี้:  * การ"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.909,
+          "passed": false,
+          "preview": "ข้อความนี้ จัดว่าเป็น 'บวก' เพราะลูกค้าแสดงความพอใจต่ออาหาร บริการ และราคา ของร้"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 0.919,
+          "passed": true,
+          "preview": "ข้อความนี้เกี่ยวกับหัวข้อ \"เทคโนโลยี\""
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.963,
+          "passed": true,
+          "preview": "ลูกค้าไม่พอใจมากนัก แต่ยังพึงพอใจในบางด้าน คะแนน 3  เหตุผล: ลูกค้าพอใจในเรื่องขอ"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 7.0,
+          "keyword_score": 0.4,
+          "thai_ratio": 0.582,
+          "passed": true,
+          "preview": "โค้ด Python ต่อไปนี้เป็นฟังก์ชันที่ถูกออกแบบมาเพื่อให้คำทักทายกับชื่อที่กำหนด  `"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.678,
+          "passed": true,
+          "preview": "ฟังก์ชัน `binary_search` ถูกใช้สำหรับการค้นหาพิกัดของตัวเลขในลิสต์ที่เรียงลำดับ "
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.828,
+          "passed": true,
+          "preview": "design pattern ที่แสดงคือ Singleton นั้นเป็นหนึ่งใน design pattern ที่มีชื่อเสีย"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.967,
+          "passed": true,
+          "preview": "ดอกบัวสีชมพูนวลรื่น บานสะพรั่งบนผิวน้ำเงิน ใบและดอกส่องประกายเด่น ความงามของธรรม"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.987,
+          "passed": true,
+          "preview": "หุ่นยนต์หนึ่งเครื่องได้รับการออกแบบมาให้เรียนรู้และพัฒนาความสามารถของตัวมันเอง แ"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.742,
+          "passed": true,
+          "preview": "สโลแกนภาษาไทยสำหรับแอปพลิเคชัน AI ที่ช่วยเลือก model ที่เหมาะสมที่สุดอัตโนมัติ ม"
+        }
+      ]
+    },
+    {
+      "model_id": "llama-3.1-8b-instant",
+      "model_name": "Llama 3.1 8B",
+      "provider": "groq",
+      "avg_final_score": 8.42,
+      "avg_keyword_score": 0.724,
+      "avg_thai_ratio": 0.869,
+      "pass_rate": 0.8,
+      "suggested_thai_score": 8,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 8.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": false,
+          "preview": "กรุงเทพมหานคร"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.798,
+          "passed": true,
+          "preview": "น้ำเป็นสารที่ประกอบด้วยธาตุที่สามสำคัญของพื้นโลก น้ำมีทั้งธาตุฮโดเจน (H) และธาตอ"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.83,
+          "passed": true,
+          "preview": "**คำอธิบายความแตกต่างระหว่าง AI และ Machine Learning**  AI (Artificial Intellige"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.903,
+          "passed": true,
+          "preview": "ภาวะโลกร้อน (Global Warming) คือปรากฏการณ์ที่ส่วนใหญ่ของโลกมีอุณหภูมิเพิ่มขึ้น โ"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.893,
+          "passed": true,
+          "preview": "**ระบบเศรษฐกิจ**  ระบบเศรษฐกิจคือระบบการจัดการทรัพยากรและผลผลิตในประเทศ เพื่อให้"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 0.828,
+          "passed": false,
+          "preview": "ดวงอาทิตย์ขึ้นมาในด้าน výchอง"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.94,
+          "passed": true,
+          "preview": "\"เทคโนโลยีความเข้าใจอัตโนมัติกำลังเปลี่ยนแปลงโลก.\""
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 1.0,
+          "passed": false,
+          "preview": "แบบเรียนของเครื่องเรียนรู้ต้องการปริมาณข้อมูลฝึกอบรมที่สำคัญเพื่อให้ได้คุณภาพที่"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.981,
+          "passed": true,
+          "preview": "คอมพิวเตอร์ควอนตัมใช้อันตรกิริยาของเมคคานิกส์ควอนตัม เช่น การเรียงสับเปลี่ยนและค"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.958,
+          "passed": true,
+          "preview": "ประเทศไทยเป็นประเทศในเอเชียตะวันออกเฉียงใต้ มีประชากรประมาณ 70 ล้านคน กรุงเทพมหา"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.817,
+          "passed": true,
+          "preview": "รายละเอียดเรื่องปัญญาประดิษฐ์ในปัจจุบัน สามารถสรุปได้เป็น bullet points ดังนี้: "
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.891,
+          "passed": true,
+          "preview": "สามารถจัดหมวดหมู่ข้อความนี้เป็น 'บวก' เพราะ:  - ใช้คำที่บ่งบอกถึงความภูมิใจและคว"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 4.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 1.0,
+          "passed": false,
+          "preview": "เทคโนโลยี"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.927,
+          "passed": true,
+          "preview": "ลูกค้าไม่พอใจ โดยเฉพาะอย่างยิ่งเรื่องอาหารเช้าที่น้อยและแพง รวมถึงพนักงานบางคนไม"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 7.0,
+          "keyword_score": 0.4,
+          "thai_ratio": 0.593,
+          "passed": true,
+          "preview": "โค้ดที่ให้มาเป็นฟังก์ชัน Python ที่ใช้แสดงข้อความเรียบต่อผู้ใช้ โดยใช้ชื่อของผู้"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.72,
+          "passed": true,
+          "preview": "ฟังก์ชันนี้คือฟังก์ชันการค้นหาแบบ Binary Search (การค้นหาแบบสองนิพจน์) ในภาษา Py"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.614,
+          "passed": true,
+          "preview": "**Design Pattern การใช้งานแบบ Singleton**  การ设计แบบ Singleton เป็นหนึ่งในออกแบบท"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.972,
+          "passed": true,
+          "preview": "ดอกบัวเย็นช้อยไหว น้ำทะเลล้อมบ่งสร้างกลิ่นหอม ดอกบัวเป็นเครื่องหมายของความหวัง ช"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.87,
+          "passed": true,
+          "preview": "หุ่นยนต์รุ่นใหม่ชื่อ \"Zeta\" ถูกสร้างขึ้นเพื่อเรียนรู้และทำความเข้าใจความหมายของม"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.845,
+          "passed": true,
+          "preview": "ต่อไปนี้คือสโลแกนภาษาไทยสำหรับแอปพลิเคชัน AI ที่ช่วยเลือก model ที่เหมาะสมที่สุด"
+        }
+      ]
+    },
+    {
+      "model_id": "moonshotai/kimi-k2-instruct",
+      "model_name": "Kimi K2",
+      "provider": "groq",
+      "avg_final_score": 0.0,
+      "avg_keyword_score": 0.0,
+      "avg_thai_ratio": 0.0,
+      "pass_rate": 0.0,
+      "suggested_thai_score": 1,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: Error code: 404 - {'error': {'message': 'The model `moonshot"
+        }
+      ]
+    }
+  ]
+}
