@@ -22,7 +22,7 @@ class ResponseScore:
     difficulty:     str
     keyword_score:  float   # 0.0–1.0
     thai_ratio:     float   # 0.0–1.0 (fraction of Thai chars in response)
-    length_ok:      bool    # response length >= 20 chars
+    length_ok:      bool    # response length >= case.min_length
     final_score:    float   # 0.0–10.0
     passed:         bool    # ผ่านเกณฑ์ขั้นต่ำไหม
     response_preview: str   # 60 chars แรกของ response
@@ -54,7 +54,7 @@ def score_response(response: str, case: ThaiTestCase) -> ResponseScore:
 
     kw_score   = _keyword_score(response, case.expected_keywords)
     th_ratio   = _thai_ratio(response)
-    length_ok  = len(response) >= 20
+    length_ok  = len(response) >= case.min_length
 
     # ── Weighted final score ──────────────────────────────────────
     # keyword: 50% weight  — ตอบถูกต้องไหม

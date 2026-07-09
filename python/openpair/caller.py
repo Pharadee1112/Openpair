@@ -7,6 +7,7 @@ Called by OpenPair.call() after routing decides which model to use.
 
 from __future__ import annotations
 
+import os
 import time
 from dataclasses import dataclass, field
 from typing import Optional
@@ -199,6 +200,43 @@ def call_groq(
     return text, input_tokens, output_tokens
 
 
+# ── Ollama (local) ──────────────────────────────────────────────────────────
+
+def call_ollama(
+    model_id: str,
+    prompt: str,
+    api_key: str,
+    system: Optional[str] = None,
+    max_tokens: int = 2048,
+) -> tuple[str, int, int]:
+    """
+    Call a local Ollama server (OpenAI-compatible endpoint). No auth required.
+    Returns (response_text, input_tokens, output_tokens).
+    """
+    try:
+        import openai
+    except ImportError:
+        raise ImportError("Install openai: pip install openai")
+
+    base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    client = openai.OpenAI(api_key="ollama", base_url=f"{base_url}/v1")
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+
+    resp = client.chat.completions.create(
+        model=model_id,
+        messages=messages,
+        max_tokens=max_tokens,
+    )
+
+    text          = resp.choices[0].message.content or ""
+    input_tokens  = resp.usage.prompt_tokens if resp.usage else 0
+    output_tokens = resp.usage.completion_tokens if resp.usage else 0
+    return text, input_tokens, output_tokens
+
+
 # ── Dispatcher ───────────────────────────────────────────────────────────────
 
 _CALLERS = {
@@ -206,6 +244,7 @@ _CALLERS = {
     "anthropic": call_anthropic,
     "google":    call_google,
     "groq":      call_groq,
+    "ollama":    call_ollama,
 }
 
 

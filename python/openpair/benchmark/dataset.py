@@ -29,6 +29,7 @@ class ThaiTestCase:
     expected_keywords:  list[str]    # คำ/วลีที่ควรอยู่ในคำตอบ
     keyword_threshold:  float = 0.4  # ต้องได้ keyword อย่างน้อยกี่ fraction (0.0–1.0)
     min_thai_ratio:     float = 0.2  # response ต้องมีอักษรไทยอย่างน้อยกี่ fraction
+    min_length:         int = 20     # ความยาวคำตอบขั้นต่ำ (chars) — ลดสำหรับ prompt ที่ขอคำตอบสั้นๆ/คำเดียวโดยตั้งใจ
     notes:              str = ""     # หมายเหตุ
 
 
@@ -45,6 +46,7 @@ THAI_TEST_CASES: list[ThaiTestCase] = [
         prompt="เมืองหลวงของประเทศไทยคืออะไร? ตอบสั้นๆ เป็นภาษาไทย",
         expected_keywords=["กรุงเทพ", "กรุงเทพมหานคร"],
         keyword_threshold=0.5,
+        min_length=5,  # prompt ขอ "ตอบสั้นๆ" — "กรุงเทพ" (7 ตัวอักษร) ก็ถูกต้องสมบูรณ์แล้ว
         notes="ความรู้พื้นฐาน ต้องตอบถูกต้อง",
     ),
     ThaiTestCase(
@@ -198,6 +200,7 @@ THAI_TEST_CASES: list[ThaiTestCase] = [
         ),
         expected_keywords=["เทคโนโลยี", "Apple", "iPhone"],
         keyword_threshold=0.3,
+        min_length=4,  # คำตอบที่ถูกต้องคือหมวดหมู่คำเดียว เช่น "กีฬา" (4 ตัวอักษร)
     ),
     ThaiTestCase(
         id="cls_03",
@@ -343,6 +346,7 @@ def load_custom_cases(path: Union[str, Path]) -> list[ThaiTestCase]:
         "expected_keywords": ["คำ1", "คำ2"],
         "keyword_threshold": 0.5,   // optional, default 0.4
         "min_thai_ratio": 0.2,      // optional, default 0.2
+        "min_length": 20,           // optional, default 20
         "notes": "หมายเหตุ"         // optional
       }
     ]
@@ -378,6 +382,7 @@ def load_custom_cases(path: Union[str, Path]) -> list[ThaiTestCase]:
             expected_keywords = item["expected_keywords"],
             keyword_threshold = float(item.get("keyword_threshold", 0.4)),
             min_thai_ratio    = float(item.get("min_thai_ratio", 0.2)),
+            min_length        = int(item.get("min_length", 20)),
             notes             = item.get("notes", ""),
         ))
 

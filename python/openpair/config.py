@@ -10,6 +10,7 @@ Loads API keys from (in order of priority):
 from __future__ import annotations
 
 import os
+import urllib.request
 from pathlib import Path
 from typing import Optional
 
@@ -26,18 +27,34 @@ class ApiKeys:
 
     def __init__(
         self,
-        openai:    Optional[str] = None,
-        anthropic: Optional[str] = None,
-        google:    Optional[str] = None,
-        groq:      Optional[str] = None,
+        openai:       Optional[str] = None,
+        anthropic:    Optional[str] = None,
+        google:       Optional[str] = None,
+        groq:         Optional[str] = None,
+        ollama_base_url: Optional[str] = None,
+        ollama_model:    Optional[str] = None,
     ) -> None:
         self.openai    = openai    or os.getenv("OPENAI_API_KEY")
         self.anthropic = anthropic or os.getenv("ANTHROPIC_API_KEY")
         self.google    = google    or os.getenv("GOOGLE_API_KEY")
         self.groq      = groq      or os.getenv("GROQ_API_KEY")
 
+        # Ollama doesn't use an API key — "available" means the local server responds.
+        self.ollama_base_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        self.ollama_model    = ollama_model    or os.getenv("OLLAMA_MODEL", "llama3.1")
+
+    def is_ollama_available(self, timeout: float = 1.0) -> bool:
+        """Ping the local Ollama server — False if it isn't running."""
+        try:
+            urllib.request.urlopen(f"{self.ollama_base_url}/api/tags", timeout=timeout)
+            return True
+        except Exception:
+            return False
+
     def for_provider(self, provider: str) -> Optional[str]:
-        """Return the key for a given provider name."""
+        """Return the key for a given provider name. Ollama has no key — returns a truthy placeholder when its server is reachable."""
+        if provider == "ollama":
+            return "local" if self.is_ollama_available() else None
         return {
             "openai":    self.openai,
             "anthropic": self.anthropic,

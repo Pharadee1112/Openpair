@@ -7,7 +7,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from openpair.benchmark.dataset import THAI_TEST_CASES, ThaiTestCase, CATEGORIES
 from openpair.benchmark.scorer import score_response, _thai_ratio, _keyword_score
-from openpair.benchmark.runner import _is_rate_limit, _extract_retry_delay, _call_with_retry
+from openpair.benchmark.runner import _is_retryable, _extract_retry_delay, _call_with_retry
 
 
 # ── Dataset tests ─────────────────────────────────────────────────────────────
@@ -28,6 +28,7 @@ class TestDataset:
             assert case.expected_keywords,     f"{case.id}: ไม่มี expected_keywords"
             assert 0 < case.keyword_threshold <= 1.0, f"{case.id}: keyword_threshold ผิด"
             assert 0 <= case.min_thai_ratio <= 1.0,   f"{case.id}: min_thai_ratio ผิด"
+            assert case.min_length > 0,                f"{case.id}: min_length ผิด"
 
     def test_ids_are_unique(self):
         ids = [c.id for c in THAI_TEST_CASES]
@@ -128,21 +129,65 @@ class TestScoreResponse:
         )
         assert 1 <= result.suggested_thai_score <= 10
 
+    def test_short_correct_answer_fails_with_default_min_length(self):
+        # Default min_length=20 penalizes a short-but-correct answer.
+        score = score_response("กรุงเทพมหานคร", self.case)
+        assert not score.length_ok
+        assert not score.passed
+
+    def test_short_correct_answer_passes_with_lower_min_length(self):
+        # A case that intentionally expects a brief answer should lower min_length.
+        brief_case = ThaiTestCase(
+            id="brief_case",
+            category="qa",
+            difficulty="easy",
+            prompt="เมืองหลวงของไทยคืออะไร? ตอบสั้นๆ",
+            expected_keywords=["กรุงเทพ"],
+            keyword_threshold=0.5,
+            min_thai_ratio=0.3,
+            min_length=5,
+        )
+        score = score_response("กรุงเทพมหานคร", brief_case)
+        assert score.length_ok
+        assert score.passed
+
+
+class TestQa01AndCls02Thresholds:
+    """Regression coverage for the qa_01/cls_02 min_length fix — both prompts
+    intentionally ask for a brief/single-word answer, so the default 20-char
+    length gate was failing genuinely correct responses."""
+
+    def test_qa_01_short_correct_answer_passes(self):
+        case = next(c for c in THAI_TEST_CASES if c.id == "qa_01")
+        score = score_response("กรุงเทพมหานคร", case)
+        assert score.passed
+        assert score.length_ok
+
+    def test_cls_02_single_word_answer_passes(self):
+        case = next(c for c in THAI_TEST_CASES if c.id == "cls_02")
+        score = score_response("เทคโนโลยี", case)
+        assert score.passed
+        assert score.length_ok
+
 
 # ── Retry logic tests ─────────────────────────────────────────────────────────
 
 class TestRetryHelpers:
     def test_is_rate_limit_google_429(self):
         err = Exception("429 RESOURCE_EXHAUSTED quota exceeded")
-        assert _is_rate_limit(err)
+        assert _is_retryable(err)
 
     def test_is_rate_limit_openai(self):
         err = Exception("rate_limit_exceeded: too many requests")
-        assert _is_rate_limit(err)
+        assert _is_retryable(err)
+
+    def test_is_overloaded_google_503(self):
+        err = Exception("503 UNAVAILABLE. The model is overloaded. Please try again later.")
+        assert _is_retryable(err)
 
     def test_is_rate_limit_false_for_other(self):
         err = Exception("500 Internal Server Error")
-        assert not _is_rate_limit(err)
+        assert not _is_retryable(err)
 
     def test_extract_retry_delay_google_format(self):
         err = Exception('"retryDelay": "44.5s"')

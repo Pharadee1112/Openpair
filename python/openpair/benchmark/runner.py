@@ -4,7 +4,7 @@ benchmark.runner — รัน benchmark กับ model จริงๆ
 ส่ง ThaiTestCase แต่ละชุดไปให้ model ตอบ แล้วเก็บผลลัพธ์
 
 Auto-retry:
-  เมื่อ API ตอบ 429 (rate limit) จะอ่านค่า retryDelay จาก error
+  เมื่อ API ตอบ 429 (rate limit) หรือ 503 (overloaded/unavailable) จะอ่านค่า retryDelay จาก error
   แล้วรอตามที่ API บอก จากนั้นส่งใหม่อัตโนมัติ (สูงสุด 3 ครั้ง)
 """
 
@@ -19,21 +19,12 @@ from typing import Optional
 
 from ..caller import make_call
 from ..config import ApiKeys
+from ..errors import is_retryable_error as _is_retryable
 from .dataset import ThaiTestCase, THAI_TEST_CASES
 from .scorer import score_response, ResponseScore, ModelBenchmarkResult
 
 
 # ── Retry helpers ─────────────────────────────────────────────────────────────
-
-def _is_rate_limit(error: Exception) -> bool:
-    """True ถ้าเป็น 429 rate limit error จาก provider ใดก็ได้"""
-    msg = str(error)
-    return (
-        "429" in msg
-        or "RESOURCE_EXHAUSTED" in msg
-        or "rate_limit_exceeded" in msg.lower()
-        or "rate limit" in msg.lower()
-    )
 
 
 def _extract_retry_delay(error: Exception, default: float = 60.0) -> float:
@@ -63,7 +54,7 @@ def _call_with_retry(
     **call_kwargs,
 ) -> tuple[str, int, int, float]:
     """
-    make_call() พร้อม auto-retry เมื่อเจอ 429
+    make_call() พร้อม auto-retry เมื่อเจอ 429 หรือ 503
 
     ถ้า API บอกว่า "retry in 44s" จะรอ 44 วิแล้วส่งใหม่
     ถ้าไม่มีข้อมูล retry delay จะรอ 60 วิ
@@ -78,13 +69,13 @@ def _call_with_retry(
         except Exception as e:
             last_error = e
 
-            if _is_rate_limit(e) and attempt < max_retries:
+            if _is_retryable(e) and attempt < max_retries:
                 delay = _extract_retry_delay(e)
                 delay = min(delay + 2, 180)  # buffer 2 วิ, cap ที่ 3 นาที
 
                 if verbose:
                     print(
-                        f"\n    ⏳ Rate limit — รอ {delay:.0f}s "
+                        f"\n    ⏳ Rate limit/overloaded — รอ {delay:.0f}s "
                         f"แล้วลองใหม่ ({attempt + 1}/{max_retries})",
                         end="", flush=True,
                     )

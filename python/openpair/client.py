@@ -11,13 +11,19 @@ Usage:
 
 from __future__ import annotations
 
+import types
 from typing import Optional, TYPE_CHECKING
 
 from .config import ApiKeys
 from .caller import make_call, CallResult
+from .errors import is_retryable_error
 
 if TYPE_CHECKING:
     pass
+
+
+# Tried, in order, after the routed provider — before falling back to Ollama.
+_DEFAULT_FALLBACK_ORDER = ["groq", "google", "openai", "anthropic"]
 
 
 class OpenPair:
@@ -49,6 +55,7 @@ class OpenPair:
                 openai    = api_keys.get("openai"),
                 anthropic = api_keys.get("anthropic"),
                 google    = api_keys.get("google"),
+                groq      = api_keys.get("groq"),
             )
         elif isinstance(api_keys, ApiKeys):
             self._keys = api_keys
@@ -92,61 +99,85 @@ class OpenPair:
         """
         Route the prompt to the best model AND make the real API call.
 
+        Resilience: if a provider fails with a transient error (429 rate limit
+        / quota exhausted, 503 overloaded), automatically retries the same
+        prompt against the next provider in the fallback chain instead of
+        raising immediately. Default chain (when `fallback_providers` isn't
+        given): routed provider → groq → google → openai → anthropic → Ollama.
+        Ollama is always tried last, and only if a local server is actually
+        reachable — it's the fallback of last resort for when every cloud
+        provider is rate-limited, or when no cloud API key is configured at
+        all but Ollama happens to be running.
+
         Args:
             prompt: The user's prompt.
             preferred_provider: Override routing to use a specific provider.
             system: System prompt / instructions for the model.
             max_tokens: Maximum tokens in the response.
-            fallback_providers: List of providers to try if the primary has no key.
+            fallback_providers: Explicit override for the fallback order
                                 e.g. ["anthropic", "openai"] — tries in order.
+                                Ollama is still appended last if available.
 
         Returns:
             CallResult with response_text, token counts, cost, latency, and routing info.
 
         Raises:
-            RuntimeError: If no API key is available for the routed provider.
-            ValueError:   If an unknown provider is routed to.
+            RuntimeError: If no provider in the chain has a usable key.
+            Exception:    Whatever the last provider tried raised, if it wasn't
+                          a transient error (or retries were exhausted).
         """
         provider = preferred_provider or self._preferred_provider
-
-        # Get routing decision from Rust core
         decision = self._rust.route(prompt, provider)
 
-        # Find a usable provider (primary → fallbacks)
-        chosen_provider = self._resolve_provider(
-            decision.provider,
-            fallback_providers or [],
-        )
+        chain = self._build_fallback_chain(decision.provider, fallback_providers)
 
-        # If fallback changed the provider, re-route so model_id matches the new provider
-        if chosen_provider != decision.provider:
-            decision = self._rust.route(prompt, chosen_provider)
+        last_error: Optional[Exception] = None
+        attempted = False
 
-        api_key = self._keys.for_provider(chosen_provider)
+        for i, candidate in enumerate(chain):
+            api_key = self._keys.for_provider(candidate)
+            if not api_key:
+                continue
+            attempted = True
 
-        # Make the actual API call
-        text, in_tok, out_tok, latency_ms = make_call(
-            provider   = chosen_provider,
-            model_id   = decision.model_id,
-            prompt     = prompt,
-            api_key    = api_key,  # type: ignore[arg-type]
-            system     = system,
-            max_tokens = max_tokens,
-        )
+            candidate_decision = self._decision_for(candidate, prompt, decision)
 
-        return CallResult(
-            model_id          = decision.model_id,
-            model_name        = decision.model_name,
-            provider          = chosen_provider,
-            tier              = decision.tier,
-            complexity_score  = decision.complexity_score,
-            routing_reason    = decision.reason,
-            cost_per_1k_input = decision.cost_per_1k_input,
-            response_text     = text,
-            input_tokens      = in_tok,
-            output_tokens     = out_tok,
-            latency_ms        = latency_ms,
-        )
+            try:
+                text, in_tok, out_tok, latency_ms = make_call(
+                    provider   = candidate,
+                    model_id   = candidate_decision.model_id,
+                    prompt     = prompt,
+                    api_key    = api_key,  # type: ignore[arg-type]
+                    system     = system,
+                    max_tokens = max_tokens,
+                )
+            except Exception as e:
+                last_error = e
+                if is_retryable_error(e) and i < len(chain) - 1:
+                    continue
+                raise
+
+            return CallResult(
+                model_id          = candidate_decision.model_id,
+                model_name        = candidate_decision.model_name,
+                provider          = candidate,
+                tier              = candidate_decision.tier,
+                complexity_score  = candidate_decision.complexity_score,
+                routing_reason    = candidate_decision.reason,
+                cost_per_1k_input = candidate_decision.cost_per_1k_input,
+                response_text     = text,
+                input_tokens      = in_tok,
+                output_tokens     = out_tok,
+                latency_ms        = latency_ms,
+            )
+
+        if not attempted:
+            raise RuntimeError(
+                f"No API key found for any provider. "
+                f"Set OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, or GROQ_API_KEY, "
+                f"run Ollama locally, or pass api_keys={{...}} to OpenPair()."
+            )
+        raise last_error  # type: ignore[misc]
 
     def available_providers(self) -> list[str]:
         """Return providers that have API keys configured."""
@@ -162,25 +193,42 @@ class OpenPair:
 
     # ── Internal helpers ────────────────────────────────────────────────────
 
-    def _resolve_provider(self, primary: str, fallbacks: list[str]) -> str:
+    def _build_fallback_chain(self, primary: str, explicit_fallbacks: Optional[list[str]]) -> list[str]:
         """
-        Find the first provider with a configured API key.
-        Tries primary → fallbacks → raises RuntimeError if none available.
+        Ordered list of providers to attempt: primary, then the fallback
+        order (explicit override or the default groq/google/openai/anthropic
+        chain), then Ollama last — only if its local server is reachable.
         """
-        candidates = [primary] + [f for f in fallbacks if f != primary]
-        for p in candidates:
-            if self._keys.has(p):
-                return p
+        if explicit_fallbacks:
+            chain = [primary] + [p for p in explicit_fallbacks if p != primary]
+        else:
+            chain = [primary] + [p for p in _DEFAULT_FALLBACK_ORDER if p != primary]
 
-        available = self._keys.available_providers()
-        if available:
-            return available[0]   # last resort: any available key
+        if "ollama" not in chain and self._keys.is_ollama_available():
+            chain.append("ollama")
 
-        raise RuntimeError(
-            f"No API key found for any provider. "
-            f"Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GOOGLE_API_KEY, "
-            f"or pass api_keys={{...}} to OpenPair()."
-        )
+        return chain
+
+    def _decision_for(self, candidate: str, prompt: str, primary_decision):
+        """
+        Routing info for `candidate`. Ollama isn't in the Rust registry (its
+        model catalog is whatever the user has pulled locally, not a fixed
+        cost/tier the router can reason about) so it's synthesized here
+        instead of going through `self._rust.route()`.
+        """
+        if candidate == "ollama":
+            return types.SimpleNamespace(
+                model_id          = self._keys.ollama_model,
+                model_name        = f"Ollama ({self._keys.ollama_model})",
+                provider          = "ollama",
+                tier              = primary_decision.tier,
+                complexity_score  = primary_decision.complexity_score,
+                reason            = f"{primary_decision.reason} — local fallback via Ollama",
+                cost_per_1k_input = 0.0,
+            )
+        if candidate == primary_decision.provider:
+            return primary_decision
+        return self._rust.route(prompt, candidate)
 
     def __repr__(self) -> str:
         providers = self._keys.available_providers()

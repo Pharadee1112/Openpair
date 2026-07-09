@@ -20,11 +20,13 @@ class TestApiKeys:
         monkeypatch.setenv("OPENAI_API_KEY", "sk-test-openai")
         monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-anthropic")
         monkeypatch.setenv("GOOGLE_API_KEY", "sk-test-google")
+        monkeypatch.setenv("GROQ_API_KEY", "sk-test-groq")
 
         keys = ApiKeys()
         assert keys.openai    == "sk-test-openai"
         assert keys.anthropic == "sk-test-anthropic"
         assert keys.google    == "sk-test-google"
+        assert keys.groq      == "sk-test-groq"
 
     def test_explicit_keys_override_env(self, monkeypatch):
         monkeypatch.setenv("OPENAI_API_KEY", "sk-env-key")
@@ -35,21 +37,49 @@ class TestApiKeys:
         monkeypatch.delenv("OPENAI_API_KEY",    raising=False)
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
+        monkeypatch.delenv("GROQ_API_KEY",      raising=False)
         keys = ApiKeys(openai="sk-x", google="gk-x")
         assert "openai" in keys.available_providers()
         assert "google" in keys.available_providers()
         assert "anthropic" not in keys.available_providers()
+        assert "groq" not in keys.available_providers()
 
     def test_has_provider(self):
         keys = ApiKeys(anthropic="sk-ant-test")
         assert keys.has("anthropic")
         assert not keys.has("openai")
 
+    def test_has_groq_provider(self):
+        keys = ApiKeys(groq="gsk-test")
+        assert keys.has("groq")
+        assert "groq" in keys.available_providers()
+
     def test_repr_masks_keys(self):
         keys = ApiKeys(openai="sk-1234567890abcdef")
         r = repr(keys)
         assert "sk-12345" in r
         assert "abcdef" not in r   # full key must NOT appear
+
+    def test_ollama_defaults(self, monkeypatch):
+        monkeypatch.delenv("OLLAMA_BASE_URL", raising=False)
+        monkeypatch.delenv("OLLAMA_MODEL",    raising=False)
+        keys = ApiKeys()
+        assert keys.ollama_base_url == "http://localhost:11434"
+        assert keys.ollama_model    == "llama3.1"
+
+    def test_ollama_available_when_server_responds(self):
+        keys = ApiKeys()
+        with patch("urllib.request.urlopen", return_value=MagicMock()):
+            assert keys.is_ollama_available()
+            assert keys.has("ollama")
+            assert keys.for_provider("ollama") == "local"
+
+    def test_ollama_unavailable_when_server_unreachable(self):
+        keys = ApiKeys()
+        with patch("urllib.request.urlopen", side_effect=OSError("connection refused")):
+            assert not keys.is_ollama_available()
+            assert not keys.has("ollama")
+            assert keys.for_provider("ollama") is None
 
 
 # ── Routing tests (no API key needed) ────────────────────────────────────────
@@ -62,7 +92,7 @@ class TestRouting:
     def test_route_returns_decision(self):
         d = self.client.route("Hello!")
         assert d.model_id
-        assert d.provider in ("openai", "anthropic", "google")
+        assert d.provider in ("openai", "anthropic", "google", "groq")
         assert d.tier in ("small", "mid", "top", "expert")
         assert 1 <= d.complexity_score <= 10
 
@@ -80,7 +110,7 @@ class TestRouting:
         assert d.complexity_score >= 6
 
     def test_preferred_provider_respected(self):
-        for provider in ("openai", "anthropic", "google"):
+        for provider in ("openai", "anthropic", "google", "groq"):
             d = self.client.route("What is Python?", preferred_provider=provider)
             assert d.provider == provider
 
@@ -101,6 +131,7 @@ class TestRouting:
         monkeypatch.delenv("OPENAI_API_KEY",    raising=False)
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
+        monkeypatch.delenv("GROQ_API_KEY",      raising=False)
         client = OpenPair(api_keys=ApiKeys())
         assert client.available_providers() == []
 
@@ -113,6 +144,7 @@ class TestCall:
             openai    = "sk-fake-openai",
             anthropic = "sk-fake-anthropic",
             google    = "sk-fake-google",
+            groq      = "gsk-fake-groq",
         ))
 
     def _mock_make_call(self, mocker=None, text="Mocked response", in_tok=10, out_tok=20, latency=150.0):
@@ -135,7 +167,7 @@ class TestCall:
         with self._mock_make_call():
             result = self.client.call("Hello!")
         assert result.model_id
-        assert result.provider in ("openai", "anthropic", "google")
+        assert result.provider in ("openai", "anthropic", "google", "groq")
         assert result.tier in ("small", "mid", "top", "expert")
         assert result.routing_reason
 
@@ -148,21 +180,99 @@ class TestCall:
         monkeypatch.delenv("OPENAI_API_KEY",    raising=False)
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
+        monkeypatch.delenv("GROQ_API_KEY",      raising=False)
         client = OpenPair(api_keys=ApiKeys())
-        with pytest.raises(RuntimeError, match="No API key"):
-            client.call("Hello!")
+        with patch.object(ApiKeys, "is_ollama_available", return_value=False):
+            with pytest.raises(RuntimeError, match="No API key"):
+                client.call("Hello!")
 
     def test_fallback_provider_used(self, monkeypatch):
         # Clear all env vars so only our explicit key is used
         monkeypatch.delenv("OPENAI_API_KEY",    raising=False)
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
+        monkeypatch.delenv("GROQ_API_KEY",      raising=False)
         # Only anthropic key is set
         client = OpenPair(api_keys=ApiKeys(anthropic="sk-ant-test"))
         with patch("openpair.client.make_call", return_value=("ok", 5, 10, 100.0)):
             result = client.call("Hello!")
         # Should have used anthropic (the only available key)
         assert result.provider == "anthropic"
+
+    def test_groq_provider_used_when_preferred(self):
+        with self._mock_make_call():
+            result = self.client.call("Hello!", preferred_provider="groq")
+        assert result.provider == "groq"
+        assert result.model_id
+
+
+# ── Fallback chain tests (mocked) ──────────────────────────────────────────────
+
+class TestFallbackChain:
+    def setup_method(self):
+        self.client = OpenPair(api_keys=ApiKeys(
+            openai    = "sk-fake-openai",
+            anthropic = "sk-fake-anthropic",
+            google    = "sk-fake-google",
+            groq      = "gsk-fake-groq",
+        ))
+
+    def test_falls_back_to_next_provider_on_rate_limit(self):
+        # Force groq as primary; it hits a 429, google (next in the default
+        # chain) should be tried automatically and succeed.
+        with patch.object(ApiKeys, "is_ollama_available", return_value=False):
+            with patch(
+                "openpair.client.make_call",
+                side_effect=[
+                    Exception("429 RESOURCE_EXHAUSTED"),
+                    ("ok from google", 5, 10, 100.0),
+                ],
+            ):
+                result = self.client.call("Hello!", preferred_provider="groq")
+        assert result.provider == "google"
+        assert result.response_text == "ok from google"
+
+    def test_non_retryable_error_raises_immediately_without_fallback(self):
+        with patch.object(ApiKeys, "is_ollama_available", return_value=False):
+            with patch(
+                "openpair.client.make_call",
+                side_effect=ValueError("invalid request: bad prompt"),
+            ) as mock_call:
+                with pytest.raises(ValueError, match="invalid request"):
+                    self.client.call("Hello!", preferred_provider="groq")
+        assert mock_call.call_count == 1
+
+    def test_falls_back_to_ollama_when_all_cloud_providers_exhausted(self):
+        with patch.object(ApiKeys, "is_ollama_available", return_value=True):
+            with patch(
+                "openpair.client.make_call",
+                side_effect=[
+                    Exception("429 rate limit"),   # groq
+                    Exception("503 UNAVAILABLE"),  # google
+                    Exception("429 rate limit"),   # openai
+                    Exception("429 rate limit"),   # anthropic
+                    ("ok from local model", 5, 10, 100.0),  # ollama
+                ],
+            ):
+                result = self.client.call("Hello!", preferred_provider="groq")
+        assert result.provider == "ollama"
+        assert result.response_text == "ok from local model"
+        assert result.cost_per_1k_input == 0.0
+
+    def test_uses_ollama_when_no_cloud_keys_but_available(self, monkeypatch):
+        monkeypatch.delenv("OPENAI_API_KEY",    raising=False)
+        monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
+        monkeypatch.delenv("GROQ_API_KEY",      raising=False)
+        client = OpenPair(api_keys=ApiKeys())
+        with patch.object(ApiKeys, "is_ollama_available", return_value=True):
+            with patch(
+                "openpair.client.make_call",
+                return_value=("ok from local model", 5, 10, 100.0),
+            ):
+                result = client.call("Hello!")
+        assert result.provider == "ollama"
+        assert result.response_text == "ok from local model"
 
 
 # ── Live tests (skipped unless real API keys present) ─────────────────────────
@@ -209,6 +319,16 @@ class TestLive:
         assert len(result.response_text) > 0
         assert result.provider == "google"
         print(f"\n[Google] {result.model_name}: {result.response_text!r} ({result.latency_ms:.0f}ms)")
+
+    def test_live_groq(self):
+        keys = ApiKeys()
+        if not keys.has("groq"):
+            pytest.skip("No GROQ_API_KEY")
+        client = OpenPair(api_keys=keys, preferred_provider="groq")
+        result = client.call("Say 'hello' in one word.")
+        assert len(result.response_text) > 0
+        assert result.provider == "groq"
+        print(f"\n[Groq] {result.model_name}: {result.response_text!r} ({result.latency_ms:.0f}ms)")
 
     def test_live_thai_routing(self):
         keys = ApiKeys()
