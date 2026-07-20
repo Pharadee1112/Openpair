@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "PowerShell(& \"d:\\\\openpair\\\\.venv\\\\Scripts\\\\Activate.ps1\"; python --version)",
-      "PowerShell(& \"d:\\\\openpair\\\\.venv\\\\Scripts\\\\Activate.ps1\"; python -c \"from openpair import OpenPair; print\\('Import OK'\\)\" 2>&1)"
+      "PowerShell(& \"d:\\\\openpair\\\\.venv\\\\Scripts\\\\Activate.ps1\"; python -c \"from openpair import OpenPair; print\\('Import OK'\\)\" 2>&1)",
+      "Bash(.venv/Scripts/python.exe -c \"from openpair import _core; print\\(_core.route\\('hello', None\\)\\)\")",
+      "Bash(.venv/Scripts/python.exe *)",
+      "Bash(echo \"---exit: $?---\")",
+      "Bash(.venv/Scripts/pip.exe show *)",
+      "Bash(cargo --version)",
+      "Bash(.venv/Scripts/maturin.exe develop *)",
+      "Bash(cargo test *)",
+      "Bash(where act.exe)",
+      "Bash(.venv/Scripts/pip.exe install *)"
     ]
   }
 }

@@ -17,6 +17,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
 
+[project.scripts]
+openpair = "openpair.cli:main"
+
 [tool.pytest.ini_options]
 markers = [
     "live: marks tests as requiring real API keys (deselect with '-m not live')",

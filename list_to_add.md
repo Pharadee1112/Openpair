@@ -1,7 +1,23 @@
 # OpenPair — สิ่งที่จะเพิ่มเติม (Feature Backlog)
 
 > ไฟล์นี้เก็บ feature และ plan ที่อยากทำในอนาคต ยังไม่ได้อยู่ใน SRD หลัก  
-> Last updated: 2026-06-02
+> Last updated: 2026-07-20
+
+---
+
+## DONE — CLI + Test Coverage + CI (2026-07-20)
+
+> ทำครบทั้ง 5 ข้อแล้ว
+
+- [x] เขียน `cli.py` + `[project.scripts]` → มี CLI ให้ test ก่อน — `python/openpair/cli.py`, entry point `openpair = "openpair.cli:main"` ใน `pyproject.toml`
+- [x] เขียน `tests/test_cli.py` ด้วย capsys → พิสูจน์ว่า CLI ทำงาน — 8 tests ผ่านหมด
+- [x] เขียน FakeOllama fixture → พิสูจน์ว่า Ollama fallback ทำงาน (ไม่ต้องลง Ollama) — `tests/conftest.py` (`fake_ollama` fixture) + `tests/test_ollama_fallback.py`, 6 tests ผ่านหมด
+- [x] ตั้ง GitHub Actions → คอมไม่ต้องแบก — `.github/workflows/ci.yml` (`rust-test` = `cargo test`, `python-test` = `maturin develop --extras dev` + `pytest -m "not live"`), verify คำสั่งจริงในเครื่องแล้วก่อน push
+- [x] Live smoke test 1 ตัวด้วย Groq key → พิสูจน์ end-to-end ต่อของจริงได้ — รันทั้ง `test_live_groq` (pytest) และ CLI จริง (`openpair "..." --provider groq`) ได้ response จริงกลับมา
+
+**บั๊กที่เจอระหว่างทำ:** CLI crash บน Windows console ที่ใช้ legacy codepage (cp874) เวลา print ตัวอักษร Unicode อย่าง `→` ใน routing reason — แก้ด้วย `sys.stdout/stderr.reconfigure(errors="replace")` ใน `cli.py`
+
+**ยังไม่ได้ push ขึ้น GitHub** — โค้ดทั้งหมดยังอยู่ในเครื่องอย่างเดียว ณ ตอนที่เขียนบรรทัดนี้
 
 ---
 
@@ -146,8 +162,8 @@ caller.py make_call()
 ### Test Plan
 
 - [ ] Unit test: call_openrouter() mock response
-- [ ] Unit test: call_ollama() mock response
-- [ ] Unit test: fallback เมื่อ Ollama ไม่ available
+- [x] Unit test: call_ollama() mock response — `tests/conftest.py` (`fake_ollama` fixture, patches `openai.OpenAI` + `is_ollama_available`) + `tests/test_ollama_fallback.py` (2026-07-20)
+- [x] Unit test: fallback เมื่อ Ollama ไม่ available — same file, `TestClientFallsBackToOllama` (no-keys case + all-cloud-rate-limited case + "doesn't use Ollama when a cloud provider succeeds" case)
 - [ ] Integration test (optional): Ollama รันจริง → ได้ response จริง
 - [ ] Benchmark: เปรียบ open-source (OpenRouter) vs closed-source cost/quality
 
