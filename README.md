@@ -143,9 +143,11 @@ python run_benchmark.py --detail                            # แสดงผล
 
 ```bash
 cargo test                    # Rust — 16 tests
-pytest                        # Python — 77 tests (mocked, ไม่ต้องมี API key)
-pytest -m live                # +5 live tests ที่เรียก API จริง (ต้องมี key จริง)
+pytest -m "not live"          # Python — 77 tests (mocked, ไม่ต้องมี API key)
+pytest -m live                # 5 tests ที่เรียก API จริง (ต้องมี key จริง, เสียเงินจริง)
 ```
+
+> **หมายเหตุ**: พิมพ์ `pytest` เฉยๆ (ไม่ใส่ `-m`) จะพยายามรันทั้ง 82 ตัว — ตัว live test ที่ไม่มี key ตรงกันจะถูก skip อัตโนมัติ แต่ตัวที่มี key จริงใน `.env` (เช่น groq/google) **จะยิง API จริงและเสียเงินจริง** ไม่ใช่แค่ "รวมไว้เฉยๆ" ถ้าไม่ได้ตั้งใจจะเสียเงิน ให้ใส่ `-m "not live"` เสมอ
 
 ## สถานะปัจจุบัน / ข้อจำกัดที่รู้อยู่แล้ว
 
@@ -157,4 +159,4 @@ pytest -m live                # +5 live tests ที่เรียก API จ�
 
 ## Roadmap
 
-ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (OpenRouter, general CLI, YAML-based model config)
+ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (OpenRouter, YAML-based model config)
