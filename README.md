@@ -95,6 +95,31 @@ result = client.call("Hello!", fallback_providers=["anthropic", "openai"])
 **Default fallback chain** (ใช้เมื่อไม่ได้ระบุ `fallback_providers` เอง):
 `[provider ที่ router เลือก] → groq → google → openai → anthropic → ollama (ถ้า ping เจอ server จริง)`
 
+## วิธีใช้ (CLI)
+
+```bash
+openpair "อธิบาย recursion ให้เด็ก ป.6 ฟัง" --route-only
+```
+```
+Model:    Claude 3 Haiku (claude-3-haiku-20240307)
+Provider: anthropic
+Tier:     mid
+Score:    4/10
+Reason:   Medium complexity — using a balanced quality/cost model [Thai].
+```
+
+`--route-only` แสดงแค่ผลการตัดสินใจ **ไม่เรียก API ไม่ต้องมี key** — ใช้ดูว่า router คิดยังไง
+
+```bash
+openpair "อธิบาย recursion"                      # เรียกจริง + auto-fallback
+openpair "Hello!" --provider groq                 # บังคับ provider
+openpair "สรุปให้หน่อย" --system "ตอบสั้นๆ"        # ใส่ system prompt
+openpair "Hello!" --max-tokens 512                # จำกัดความยาว (default 2048)
+```
+
+คำตอบออก stdout ส่วนข้อมูล model/ราคา/latency ออก stderr — เพราะฉะนั้น
+`openpair "..." > answer.txt` จะได้แต่คำตอบล้วนๆ ในไฟล์
+
 ## Rust demo binary (routing preview เท่านั้น)
 
 ```bash
@@ -118,15 +143,15 @@ python run_benchmark.py --detail                            # แสดงผล
 
 ```bash
 cargo test                    # Rust — 16 tests
-pytest                        # Python — 66 tests (mocked, ไม่ต้องมี API key)
-pytest -m live                # รวม live tests ที่เรียก API จริง (ต้องมี key จริง)
+pytest                        # Python — 77 tests (mocked, ไม่ต้องมี API key)
+pytest -m live                # +5 live tests ที่เรียก API จริง (ต้องมี key จริง)
 ```
 
 ## สถานะปัจจุบัน / ข้อจำกัดที่รู้อยู่แล้ว
 
-- **ยังไม่มี general-purpose CLI** (แบบ `openpair route "..."` เป็นคำสั่ง shell) — มีแค่ Rust demo binary (routing เฉยๆ) กับ Python library เท่านั้น `pyproject.toml` ยังไม่มี `[project.scripts]` เลย
+- **CLI พร้อมใช้แล้ว** — `openpair "..."` เป็นคำสั่ง shell จริง (`pyproject.toml` มี `[project.scripts]` → `openpair = "openpair.cli:main"`) ดูวิธีใช้ในหัวข้อ "วิธีใช้ (CLI)" ด้านบน
 - **OpenRouter** ยังไม่ implement (มีแผนอยู่ใน `list_to_add.md`)
-- **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
+- **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
 - `gemini-2.5-flash` free tier มี quota **20 requests/วัน ต่อ project ต่อ model** — รัน benchmark ซ้ำในวันเดียวกันจะชน quota แน่นอน
 - `src/registry.rs` มีทั้ง `thai_score` ที่มาจาก benchmark จริงและค่าประมาณ (ดู comment ในไฟล์) — อย่าเชื่อว่าทุกค่าวัดจริงหมด
 
