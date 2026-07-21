@@ -51,10 +51,8 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install maturin and build/install the Rust extension
-        run: |
-          pip install maturin
-          maturin develop --release --extras dev
+      - name: Build and install the package
+        run: pip install ".[dev]"
 
       - name: Run pytest (excluding live API tests)
         run: pytest -m "not live" -v
