@@ -8,11 +8,27 @@
 /// 5. Multi-part question indicators
 /// 6. Thai language detection (boosts score slightly — Thai needs stronger models)
 
-const COMPLEX_KEYWORDS: &[&str] = &[
-    "analyze", "analyse", "evaluate", "compare", "design",
-    "architecture", "implement", "algorithm", "optimize",
-    "comprehensive", "reasoning", "multi-step", "trade-off",
-    "in-depth", "explain in detail", "step by step",
+/// Word-start stems for complex/analytical keywords, so that inflected
+/// forms (analysis, analyzing, evaluation, comparing, ...) match without
+/// needing every surface form spelled out. Matched against whole tokens
+/// via `starts_with`, not raw substring search, to avoid false hits.
+const COMPLEX_KEYWORD_STEMS: &[&str] = &[
+    "analy",        // analyze, analysis, analyzing, analytical
+    "evaluat",       // evaluate, evaluation, evaluating
+    "compar",        // compare, comparison, comparing
+    "design",        // design, designing, designed
+    "architect",     // architecture, architectural
+    "implement",      // implement, implementation, implementing
+    "algorithm",      // algorithm, algorithmic
+    "optimi",         // optimize/optimise, optimization, optimizing
+    "comprehensiv",   // comprehensive, comprehensively
+    "reason",         // reasoning, reason, reasoned
+];
+
+/// Multi-word / hyphenated complex-keyword phrases, matched as substrings
+/// since they span token boundaries.
+const COMPLEX_KEYWORD_PHRASES: &[&str] = &[
+    "multi-step", "trade-off", "in-depth", "explain in detail", "step by step",
 ];
 
 const CODE_KEYWORDS: &[&str] = &[
@@ -63,10 +79,14 @@ pub fn score_complexity(prompt: &str) -> u8 {
 
     // ── 1. Length component (0–3 pts) ──────────────────────────────
     score += match word_count {
-        0..=15  => 1.0,
-        16..=50 => 1.0,
-        51..=150 => 1.8,
-        151..=400 => 2.5,
+        0..=2 => 0.2,
+        3..=5 => 0.5,
+        6..=10 => 0.9,
+        11..=15 => 1.3,
+        16..=25 => 1.6,
+        26..=50 => 2.0,
+        51..=150 => 2.5,
+        151..=400 => 2.8,
         _ => 3.0,
     };
 
@@ -79,9 +99,20 @@ pub fn score_complexity(prompt: &str) -> u8 {
         _ => 2.0,
     };
 
-    // ── 3. Complex/analytical keywords (0–2 pts) ────────────────────
-    let complex_hits = COMPLEX_KEYWORDS.iter().filter(|k| lower.contains(**k)).count();
-    score += (complex_hits as f64 * 0.5).min(2.5);
+    // ── 3. Complex/analytical keywords (0–3.5 pts) ──────────────────
+    // Tokenize (splitting on anything but letters/digits/hyphen) so stems
+    // are matched against whole words, not arbitrary substrings.
+    let tokens: Vec<&str> = lower
+        .split(|c: char| !c.is_alphanumeric() && c != '-')
+        .filter(|s| !s.is_empty())
+        .collect();
+    let stem_hits = tokens
+        .iter()
+        .filter(|t| COMPLEX_KEYWORD_STEMS.iter().any(|stem| t.starts_with(stem)))
+        .count();
+    let phrase_hits = COMPLEX_KEYWORD_PHRASES.iter().filter(|p| lower.contains(**p)).count();
+    let complex_hits = stem_hits + phrase_hits;
+    score += (complex_hits as f64 * 0.8).min(3.5);
 
     // ── 4. Code/technical keywords (0–2 pts) ────────────────────────
     let code_hits = CODE_KEYWORDS.iter().filter(|k| lower.contains(**k)).count();
@@ -159,6 +190,37 @@ mod tests {
             let s = score_complexity(p);
             assert!((1..=10).contains(&s), "score {s} out of range for: {p:.30}...");
         }
+    }
+
+    #[test]
+    fn suffix_variants_are_recognized() {
+        // "analysis"/"comparison" should now count as keyword hits, not just
+        // the bare "analyze"/"compare" forms.
+        let base = score_complexity("Please write a short summary of the weekly team meeting notes");
+        let analysis = score_complexity("Please write a short analysis of the weekly team meeting notes");
+        let comparison = score_complexity("Please write a short comparison of the weekly team meeting notes");
+        assert!(analysis > base, "analysis should score above a keyword-free baseline");
+        assert!(comparison > base, "comparison should score above a keyword-free baseline");
+    }
+
+    #[test]
+    fn length_buckets_are_granular() {
+        // A one-word prompt and a moderately long keyword-free prompt should
+        // no longer collapse onto the same length-component score.
+        let one_word = score_complexity("Hi");
+        let longer = score_complexity(
+            "This is a fairly ordinary sentence with quite a few plain, everyday words \
+             strung together one after another just to pad out the total word count here",
+        );
+        assert!(longer > one_word, "longer prompt should score above a one-word prompt");
+    }
+
+    #[test]
+    fn complex_13_word_sentence_scores_moderately_high() {
+        let s = score_complexity(
+            "Analyze the trade-offs between microservices architecture and monolithic design patterns in software systems",
+        );
+        assert!((6..=7).contains(&s), "expected 6-7, got {s}");
     }
 
     #[test]
