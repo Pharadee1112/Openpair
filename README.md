@@ -101,7 +101,7 @@ result = client.call("Hello!", fallback_providers=["anthropic", "openai"])
 openpair "อธิบาย recursion ให้เด็ก ป.6 ฟัง" --route-only
 ```
 ```
-Model:    Claude 3 Haiku (claude-3-haiku-20240307)
+Model:    Claude Haiku 4.5 (claude-haiku-4-5)
 Provider: anthropic
 Tier:     mid
 Score:    4/10
@@ -132,7 +132,7 @@ cargo run --bin openpair-demo -- "your prompt here"
 
 ```bash
 python run_benchmark.py                                    # รันทุก model default (Gemini)
-python run_benchmark.py --models gemini-2.5-flash           # เจาะจง model
+python run_benchmark.py --models gemini-3.6-flash           # เจาะจง model
 python run_benchmark.py --category qa                       # เจาะจงหมวด
 python run_benchmark.py --detail                            # แสดงผลละเอียดทุก test case
 ```
@@ -156,7 +156,7 @@ Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แ�
 - **CLI พร้อมใช้แล้ว** — `openpair "..."` เป็นคำสั่ง shell จริง (`pyproject.toml` มี `[project.scripts]` → `openpair = "openpair.cli:main"`) ดูวิธีใช้ในหัวข้อ "วิธีใช้ (CLI)" ด้านบน
 - **OpenRouter** ยังไม่ implement (มีแผนอยู่ใน `list_to_add.md`)
 - **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
-- `gemini-2.5-flash` free tier มี quota **20 requests/วัน ต่อ project ต่อ model** — รัน benchmark ซ้ำในวันเดียวกันจะชน quota แน่นอน
+- `gemini-3.6-flash` free tier มี quota **20 requests/วัน ต่อ project ต่อ model** — รัน benchmark ซ้ำในวันเดียวกันจะชน quota แน่นอน
 - `src/registry.rs` มีทั้ง `thai_score` ที่มาจาก benchmark จริงและค่าประมาณ (ดู comment ในไฟล์) — อย่าเชื่อว่าทุกค่าวัดจริงหมด
 
 ## Roadmap

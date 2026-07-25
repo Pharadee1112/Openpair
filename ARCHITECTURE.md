@@ -47,7 +47,7 @@
                          │
 ┌────────────────────────▼────────────────────────────────────┐
 │  Layer 5 — External AI APIs                                 │
-│  OpenAI / Anthropic / Google / Ollama                       │
+│  OpenAI / Anthropic / Google / Groq / Ollama                │
 │  ปลายทางที่รับ prompt และส่งคำตอบกลับ                      │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -90,14 +90,17 @@
 
 | Model | Provider | Tier | Context | Cost/1K input |
 |---|---|---|---|---|
-| Claude 3 Haiku | anthropic | Small | 200K | $0.00025 |
-| GPT-4o Mini | openai | Small | 128K | $0.00015 |
-| Gemini 1.5 Flash | google | Small | 1M | $0.000075 |
-| Claude 3.5 Sonnet | anthropic | Mid | 200K | $0.003 |
-| Gemini 1.5 Pro | google | Mid | 1M | $0.00125 |
-| GPT-4o | openai | Top | 128K | $0.005 |
-| Claude 3.5 Sonnet | anthropic | Top | 200K | $0.003 |
-| Gemini 1.5 Pro | google | Expert | 1M | $0.00125 |
+| Claude Haiku 4.5 | anthropic | Small | 1M | $0.001 |
+| GPT-5.4 Nano | openai | Small | 1M | $0.0002 |
+| Gemini 3.1 Flash Lite | google | Small | 1M | $0.00025 |
+| Llama 3.1 8B | groq | Small | 128K | $0.00005 |
+| Claude Sonnet 5 | anthropic | Mid | 1M | $0.003 |
+| Gemini 3.6 Flash | google | Mid | 1M | $0.0015 |
+| Llama 3.3 70B | groq | Mid | 128K | $0.00059 |
+| GPT-5.5 | openai | Top | 1M | $0.005 |
+| Claude Opus 5 | anthropic | Top | 1M | $0.005 |
+| GPT-OSS 120B | groq | Top | 131K | $0.00015 |
+| Gemini 3.1 Pro | google | Expert | 1M | $0.002 |
 
 **Tier Mapping:**
 
@@ -160,7 +163,7 @@ expose ให้ Python เรียกได้ 2 function:
 import openpair_core
 
 result = openpair_core.route("write me a function")
-# → RoutingDecision(model='GPT-4o Mini', tier='small', score=3, cost=$0.00015/1K)
+# → RoutingDecision(model='Llama 3.1 8B', tier='small', score=1, cost=$0.00005/1K)
 
 score = openpair_core.score_complexity("hello world")
 # → 1
@@ -178,11 +181,11 @@ cargo run --bin openpair-demo -- "Design a microservices system"
 #   OpenPair Routing Engine (Rust Demo)
 # ──────────────────────────────────────────
 #   Prompt : Design a microservices system
-#   Score  : 7/10
-#   Tier   : top
-#   Model  : GPT-4o (openai)
-#   Cost   : $0.00500/1K input tokens
-#   Reason : High complexity — using a top-tier reasoning model...
+#   Score  : 3/10
+#   Tier   : small
+#   Model  : Llama 3.1 8B (groq)
+#   Cost   : $0.00005/1K input tokens
+#   Reason : Low complexity — using a fast, cost-efficient model...
 # ──────────────────────────────────────────
 ```
 

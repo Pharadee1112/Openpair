@@ -9,8 +9,8 @@ Usage:
 
     results = run_full_benchmark(
         models=[
-            {"model_id": "gemini-2.5-flash", "model_name": "Gemini 2.5 Flash", "provider": "google"},
-            {"model_id": "gemini-2.5-flash-lite", "model_name": "Gemini 2.5 Flash Lite", "provider": "google"},
+            {"model_id": "gemini-3.6-flash", "model_name": "Gemini 3.6 Flash", "provider": "google"},
+            {"model_id": "gemini-3.1-flash-lite", "model_name": "Gemini 3.1 Flash Lite", "provider": "google"},
         ],
         api_keys=ApiKeys(),
         output_path="benchmark_results.json",

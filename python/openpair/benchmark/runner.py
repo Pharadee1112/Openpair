@@ -108,8 +108,8 @@ def run_model_benchmark(
     เมื่อเจอ rate limit จะรอและลองใหม่อัตโนมัติ
 
     Args:
-        model_id:    model ID เช่น "gemini-2.5-flash"
-        model_name:  ชื่อสวยงาม เช่น "Gemini 2.5 Flash"
+        model_id:    model ID เช่น "gemini-3.6-flash"
+        model_name:  ชื่อสวยงาม เช่น "Gemini 3.6 Flash"
         provider:    "google" | "openai" | "anthropic"
         api_key:     API key สำหรับ provider นั้น
         cases:       ชุดข้อสอบ (ถ้าไม่ระบุจะใช้ทั้งหมด)
@@ -205,7 +205,7 @@ def run_full_benchmark(
 
     Args:
         models: list of dicts เช่น:
-            [{"model_id": "gemini-2.5-flash", "model_name": "Gemini 2.5 Flash", "provider": "google"}]
+            [{"model_id": "gemini-3.6-flash", "model_name": "Gemini 3.6 Flash", "provider": "google"}]
         api_keys:    ApiKeys object ที่มี key สำหรับ provider ที่ต้องการ
         cases:       ชุดข้อสอบ (ถ้าไม่ระบุใช้ทั้งหมด)
         output_path: path สำหรับบันทึก JSON ผลลัพธ์
