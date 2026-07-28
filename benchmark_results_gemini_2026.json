@@ -1,0 +1,217 @@
+{
+  "run_at": "2026-07-28T14:22:20.418435",
+  "models": [
+    {
+      "model_id": "gemini-3.1-flash-lite",
+      "model_name": "Gemini 3.1 Flash Lite",
+      "provider": "google",
+      "avg_final_score": 9.01,
+      "avg_keyword_score": 0.802,
+      "avg_thai_ratio": 0.82,
+      "pass_rate": 0.95,
+      "suggested_thai_score": 9,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "กรุงเทพมหานคร"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.809,
+          "passed": true,
+          "preview": "น้ำ (Water) มีสูตรทางเคมีคือ **H₂O** ซึ่งประกอบด้วยธาตุหลัก 2 ชนิด ดังนี้ครับ:  "
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.734,
+          "passed": true,
+          "preview": "เพื่อให้เข้าใจง่ายที่สุด ให้ลองจินตนาการถึง **\"วงกลมที่ซ้อนกันอยู่\"** ครับ  *   "
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.872,
+          "passed": true,
+          "preview": "**ภาวะโลกร้อน (Global Warming)** คือ ปรากฏการณ์ที่อุณหภูมิเฉลี่ยของโลกสูงขึ้นอย่"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.794,
+          "passed": true,
+          "preview": "การเปรียบเทียบระบบเศรษฐกิจแบบ **ทุนนิยม (Capitalism)** และ **สังคมนิยม (Socialis"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.826,
+          "passed": true,
+          "preview": "แปลว่า **\"พระอาทิตย์ขึ้นทางทิศตะวันออก\"** ครับ"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.809,
+          "passed": true,
+          "preview": "แปลว่า: **\"ปัญญาประดิษฐ์กำลังเปลี่ยนโลก\"** ครับ"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.769,
+          "passed": true,
+          "preview": "คุณสามารถเลือกใช้ได้หลายรูปแบบตามระดับความทางการที่ต้องการครับ:  *   **แบบเป็นธร"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.776,
+          "passed": true,
+          "preview": "คุณสามารถแปลให้เป็นธรรมชาติได้ดังนี้ครับ:  **\"คอมพิวเตอร์ควอนตัมใช้ประโยชน์จากปร"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.965,
+          "passed": true,
+          "preview": "ประเทศไทยเป็นประเทศในเอเชียตะวันออกเฉียงใต้ที่มีประชากรประมาณ 70 ล้านคน โดยมีกรุ"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.805,
+          "passed": true,
+          "preview": "สรุปประเด็นสำคัญจากการพัฒนา AI มีดังนี้ครับ  *   **ปัจจัยขับเคลื่อนหลัก:** การพั"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.883,
+          "passed": false,
+          "preview": "จัดอยู่ในหมวดหมู่: **บวก**  **เหตุผล:** ข้อความมีการชื่นชมในด้านคุณภาพอาหาร การบ"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 0.812,
+          "passed": true,
+          "preview": "จัดอยู่ในหมวดหมู่: **เทคโนโลยี**"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.837,
+          "passed": true,
+          "preview": "สรุปความคิดเห็นต่อรีวิวนี้ครับ:  **สถานะ:** **ก้ำกึ่ง (ค่อนไปทางพอใจเล็กน้อย)** "
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.652,
+          "passed": true,
+          "preview": "โค้ดนี้คือตัวอย่างการเขียน **ฟังก์ชัน (Function)** ในภาษา Python เพื่อใช้ทักทายค"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.622,
+          "passed": true,
+          "preview": "โค้ดที่คุณให้มาคืออัลกอริทึม **Binary Search (การค้นหาแบบทวิภาค)** ครับ  ### 1. "
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.638,
+          "passed": true,
+          "preview": "Design Pattern นี้เรียกว่า **\"Singleton\" (ซิงเกิลตัน)** ครับ  ### อธิบายการทำงาน"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.951,
+          "passed": true,
+          "preview": "นี่คือบทกวีเกี่ยวกับดอกบัวครับ:  ผุดจากโคลนตมก้มกราบฟ้า ชูช่อผกาบริสุทธิ์สดใส กล"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.988,
+          "passed": true,
+          "preview": "หุ่นยนต์รุ่นเก่าตัวหนึ่งถูกทิ้งไว้ในโกดังร้างจนกระทั่งได้พบกับนกน้อยที่บาดเจ็บจา"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.852,
+          "passed": true,
+          "preview": "นี่คือสโลแกน 3 สไตล์สำหรับแอปพลิเคชัน AI ที่ช่วยเลือกโมเดลอัตโนมัติ โดยเน้นความก"
+        }
+      ]
+    }
+  ]
+}

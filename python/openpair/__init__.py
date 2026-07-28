@@ -22,4 +22,5 @@ from .config import ApiKeys
 from .caller import CallResult
 
 __version__ = "0.1.0"
-__all__ = ["OpenPair", "ApiKeys", "CallResult"]
+__registry_snapshot__ = "2026-07-28"  # date the model prices/thai_score in src/registry.rs were last refreshed
+__all__ = ["OpenPair", "ApiKeys", "CallResult", "__registry_snapshot__"]

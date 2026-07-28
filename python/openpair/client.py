@@ -12,6 +12,8 @@ Usage:
 from __future__ import annotations
 
 import types
+from collections import OrderedDict
+from dataclasses import replace
 from typing import Optional, TYPE_CHECKING
 
 from .config import ApiKeys
@@ -48,6 +50,7 @@ class OpenPair:
         self,
         api_keys: Optional[ApiKeys | dict] = None,
         preferred_provider: Optional[str] = None,
+        cache_size: int = 128,
     ) -> None:
         # Normalise api_keys input
         if isinstance(api_keys, dict):
@@ -63,6 +66,12 @@ class OpenPair:
             self._keys = ApiKeys()  # reads from env
 
         self._preferred_provider = preferred_provider
+
+        # In-memory LRU cache of (prompt, provider pin, system, max_tokens) -> CallResult.
+        # Repeating the exact same call() args returns the cached response instead of
+        # paying for another API call. Per-instance, not shared across OpenPair objects.
+        self._cache_size: int = cache_size
+        self._cache: "OrderedDict[tuple, CallResult]" = OrderedDict()
 
         # Lazy-import the Rust core (built by maturin)
         try:
@@ -95,6 +104,7 @@ class OpenPair:
         system: Optional[str] = None,
         max_tokens: int = 2048,
         fallback_providers: Optional[list[str]] = None,
+        use_cache: bool = True,
     ) -> CallResult:
         """
         Route the prompt to the best model AND make the real API call.
@@ -117,6 +127,11 @@ class OpenPair:
             fallback_providers: Explicit override for the fallback order
                                 e.g. ["anthropic", "openai"] — tries in order.
                                 Ollama is still appended last if available.
+            use_cache: If True (default), an exact repeat of the same
+                       (prompt, preferred_provider, system, max_tokens) skips
+                       the API call entirely and returns the cached CallResult
+                       (with `from_cache=True`, `estimated_cost` reported as 0).
+                       Pass False to force a fresh call.
 
         Returns:
             CallResult with response_text, token counts, cost, latency, and routing info.
@@ -127,6 +142,12 @@ class OpenPair:
                           a transient error (or retries were exhausted).
         """
         provider = preferred_provider or self._preferred_provider
+
+        cache_key = (prompt, provider, system, max_tokens)
+        if use_cache and cache_key in self._cache:
+            self._cache.move_to_end(cache_key)
+            return replace(self._cache[cache_key], from_cache=True)
+
         decision = self._rust.route(prompt, provider)
 
         chain = self._build_fallback_chain(decision.provider, fallback_providers)
@@ -157,7 +178,7 @@ class OpenPair:
                     continue
                 raise
 
-            return CallResult(
+            result = CallResult(
                 model_id          = candidate_decision.model_id,
                 model_name        = candidate_decision.model_name,
                 provider          = candidate,
@@ -170,6 +191,14 @@ class OpenPair:
                 output_tokens     = out_tok,
                 latency_ms        = latency_ms,
             )
+
+            if use_cache:
+                self._cache[cache_key] = result
+                self._cache.move_to_end(cache_key)
+                if len(self._cache) > self._cache_size:
+                    self._cache.popitem(last=False)
+
+            return result
 
         if not attempted:
             raise RuntimeError(

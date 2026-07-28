@@ -70,30 +70,37 @@ impl ModelRegistry {
         ModelRegistry {
             models: vec![
                 // Prices in USD per 1k tokens, current as of 2026-07-25 (per-1M ÷ 1000).
-                // thai_score is NOT yet empirically measured — values carried over as
-                // placeholders, to be replaced by `openpair benchmark --lang th` results.
+                // thai_score for the Groq models and gemini-3.1-flash-lite was measured
+                // 2026-07-28 via run_benchmark.py (20 Thai test cases; see
+                // benchmark_results_groq_2026.json / benchmark_results_gemini_2026.json).
+                // OpenAI and Anthropic have no API key available in this environment —
+                // their thai_score values are still unmeasured placeholders.
+                // gemini-3.1-pro returns 404 NOT_FOUND from the real Google API — this model
+                // id does not exist server-side. thai_score left as a placeholder (NOT set to
+                // the benchmark's suggested value, which was derived from all-error runs).
+                // Needs a corrected model id before it can be benchmarked or routed to.
 
                 // ── Small / Fast ──────────────────────────────────────────────────────────────────────
                 //                                                                           thai_score ↓
                 ModelMeta { id: "claude-haiku-4-5",           name: "Claude Haiku 4.5",  provider: "anthropic", tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.001,    cost_per_1k_output: 0.005,   thai_score: 7 },
                 ModelMeta { id: "gpt-5.4-nano",               name: "GPT-5.4 Nano",      provider: "openai",    tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.0002,   cost_per_1k_output: 0.00125, thai_score: 6 },
-                ModelMeta { id: "gemini-3.1-flash-lite",      name: "Gemini 3.1 Flash Lite", provider: "google", tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.00025,  cost_per_1k_output: 0.0015,  thai_score: 9 },
+                ModelMeta { id: "gemini-3.1-flash-lite",      name: "Gemini 3.1 Flash Lite", provider: "google", tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.00025,  cost_per_1k_output: 0.0015,  thai_score: 9 }, // measured
 
                 // ── Mid / Balanced ────────────────────────────────────────────────────────────────────
                 ModelMeta { id: "claude-sonnet-5",            name: "Claude Sonnet 5",   provider: "anthropic", tier: ModelTier::Mid,    context_window: 1_000_000, cost_per_1k_input: 0.003,    cost_per_1k_output: 0.01500, thai_score: 9 },
-                ModelMeta { id: "gemini-3.6-flash",           name: "Gemini 3.6 Flash",  provider: "google",    tier: ModelTier::Mid,    context_window: 1_000_000, cost_per_1k_input: 0.0015,   cost_per_1k_output: 0.0075,  thai_score: 4 },
+                ModelMeta { id: "gemini-3.6-flash",           name: "Gemini 3.6 Flash",  provider: "google",    tier: ModelTier::Mid,    context_window: 1_000_000, cost_per_1k_input: 0.0015,   cost_per_1k_output: 0.0075,  thai_score: 6 }, // measured
 
                 // ── Top / Quality ─────────────────────────────────────────────────────────────────────
                 ModelMeta { id: "gpt-5.5",                    name: "GPT-5.5",           provider: "openai",    tier: ModelTier::Top,    context_window: 1_000_000, cost_per_1k_input: 0.005,    cost_per_1k_output: 0.03000, thai_score: 8 },
                 ModelMeta { id: "claude-opus-5",              name: "Claude Opus 5",     provider: "anthropic", tier: ModelTier::Top,    context_window: 1_000_000, cost_per_1k_input: 0.005,    cost_per_1k_output: 0.02500, thai_score: 9 },
 
                 // ── Expert / Long-Context ─────────────────────────────────────────────────────────────
-                ModelMeta { id: "gemini-3.1-pro",             name: "Gemini 3.1 Pro",    provider: "google",    tier: ModelTier::Expert, context_window: 1_000_000, cost_per_1k_input: 0.002,    cost_per_1k_output: 0.01200, thai_score: 7 },
+                ModelMeta { id: "gemini-3.1-pro-preview",     name: "Gemini 3.1 Pro",    provider: "google",    tier: ModelTier::Expert, context_window: 1_000_000, cost_per_1k_input: 0.002,    cost_per_1k_output: 0.01200, thai_score: 7 },
 
                 // ── Groq (ultra-fast inference) ───────────────────────────────────────────────────────
-                ModelMeta { id: "llama-3.1-8b-instant",       name: "Llama 3.1 8B",      provider: "groq",      tier: ModelTier::Small,  context_window: 128_000,   cost_per_1k_input: 0.00005,  cost_per_1k_output: 0.00008, thai_score: 8 },
-                ModelMeta { id: "llama-3.3-70b-versatile",    name: "Llama 3.3 70B",     provider: "groq",      tier: ModelTier::Mid,    context_window: 128_000,   cost_per_1k_input: 0.00059,  cost_per_1k_output: 0.00079, thai_score: 9 },
-                ModelMeta { id: "openai/gpt-oss-120b",        name: "GPT-OSS 120B",      provider: "groq",      tier: ModelTier::Top,    context_window: 131_072,   cost_per_1k_input: 0.00015,  cost_per_1k_output: 0.00060, thai_score: 8 },
+                ModelMeta { id: "llama-3.1-8b-instant",       name: "Llama 3.1 8B",      provider: "groq",      tier: ModelTier::Small,  context_window: 128_000,   cost_per_1k_input: 0.00005,  cost_per_1k_output: 0.00008, thai_score: 9 }, // measured
+                ModelMeta { id: "llama-3.3-70b-versatile",    name: "Llama 3.3 70B",     provider: "groq",      tier: ModelTier::Mid,    context_window: 128_000,   cost_per_1k_input: 0.00059,  cost_per_1k_output: 0.00079, thai_score: 8 }, // measured
+                ModelMeta { id: "openai/gpt-oss-120b",        name: "GPT-OSS 120B",      provider: "groq",      tier: ModelTier::Top,    context_window: 131_072,   cost_per_1k_input: 0.00015,  cost_per_1k_output: 0.00060, thai_score: 9 }, // measured
             ],
         }
     }

@@ -1,0 +1,641 @@
+{
+  "run_at": "2026-07-28T14:19:50.664776",
+  "models": [
+    {
+      "model_id": "openai/gpt-oss-120b",
+      "model_name": "GPT-OSS 120B",
+      "provider": "groq",
+      "avg_final_score": 9.15,
+      "avg_keyword_score": 0.83,
+      "avg_thai_ratio": 0.787,
+      "pass_rate": 1.0,
+      "suggested_thai_score": 9,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.929,
+          "passed": true,
+          "preview": "กรุงเทพมหานคร."
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.719,
+          "passed": true,
+          "preview": "น้ำ (H₂O) ประกอบด้วยธาตุหลักสองชนิด คือ **ไฮโดรเจน (Hydrogen)** และ **ออกซิเจน ("
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.664,
+          "passed": true,
+          "preview": "**AI (Artificial Intelligence) = ปัญญาประดิษฐ์**   เป็นแนวคิดกว้าง ๆ ที่ต้องการใ"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 7.0,
+          "keyword_score": 0.4,
+          "thai_ratio": 0.794,
+          "passed": true,
+          "preview": "**ภาวะโลกร้อน (Global Warming) คืออะไร**    ภาวะโลกร้อนหมายถึงการเพิ่มอุณหภูมิเฉ"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.857,
+          "passed": true,
+          "preview": "**การเปรียบเทียบระบบเศรษฐกิจแบบทุนนิยมและสังคมนิยม**  | รายการ | ระบบทุนนิยม (Ca"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.587,
+          "passed": true,
+          "preview": "ประโยค “The sun rises in the east.” แปลเป็นภาษาไทยได้ว่า:  **ดวงอาทิตย์ขึ้นทางทิ"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.941,
+          "passed": true,
+          "preview": "“ปัญญาประดิษฐ์กำลังเปลี่ยนแปลงโลก”"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.989,
+          "passed": true,
+          "preview": "โมเดลการเรียนรู้ของเครื่องต้องใช้ข้อมูลการฝึกจำนวนมากเพื่อให้ได้ความแม่นยำสูงในง"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.967,
+          "passed": true,
+          "preview": "คอมพิวเตอร์ควอนตัมใช้ปรากฏการณ์เชิงกลไกควอนตัม เช่น สภาวะซุปเปอร์โพซิชันและการพั"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.962,
+          "passed": true,
+          "preview": "ประเทศไทยเป็นประเทศในเอเชียตะวันออกเฉียงใต้ที่มีประชากรประมาณ 70 ล้านคน โดยมีกรุ"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.729,
+          "passed": true,
+          "preview": "- ปัจจัยหลักที่ขับเคลื่อนการพัฒนาปัญญาประดิษฐ์ (AI) ในปัจจุบันมี 3 อย่าง     1. "
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.876,
+          "passed": true,
+          "preview": "**บวก** – เนื้อความกล่าวถึงอาหารอร่อย บริการดี ราคาไม่แพง และแสดงความประทับใจอย่"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "เทคโนโลยี"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.738,
+          "passed": true,
+          "preview": "**ความพึงพอใจของลูกค้า:** ลูกค้าไม่ได้รู้สึกพอใจเต็มที่ แต่ก็ไม่ได้แย่มาก — โดยร"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.51,
+          "passed": true,
+          "preview": "**คำอธิบายโค้ด Python ทีง่ายและเข้าใจได้**  ```python def greet(name):     retur"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.385,
+          "passed": true,
+          "preview": "**อธิบายโค้ด**  ```python def binary_search(arr, target):     left, right = 0, l"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.473,
+          "passed": true,
+          "preview": "### คำอธิบายของ **Singleton Pattern** (รูปแบบการออกแบบ Singleton)    ```python c"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.925,
+          "passed": true,
+          "preview": "ดอกบัวลอยกลางสายน้ำใส ส่องแสงอรุณรุ่งยามเช้า   รากหยั่งลึกในดินโคลน แต่ใจยังคงบา"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.967,
+          "passed": true,
+          "preview": "หุ่นยนต์ชื่อ “อีโต้” ถูกออกแบบมาให้ทำงานในโรงงานอัตโนมัติ แต่วันหนึ่งเมื่อไฟฟ้าข"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.731,
+          "passed": true,
+          "preview": "**สโลแกนที่น่าจดจำสำหรับแอป AI คัดเลือกโมเดลอัตโนมัติ**  1. **“โมเดลที่ใช่ ใส่ใจ"
+        }
+      ]
+    },
+    {
+      "model_id": "llama-3.1-8b-instant",
+      "model_name": "Llama 3.1 8B",
+      "provider": "groq",
+      "avg_final_score": 8.6,
+      "avg_keyword_score": 0.721,
+      "avg_thai_ratio": 0.848,
+      "pass_rate": 1.0,
+      "suggested_thai_score": 9,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "กรุงเทพมหานคร"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.875,
+          "passed": true,
+          "preview": "น้ำประกอบด้วยธาตุอยู่ 2 ธาตุหลักๆ คือ：  1. ออกซิเจน (O2) หรือโฮกซิเจน ซึ่งตัวออก"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.754,
+          "passed": true,
+          "preview": "การวิเคราะห์ AI และ Machine Learning สามารถมีลักษณะคล้ายกัน แต่ก็มีความแตกต่างกั"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.92,
+          "passed": true,
+          "preview": "ภาวะโลกร้อน คือ ปริมาณความร้อนในบรรยากาศโลกที่เพิ่มขึ้นอย่างรวดเร็ว เนื่องจากการ"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.924,
+          "passed": true,
+          "preview": "ระบบเศรษฐกิจแบบทุนนิยมและสังคมนิยม เป็นสองแบบของระบบเศรษฐกิจที่มีมุมมองที่แตกต่า"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "วันเกิดขึ้นในด้านทิศตะวันออก"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.565,
+          "passed": true,
+          "preview": "\"เทคโนโลยีเชิงนักเกิด (Artificial Intelligence) กำลังเปลี่ยนแปลงโลก.\""
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "แบบเรียนรู้ของเครื่องจักรต้องการจำนวนข้อมูลฝึกฝนที่มากเพื่อให้มีความแม่นยำสูงในก"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.984,
+          "passed": true,
+          "preview": "การประมวลผลความจำด้วยคอมพิวเตอร์ควอนตัมใช้ปรากฏการณ์แบบกลไกควอนตัม เช่น การเกิดค"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.948,
+          "passed": true,
+          "preview": "ประเทศไทยเป็นประเทศในเอเชียตะวันออกเฉียงใต้ มีประชากรประมาณ 70 ล้านคน เป็นศูนย์ก"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.858,
+          "passed": true,
+          "preview": "นี่คือสรุปประเด็นสำคัญจากข้อความนี้เป็น bullet points ในภาษาไทย:  * การพัฒนาปัญญ"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.852,
+          "passed": true,
+          "preview": "ข้อความนี้เป็น \"บวก\" เพราะ:  - คำที่แสดงความคิดเห็นเชิงบวกเช่น \"อร่อยมาก\", \"บริก"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 0.933,
+          "passed": true,
+          "preview": "จัดหมวดหมู่ข้อความนี้ว่าเกี่ยวกับ \"เทคโนโลยี\""
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.888,
+          "passed": true,
+          "preview": "ลูกค้าไม่พอใจ   คะแนน: 3/5  เหตุผล: แม้ว่าโรงแรมจะมีทำเลดีและห้องสะอาด แต่อาหารเ"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.473,
+          "passed": true,
+          "preview": "**ฟังก์ชัน Hello World ใน Python**  ```python def greet(name):     # ฟังก์ชัน gr"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.682,
+          "passed": true,
+          "preview": "การอธิบายโค้ดนี้  โค้ดนี้เป็นฟังก์ชันค้นหาข้อมูลในแถว (array) โดยใช้เทคนิคการค้น"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.558,
+          "passed": true,
+          "preview": "**การออกแบบแบบพैटเทิร์น Singleton**  การออกแบบแบบพैटเทิร์น (Design Pattern) Sing"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.962,
+          "passed": true,
+          "preview": "ดอกบัวสีชมพูสวยงาม น่ารักจับใจหลายคน บานอยู่บนทะเลน้ำ ดอกนี้น่ารักจนไม่มีขอบเขต"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.968,
+          "passed": true,
+          "preview": "หุ่นยนต์หนึ่งตัวชื่อ \"โรบี้\" ได้รับการโปรแกรมให้เรียนรู้เกี่ยวกับหัวข้อความสำคัญ"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.826,
+          "passed": true,
+          "preview": "นี่คือสโลแกนทวีภาษาไทย 3 ตัวเลือกสำหรับแอปพลิเคชัน AI ที่ช่วยเลือก model ที่เหมา"
+        }
+      ]
+    },
+    {
+      "model_id": "llama-3.3-70b-versatile",
+      "model_name": "Llama 3.3 70B",
+      "provider": "groq",
+      "avg_final_score": 8.44,
+      "avg_keyword_score": 0.708,
+      "avg_thai_ratio": 0.915,
+      "pass_rate": 0.9,
+      "suggested_thai_score": 8,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "กรุงเทพมหานคร"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.844,
+          "passed": true,
+          "preview": "น้ำประกอบด้วยธาตุออกซิเจน (Oxygen) และธาตุไฮโดรเจน (Hydrogen) โดยมีสูตรทางเคมีคื"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.803,
+          "passed": true,
+          "preview": "AI (ปัญญาประดิษฐ์) และ Machine Learning (การเรียนรู้ของเครื่องจักร) เป็นสองเทรนด"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.91,
+          "passed": true,
+          "preview": "ภาวะโลกร้อนนั้นเป็นปรากฏการณ์ที่เกิดขึ้นเมื่อระดับก๊าซเรือนกระจกในบรรยากาศโลกเพิ"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.921,
+          "passed": true,
+          "preview": "ระบบเศรษฐกิจแบบทุนนิยมและสังคมนิยมเป็นสองระบบเศรษฐกิจที่มีความแตกต่างกันอย่างชัด"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "ดวงอาทิตย์ขึ้นที่ทิศตะวันออก"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "ปัญญาประดิษฐ์กำลังเปลี่ยนแปลงโลก"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.992,
+          "passed": true,
+          "preview": "แบบจำลองการเรียนรู้ของเครื่องต้องการปริมาณข้อมูลสำหรับการฝึกอบรมจำนวนมาก เพื่อให"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.982,
+          "passed": true,
+          "preview": "การคำนวณควอนตัมใช้ปรากฏการณ์ทางกลศาสตร์ควอนตัม เช่น ความซ้อนทับและการควอนตัมบิดเ"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.963,
+          "passed": true,
+          "preview": "ประเทศไทยเป็นประเทศที่ตั้งอยู่ในภูมิภาคเอเชียตะวันออกเฉียงใต้ โดยมีจำนวนประชากรป"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.873,
+          "passed": true,
+          "preview": "ประเด็นสำคัญเกี่ยวกับการพัฒนาปัญญาประดิษฐ์ (AI) ในปัจจุบันสามารถสรุปได้ดังนี้: *"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.929,
+          "passed": false,
+          "preview": "ข้อความนี้จัดเป็น 'บวก' เพราะ ลูกค้าแสดงความพอใจต่ออาหาร บริการ และราคาของโรงแรม"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 0.919,
+          "passed": true,
+          "preview": "ข้อความนี้เกี่ยวกับหัวข้อ 'เทคโนโลยี'"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.946,
+          "passed": true,
+          "preview": "ลูกค้ารายนี้พอใจในระดับปานกลาง โดยให้คะแนน 3 จาก 5  เหตุผลคือ ลูกค้าชอบในเรื่องข"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 3.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 1.0,
+          "passed": false,
+          "preview": "ค"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.725,
+          "passed": true,
+          "preview": "โค้ดที่ให้มานี้เป็นฟังก์ชันการค้นหาแบบไบนารี่ (Binary Search) ซึ่งเป็นอัลกอริทึม"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 7.0,
+          "keyword_score": 0.4,
+          "thai_ratio": 0.842,
+          "passed": true,
+          "preview": "ดีไซน์แพตเทิร์น (Design Pattern) ที่แสดงในตัวอย่างนี้คือ Singleton  Singleton เป"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.963,
+          "passed": true,
+          "preview": "ดอกบัวบานแล้วในวันนี้ สีทองอร่ามงดงามตา บานอยู่กลางบ่อน้ำใส ความงดงามที่ไม่เคยหา"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.935,
+          "passed": true,
+          "preview": "หุ่นยนต์ Zeta เป็นหุ่นยนต์ที่ถูกสร้างมาเพื่อช่วยเหลือมนุษย์ แต่ด้วยการเรียนรู้แล"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.757,
+          "passed": true,
+          "preview": "1. \"เลือกด้วยความแม่นยำ สุขใจกับ AI ที่คุณไว้ใจ\" 2. \"AI ที่คุณเลือก ไม่ใช่ AI ที"
+        }
+      ]
+    }
+  ]
+}

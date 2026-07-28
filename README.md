@@ -7,8 +7,8 @@ Intelligent AI router — automatically picks the cheapest model that can actual
 เวลาใช้ LLM หลาย provider พร้อมกัน คนส่วนใหญ่จะ hardcode เลือก model เดียวไว้ตายตัว — ทำให้จ่ายแพงเกินไปสำหรับ prompt ง่ายๆ หรือได้คุณภาพไม่พอสำหรับ prompt ที่ซับซ้อน แถมพอ provider ไหน rate-limit ก็ request พังทันที
 
 OpenPair แก้ปัญหานี้ด้วย:
-- **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง GPT-4-class ทุกครั้ง
-- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark วัดจริงอยู่ในโปรเจกต์)
+- **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง top-tier model (เช่น GPT-5.5 / Claude Opus 5) ทุกครั้ง
+- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — วัดจริงแล้วสำหรับ 4 model คือ Groq ทั้ง 3 ตัวกับ `gemini-3.1-flash-lite`, ที่เหลือยังเป็นค่าประมาณ ดู `src/registry.rs`)
 - **Fallback อัตโนมัติ**: ถ้า provider หลักโดน rate limit (429) หรือ overloaded (503) จะลองยิง provider ถัดไปในเชนให้อัตโนมัติ ไม่ต้องเขียน retry logic เอง
 - **Ollama เป็นด่านสุดท้าย**: ถ้า cloud provider ทั้งหมดโดน rate limit พร้อมกัน หรือไม่มี API key เลย แต่มี Ollama รันอยู่ในเครื่อง จะ fallback ไปใช้ local model โดยอัตโนมัติ
 

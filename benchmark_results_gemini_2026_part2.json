@@ -1,0 +1,429 @@
+{
+  "run_at": "2026-07-28T14:33:12.636058",
+  "models": [
+    {
+      "model_id": "gemini-3.6-flash",
+      "model_name": "Gemini 3.6 Flash",
+      "provider": "google",
+      "avg_final_score": 5.74,
+      "avg_keyword_score": 0.294,
+      "avg_thai_ratio": 0.551,
+      "pass_rate": 0.3,
+      "suggested_thai_score": 6,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "กรุงเทพมหานคร"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 2.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "(By weight, oxygen is ~89% and hydrogen is ~11% because"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 5.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.538,
+          "passed": false,
+          "preview": "สั่งทุกขั้นตอน         *   *Analogy:* \"เครื่องมือ\" หรือ \"วิธีการ\""
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 2.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": ").         *   Risk of sea inundation in Bangkok and surrounding low-lying"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 6.0,
+          "keyword_score": 0.2,
+          "thai_ratio": 0.329,
+          "passed": false,
+          "preview": "System (ระบบเศรษฐกิจแบบสังคมนิยม)**         *   Definition & Key Concepts"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.815,
+          "passed": true,
+          "preview": "ประโยคนี้แปลเป็นภาษาไทยได้ว่า:  **\"ดวงอาทิตย์ขึ้นทางทิศตะวันออก\"**   *(หรือใช้คำ"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.832,
+          "passed": true,
+          "preview": "ประโยคนี้แปลเป็นภาษาไทยได้ว่า:  **\"ปัญญาประดิษฐ์กำลังเปลี่ยนแปลงโลก\"**   *(หรือใ"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.984,
+          "passed": false,
+          "preview": "ของเครื่องจำเป็นต้องใช้ชุดข้อมูลฝึกฝนจำนวนมาก เพื่อให้ได้ความ"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 5.55,
+          "keyword_score": 0.2,
+          "thai_ratio": 0.255,
+          "passed": false,
+          "preview": "(or just \"การซ้อนทับ\").         \"Entanglement\" -> \"การพ"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.875,
+          "passed": false,
+          "preview": "ตะวันออกเฉียงใต้ มีประชากรประมาณ 70 ล้านคน โดยมี"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 5.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.553,
+          "passed": false,
+          "preview": "ปัจจัยหลักในการพัฒนา AI (3 ปัจจัย):**         *"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.804,
+          "passed": true,
+          "preview": "**หมวดหมู่:** บวก  **เหตุผล:** ข้อความนี้มีการใช้คำชื่นชมและแสดงความพึงพอใจในทุก"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "เทคโนโลยี"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.792,
+          "passed": false,
+          "preview": "**สรุปผล:** ลูกค้ามีความรู้สึก **\"พอใจในระดับปาน"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 3.87,
+          "keyword_score": 0.2,
+          "thai_ratio": 0.087,
+          "passed": false,
+          "preview": "ชื่อ `name`         *   `return f'Hello, {name"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 2.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "` to `mid - 1`.         6. If loop ends without finding the target, returns"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 3.0,
+          "keyword_score": 0.2,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "(Logic): If no instance exists, create one; if it exists, return the existing on"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 5.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.784,
+          "passed": false,
+          "preview": "ดุจจิตใจ ใสบริสุทธิ์ เลิศลึกล้ำ (Like"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.469,
+          "passed": false,
+          "preview": "คือสิ่งที่มนุษย์เรียกว่าเพื่อน      *   *Sentence 4: Conclusion/"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 6.25,
+          "keyword_score": 0.25,
+          "thai_ratio": 0.907,
+          "passed": true,
+          "preview": "นี่คือ 3 ตัวเลือกสโลแกนภาษาไทยที่กระชับ ติด"
+        }
+      ]
+    },
+    {
+      "model_id": "gemini-3.1-pro",
+      "model_name": "Gemini 3.1 Pro",
+      "provider": "google",
+      "avg_final_score": 0.0,
+      "avg_keyword_score": 0.0,
+      "avg_thai_ratio": 0.0,
+      "pass_rate": 0.0,
+      "suggested_thai_score": 1,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 0.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.0,
+          "passed": false,
+          "preview": "ERROR: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/ge"
+        }
+      ]
+    }
+  ]
+}

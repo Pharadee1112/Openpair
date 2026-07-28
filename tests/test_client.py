@@ -205,6 +205,69 @@ class TestCall:
         assert result.model_id
 
 
+# ── Cache tests ─────────────────────────────────────────────────────────────
+
+class TestCache:
+    def setup_method(self):
+        self.client = OpenPair(api_keys=ApiKeys(
+            openai    = "sk-fake-openai",
+            anthropic = "sk-fake-anthropic",
+            google    = "sk-fake-google",
+            groq      = "gsk-fake-groq",
+        ))
+
+    def test_repeated_call_hits_cache_without_calling_api(self):
+        with patch(
+            "openpair.client.make_call",
+            return_value=("first response", 10, 20, 150.0),
+        ) as mock_call:
+            first = self.client.call("Hello!")
+            second = self.client.call("Hello!")
+
+        assert mock_call.call_count == 1
+        assert first.from_cache is False
+        assert second.from_cache is True
+        assert second.response_text == "first response"
+        assert second.estimated_cost == 0.0
+
+    def test_different_prompt_is_not_a_cache_hit(self):
+        with patch(
+            "openpair.client.make_call",
+            return_value=("resp", 10, 20, 150.0),
+        ) as mock_call:
+            self.client.call("Hello!")
+            self.client.call("Different prompt")
+
+        assert mock_call.call_count == 2
+
+    def test_use_cache_false_forces_fresh_call(self):
+        with patch(
+            "openpair.client.make_call",
+            return_value=("resp", 10, 20, 150.0),
+        ) as mock_call:
+            self.client.call("Hello!")
+            result = self.client.call("Hello!", use_cache=False)
+
+        assert mock_call.call_count == 2
+        assert result.from_cache is False
+
+    def test_cache_evicts_oldest_beyond_cache_size(self):
+        client = OpenPair(
+            api_keys=ApiKeys(groq="gsk-fake-groq"),
+            cache_size=2,
+        )
+        with patch(
+            "openpair.client.make_call",
+            return_value=("resp", 10, 20, 150.0),
+        ) as mock_call:
+            client.call("prompt A")
+            client.call("prompt B")
+            client.call("prompt C")  # evicts "prompt A"
+            client.call("prompt A")  # cache miss again, re-calls API
+
+        assert mock_call.call_count == 4
+
+
 # ── Fallback chain tests (mocked) ──────────────────────────────────────────────
 
 class TestFallbackChain:

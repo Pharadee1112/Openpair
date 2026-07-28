@@ -30,10 +30,13 @@ class CallResult:
     input_tokens:      int
     output_tokens:     int
     latency_ms:        float
+    from_cache:        bool = False
 
     @property
     def estimated_cost(self) -> float:
-        """Approximate cost of this call in USD."""
+        """Approximate cost of this call in USD. Cache hits cost nothing — no API call was made."""
+        if self.from_cache:
+            return 0.0
         return (self.input_tokens / 1000) * self.cost_per_1k_input
 
     def __repr__(self) -> str:

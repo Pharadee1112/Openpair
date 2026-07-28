@@ -13,6 +13,7 @@ import argparse
 import sys
 from typing import Optional, Sequence
 
+from . import __registry_snapshot__, __version__
 from .client import OpenPair
 
 
@@ -20,6 +21,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="openpair",
         description="Route a prompt to the best AI model, and (unless --route-only) call it.",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"openpair {__version__} (registry snapshot: {__registry_snapshot__})",
     )
     parser.add_argument("prompt", help="The prompt to route/send.")
     parser.add_argument(

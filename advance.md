@@ -1,7 +1,7 @@
 # OpenPair — Advanced Planning: Marketing & Future Strategy
 
 > ไฟล์นี้เก็บแผนธุรกิจ, กลยุทธ์ Marketing, และข้อดีข้อเสียของ OpenPair  
-> Last updated: 2026-05-22
+> Last updated: 2026-05-22 (checkboxes verified against code 2026-07-28)
 
 ---
 
@@ -121,9 +121,9 @@ Python developers ทั้งหมด     ~  15 ล้านคน (2024)
 ## ❌ ข้อเสีย / ความเสี่ยง (Weaknesses & Risks)
 
 ### Technical Risks
-- **Rule-based classifier แม่นยำจำกัด** — Phase 1 ใช้แค่ keyword matching, ยังไม่มี BERT/semantic
-- **ยังไม่ได้ call AI API จริง** — MVP ยังแค่ "routing decision" ไม่ใช่ "routing จริง"
-- **Hardcoded registry** — ถ้า OpenAI ขึ้นราคา ต้องแก้ code ใหม่ทุกครั้ง
+- **Rule-based classifier แม่นยำจำกัด** — Phase 1 ใช้แค่ keyword matching, ยังไม่มี BERT/semantic (ตรวจโค้ดจริง 2026-07-28: ปรับปรุงเป็น stem+tokenize+bucket แล้ว แต่ยังเป็น rule-based ไม่ใช่ semantic)
+- ~~ยังไม่ได้ call AI API จริง~~ — **แก้แล้ว** call จริงได้ทั้ง 5 provider (OpenAI, Anthropic, Google, Groq, Ollama) ใน `python/openpair/caller.py` (ตรวจโค้ดจริง 2026-07-28)
+- **Hardcoded registry** — ถ้า OpenAI ขึ้นราคา ต้องแก้ code ใหม่ทุกครั้ง (ยังไม่แก้ — ตัดสินใจแล้วว่ายังไม่ทำ YAML config ดู `list_to_add.md`)
 
 ### Business Risks
 - **pip-only = เข้าถึงแค่ Python developer** (แก้ได้ใน Phase 4 ด้วย REST API)
@@ -139,10 +139,10 @@ Python developers ทั้งหมด     ~  15 ล้านคน (2024)
 ## 🗺️ แผนอนาคต (Beyond SRD)
 
 ### สิ่งที่ต้องทำก่อน (Phase 2 Priority)
-- [ ] Call AI API จริงได้ (OpenAI, Anthropic, Google)
-- [ ] Python library (`pip install openpair`) ใช้ได้จริง
-- [ ] API key management
-- [ ] YAML config สำหรับ registry (ไม่ต้อง hardcode)
+- [x] ~~Call AI API จริงได้ (OpenAI, Anthropic, Google)~~ — ทำแล้ว ครบ 5 provider รวม Groq + Ollama (ตรวจโค้ดจริง 2026-07-28)
+- [x] ~~Python library (`pip install openpair`) ใช้ได้จริง~~ — ทำแล้ว, entry point `openpair = "openpair.cli:main"` ใน `pyproject.toml`
+- [x] ~~API key management~~ — ทำแล้ว, `ApiKeys` class ใน `python/openpair/config.py`
+- [ ] YAML config สำหรับ registry (ไม่ต้อง hardcode) — ตัดสินใจแล้วว่ายังไม่ทำ (ดู `list_to_add.md`)
 
 ### Growth Path
 ```

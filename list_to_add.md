@@ -1,7 +1,42 @@
 # OpenPair — สิ่งที่จะเพิ่มเติม (Feature Backlog)
 
 > ไฟล์นี้เก็บ feature และ plan ที่อยากทำในอนาคต ยังไม่ได้อยู่ใน SRD หลัก  
-> Last updated: 2026-07-25
+> Last updated: 2026-07-28
+
+---
+
+## DONE — รัน benchmark จริง 5 model + อัปเดต thai_score + เจอ/แก้ model id ผิด + `--version` flag (2026-07-28)
+
+> รันจริงด้วย `run_benchmark.py` (20 Thai test cases ต่อ model) ใช้ `GOOGLE_API_KEY` + `GROQ_API_KEY` ที่มีอยู่ใน `.env` — ไม่มี `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` เลยยังวัดฝั่ง OpenAI/Anthropic ไม่ได้
+
+- [x] **Groq ทั้ง 3 model** — `llama-3.1-8b-instant` (avg 8.60/10, thai_score 8→**9**), `llama-3.3-70b-versatile` (avg 8.44/10, thai_score 9→**8**), `openai/gpt-oss-120b` (avg 9.15/10, thai_score 8→**9**) → บันทึกที่ `benchmark_results_groq_2026.json`, อัปเดต `src/registry.rs` แล้ว
+- [x] **Gemini 2 model** — `gemini-3.1-flash-lite` (avg 9.01/10, thai_score ยืนยัน **9** ตรงกับค่าเดิม), `gemini-3.6-flash` (avg 5.74/10, thai_score เดิม (ประมาณ) 4 → จริง **6**) → บันทึกที่ `benchmark_results_gemini_2026.json` / `benchmark_results_gemini_2026_part2.json` — ผลคือ quota 20 request/วันเป็น **ต่อ model** ไม่ใช่รวมทั้ง project จึงรันได้มากกว่า 1 model/วัน
+- [x] **เจอบั๊ก: `gemini-3.1-pro` ไม่มีจริงใน Google API** — เรียกแล้วได้ 404 NOT_FOUND ทุก request (ไม่ใช่ปัญหาคุณภาพ เป็น model id ผิด) เช็ค `client.models.list()` จริงแล้วพบว่าตัวจริงชื่อ `gemini-3.1-pro-preview` → แก้ id ใน `src/registry.rs` แล้ว **ไม่ได้** เอา thai_score=1 ที่ระบบแนะนำมาใส่ (มันมาจาก error ล้วนๆ ไม่ใช่คุณภาพจริง) thai_score ของ `gemini-3.1-pro-preview` ยังเป็นค่าประมาณเดิม (7) รอวัดจริงพรุ่งนี้
+- [ ] **`gemini-3.1-pro-preview` ยังไม่ได้วัดจริง** — พยายามรันแล้วแต่ค้างนาน (~50 นาทีไม่จบ, 20 cases) น่าจะติด rate limit ของ preview model ที่เข้มกว่าปกติ → ยกเลิก (kill process) แล้วตามคำขอ user ให้ **รันใหม่วันถัดไป**
+- [x] **ลบผลลัพธ์เก่าที่อ้าง model ตายแล้ว** — `benchmark_results.json` และ `benchmark_results_gemini25flash.json` อ้าง `gemini-2.5-flash*` ที่ไม่มีใน registry แล้ว ลบทิ้ง แทนที่ด้วยไฟล์ 2026
+- [x] **แก้ README** — บรรทัด "GPT-4-class" เปลี่ยนเป็นชื่อรุ่นปัจจุบัน, ระบุชัดว่า Thai benchmark วัดจริงแล้วกี่ model ไม่ใช่ "วัดจริงหมดแล้ว"
+- [x] **แก้ ARCHITECTURE.md** — ลบ/แก้ตารางเก่าที่บอกว่า "ยังเรียก API จริงไม่ได้" (ล้าสมัยมาก ตอนนี้เรียกได้จริงทั้ง 4 provider + Ollama fallback + CLI) เพิ่มบรรทัด อัปเดต 2026-07-28
+- [x] **`--version` flag** — เพิ่ม `__registry_snapshot__ = "2026-07-28"` ใน `python/openpair/__init__.py` + `--version` ใน `cli.py` (argparse `action="version"`), `pip install -e .` แล้ว ยืนยันด้วย `openpair --version` → `openpair 0.1.0 (registry snapshot: 2026-07-28)`, `pytest tests/test_cli.py` ผ่านครบ 8/8
+
+**ยังไม่จบ (ของจริง ไม่ใช่เดา) — สถานะ registry.rs หลัง 2026-07-28:**
+- วัดจริงแล้ว: `llama-3.1-8b-instant`, `llama-3.3-70b-versatile`, `openai/gpt-oss-120b`, `gemini-3.1-flash-lite`, `gemini-3.6-flash` (5/10)
+- ยังเป็นค่าประมาณ: `claude-haiku-4-5`, `gpt-5.4-nano`, `claude-sonnet-5`, `gpt-5.5`, `claude-opus-5` (ไม่มี API key OpenAI/Anthropic), `gemini-3.1-pro-preview` (ติด rate limit วันนี้ รอรันวันถัดไป)
+
+---
+
+## DONE — Prompt cache (2026-07-28)
+
+- [x] **In-memory LRU cache สำหรับ prompt ซ้ำ** — เพิ่ม `_cache: OrderedDict` ใน `OpenPair.__init__` (`python/openpair/client.py`), key คือ `(prompt, preferred_provider, system, max_tokens)` ครบทุกตัวถึงจะนับว่าเหมือนกัน ค่า default `cache_size=128` ตั้งค่าได้ผ่าน `OpenPair(cache_size=...)`. `call()` มี param `use_cache: bool = True` (ปิดได้ต่อ call ด้วย `use_cache=False`)
+- [x] เพิ่ม field `from_cache: bool` ใน `CallResult` (`caller.py`) — cache hit จะ `estimated_cost` เป็น 0.0 (ไม่ได้ยิง API จริง ไม่มีค่าใช้จ่าย)
+- [x] เขียนเทส 4 ตัวใน `tests/test_client.py::TestCache` — cache hit ไม่เรียก API ซ้ำ, prompt ต่างกันไม่ hit, `use_cache=False` บังคับเรียกใหม่, cache เต็มแล้ว evict ตัวเก่าสุด (LRU) — ผ่านหมด, รวมทั้ง suite 81/81 ผ่าน (`pytest -m "not live"`), cargo test 21/21 ผ่าน
+- **หมายเหตุ:** เป็น per-instance cache (อยู่ใน object `OpenPair` แต่ละตัว) ไม่ใช่ shared/global หรือ persist ข้าม process — ถ้าอยากได้ persistent cache (เช่น เขียนลง disk/redis) ต้องทำเพิ่ม ยังไม่ได้ทำตอนนี้
+
+---
+
+## ยังไม่ได้ทำ (blocked หรือ user บอกให้ข้ามไปก่อน — 2026-07-28)
+
+- [ ] **Ollama fallback กับของจริง** — เครื่องนี้ไม่มี Ollama ติดตั้งเลย (`ollama` command not found ทั้ง bash/PowerShell) เทสตอนนี้ผ่านแค่ mock (`tests/test_ollama_fallback.py` ใช้ `FakeOllama` fixture) ยังไม่เคยพิสูจน์กับ server จริง — user เลือก "ข้ามไปก่อน" (ไม่ให้ติดตั้ง Ollama อัตโนมัติ) ถ้าจะทำต่อ ต้องติดตั้ง Ollama เองก่อน (`ollama pull llama3.2` แล้วรัน `ollama serve`) แล้วค่อยรัน integration test จริง
+- [ ] **`gemini-3.1-pro-preview` ยังไม่ได้วัดจริง** — ลองรันแล้วค้าง ~50 นาทีไม่จบ (rate limit ของ preview model) ยกเลิกไปแล้ว ตาม user บอกให้รันใหม่วันถัดไป
 
 ---
 
@@ -19,12 +54,12 @@
 
 ## ยังค้างอยู่ (next action — เริ่มตรงนี้เมื่อกลับมา)
 
-- [ ] **เพิ่ม `--version` flag ให้ CLI จริง** — ยังไม่มีโค้ดเลย (ดูหมายเหตุด้านบน) ต้องเพิ่ม `__registry_snapshot__ = "2026-07-25"` ใน `python/openpair/__init__.py` + `--version` ใน `cli.py` (argparse `action="version"`) แล้ว `pip install -e .` + commit + push จุดประสงค์: ให้ผู้ใช้ระบุได้ว่ารันด้วย registry วันไหน (reproducibility สำหรับ paper)
-- [ ] **อัปเดต README** — ยืนยันแล้วว่ายังมีจุดอ้างของเก่า: บรรทัด 10 "GPT-4-class" (ควรเป็นชื่อรุ่นปัจจุบัน), บรรทัด 11 "Thai-quality benchmark วัดจริงอยู่ในโปรเจกต์" (ยังไม่ได้วัดจริง ยังรอ benchmark), เช็คตัวอย่าง output ในไฟล์ด้วยว่าอ้างโมเดล/ราคาเก่าหรือไม่
-- [ ] **ตัดสินใจเรื่อง score ที่เหมาะสม** — "Design a distributed database..." ได้ 5/10 ตอนนี้ → Llama 3.3 70B ตอบดีมากที่ $0.00003 คำถามคือควรดันเป็น 8 ไหม (→ โมเดลแพงกว่า) — **ต้องรอผล benchmark ก่อน ห้ามเดาเอง**
-- [ ] รัน benchmark ครบทุก model (ติด rate limit ตอนทดสอบครั้งก่อน)
-- [ ] อัปเดต `thai_score` ใน `registry.rs` ด้วยผลจริงจาก benchmark
-- [ ] Custom benchmark (ให้ user เพิ่ม test case เอง)
+- [x] ~~เพิ่ม `--version` flag ให้ CLI จริง~~ — ทำแล้ว 2026-07-28: เพิ่ม `__registry_snapshot__ = "2026-07-28"` ใน `python/openpair/__init__.py` + `--version` ใน `cli.py` (argparse `action="version"`), `pip install -e .` แล้ว, ยืนยันด้วย `openpair --version` → `openpair 0.1.0 (registry snapshot: 2026-07-28)`, `pytest tests/test_cli.py` ผ่านครบ 8/8 — ยังไม่ได้ commit/push
+- [x] ~~อัปเดต README~~ — แก้แล้ว 2026-07-28 (ดู DONE ด้านล่าง)
+- [x] ~~รัน benchmark~~ — รันแล้ว 4/10 model จริง 2026-07-28 (Groq ทั้ง 3 + gemini-3.1-flash-lite), อัปเดต `thai_score` ใน `registry.rs` แล้วด้วยผลจริง (ดู DONE ด้านล่าง)
+- [ ] **ตัดสินใจเรื่อง score ที่เหมาะสม** — "Design a distributed database..." ตอนนี้มีผลจริงแล้วว่า Llama 3.3 70B ได้ avg 8.44/10 แต่ทำ code_thai แย่สุด (6.0/10, `code_01` ได้ 3.0 kw=0%) → เป็นสัญญาณว่า Llama 3.3 70B ไม่ควรถูกดันขึ้น tier สำหรับงาน code — รอ human ตัดสินใจ ไม่เดาเอง
+- [ ] **วัด thai_score ที่เหลือ** — OpenAI/Anthropic ต้องมี API key ก่อน (ไม่มีใน `.env` ตอนนี้), Gemini เหลือ `gemini-3.6-flash` กับ `gemini-3.1-pro` แต่ quota 20 req/วันพอดีเท่ากับ 1 model/วัน — รันได้อีกทีพรุ่งนี้เป็นต้นไป
+- [x] ~~Custom benchmark (ให้ user เพิ่ม test case เอง)~~ — ทำแล้ว: `load_custom_cases()` ใน `python/openpair/benchmark/dataset.py` (โหลด test case จาก JSON, มี validation + `custom_cases.example.json`) export ไว้ใน `benchmark/__init__.py` แล้ว (ตรวจโค้ดจริง 2026-07-28)
 
 **ตัดสินใจแล้วว่ายังไม่ทำ:** แยก registry ออกเป็น YAML — เข้าใจภาพแล้ว (แยกข้อมูลออกจากโค้ด แก้ราคาโดยไม่ต้อง compile) แต่เป็นงานใหญ่ (ต้อง `serde_yaml` + error handling) ถ้าทำ ให้ไฟล์ติดไปกับโปรเจกต์ + มีค่า default ในตัว (โปรแกรมไม่พังถ้า yaml หาย)
 
@@ -74,9 +109,9 @@ complex_thai → claude-3-5-sonnet        (thai_score: 9, ดีที่สุ�
 - Live API (Gemini): 2/2 pass
 
 ### สิ่งที่ยังค้างอยู่ (next action)
-- [ ] รัน benchmark ครบทุก model (ติด rate limit ตอนทดสอบ)
-- [ ] อัปเดต thai_score ใน registry.rs ด้วยผลจริง
-- [ ] Custom benchmark (ให้ user เพิ่ม test case เอง)
+- [x] ~~รัน benchmark ครบทุก model~~ — รันได้ 4/10 แล้ว (ดู DONE 2026-07-28 ด้านบน), เหลืออีก 6 model รอ API key/quota
+- [x] ~~อัปเดต thai_score ใน registry.rs ด้วยผลจริง~~ — อัปเดตแล้วสำหรับ 4 model ที่วัดได้ (ดู DONE 2026-07-28 ด้านบน)
+- [x] ~~Custom benchmark (ให้ user เพิ่ม test case เอง)~~ — ทำแล้ว: `load_custom_cases()` ใน `dataset.py`
 
 ---
 

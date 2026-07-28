@@ -352,23 +352,24 @@ Go dev      ❌              Go dev      ✅ http.Get(...)
 
 Pattern นี้คือ standard ของ dev tools ทั่วไป (OpenAI, Stripe ก็เริ่มแบบนี้)
 
-**painpoint ที่ใหญ่กว่า pip-only ตอนนี้คือ:**
-- ❌ ยังไม่ได้ call AI API จริง (แค่บอกว่า "ควรส่งไปที่ไหน" แต่ส่งให้ไม่ได้)
-- ❌ ยังไม่มี Python library สำหรับ user install
-- ❌ ยังไม่มี API key management
+**อัปเดต 2026-07-28 — ข้อด้านบนนี้ล้าสมัยแล้ว** ตอนนี้ทำ real API calls ได้จริงแล้ว (`python/openpair/caller.py` รองรับ OpenAI, Anthropic, Google, Groq + Ollama fallback) มี CLI (`openpair` entry point) และมี API key management ผ่าน `ApiKeys`/`.env` ที่เหลือจริงๆ ตอนนี้คือ:
+- ❌ ยังไม่มี REST API server (pip-only ยังจริงอยู่)
+- ❌ ยังไม่มี decision cache สำหรับ prompt ซ้ำ
 
 ---
 
 ## ✅ สรุป: ทำแล้ว vs ยังขาด
 
+> อัปเดต 2026-07-28 — ตารางเดิมล้าสมัยมาก (era ที่ยังไม่มี API call จริง) แก้ให้ตรงกับโค้ดปัจจุบัน
+
 | ทำแล้ว ✅ | ยังขาด ❌ |
 |---|---|
-| Rule-based complexity scoring | BERT semantic embeddings |
-| Model registry (hardcoded) | YAML config + hot-reload |
-| Tier-based routing decision | LLM Cascade fallback chain |
-| PyO3 Python binding | จริง API calls (OpenAI/Claude/Google) |
-| CLI demo | Python library public API |
-| 14/16 tests pass | Constraint checker + budget cap |
-| | LLM-as-a-Judge quality verification |
-| | Decision Cache (LRU) |
-| | Web Dashboard |
+| Rule-based complexity scoring (`src/classifier.rs`) | BERT semantic embeddings |
+| Model registry (`src/registry.rs`, 2026 models) | YAML config + hot-reload |
+| Tier-based routing decision | Constraint checker + budget cap |
+| PyO3 Python binding | LLM-as-a-Judge quality verification |
+| จริง API calls (OpenAI/Anthropic/Google/Groq) | Decision Cache (LRU) |
+| Ollama local fallback | Web Dashboard |
+| CLI (`openpair` command, `--provider`, ฯลฯ) | REST API server (multi-language clients) |
+| Thai benchmark วัดจริงแล้ว 4/10 model ใน registry (ดู `list_to_add.md`) | Thai benchmark ให้ครบทุก model (ติด rate limit / ไม่มี key) |
+| CI (GitHub Actions: rust-test + python-test) | |
