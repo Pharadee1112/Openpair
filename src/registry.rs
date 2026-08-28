@@ -98,8 +98,13 @@ impl ModelRegistry {
                 ModelMeta { id: "gemini-3.1-pro-preview",     name: "Gemini 3.1 Pro",    provider: "google",    tier: ModelTier::Expert, context_window: 1_000_000, cost_per_1k_input: 0.002,    cost_per_1k_output: 0.01200, thai_score: 7 },
 
                 // ── Groq (ultra-fast inference) ───────────────────────────────────────────────────────
-                ModelMeta { id: "llama-3.1-8b-instant",       name: "Llama 3.1 8B",      provider: "groq",      tier: ModelTier::Small,  context_window: 128_000,   cost_per_1k_input: 0.00005,  cost_per_1k_output: 0.00008, thai_score: 9 }, // measured
-                ModelMeta { id: "llama-3.3-70b-versatile",    name: "Llama 3.3 70B",     provider: "groq",      tier: ModelTier::Mid,    context_window: 128_000,   cost_per_1k_input: 0.00059,  cost_per_1k_output: 0.00079, thai_score: 8 }, // measured
+                // 2026-08-28: llama-3.1-8b-instant / llama-3.3-70b-versatile decommissioned by Groq
+                // (confirmed via GET /v1/models — both 404 now). No Mid-tier Groq model replaces
+                // llama-3.3-70b-versatile at a comparable price today (qwen3.6/3.8-27b price above
+                // gpt-oss-120b, groq/compound(-mini) pricing not published) — Mid tier drops its Groq
+                // option until one appears; Small tier gets gpt-oss-20b (price confirmed via Groq docs,
+                // thai_score inherited as an estimate, not yet re-benchmarked).
+                ModelMeta { id: "openai/gpt-oss-20b",         name: "GPT-OSS 20B",       provider: "groq",      tier: ModelTier::Small,  context_window: 131_072,   cost_per_1k_input: 0.000075, cost_per_1k_output: 0.00030, thai_score: 8 }, // TODO: re-benchmark thai_score
                 ModelMeta { id: "openai/gpt-oss-120b",        name: "GPT-OSS 120B",      provider: "groq",      tier: ModelTier::Top,    context_window: 131_072,   cost_per_1k_input: 0.00015,  cost_per_1k_output: 0.00060, thai_score: 9 }, // measured
             ],
         }

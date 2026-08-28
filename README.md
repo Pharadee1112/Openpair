@@ -8,7 +8,7 @@ Intelligent AI router — automatically picks the cheapest model that can actual
 
 OpenPair แก้ปัญหานี้ด้วย:
 - **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง top-tier model (เช่น GPT-5.5 / Claude Opus 5) ทุกครั้ง
-- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — วัดจริงแล้วสำหรับ 5 model คือ Groq ทั้ง 3 ตัวกับ `gemini-3.1-flash-lite` และ `gemini-3.6-flash`, ยังเหลือ `gemini-3.1-pro-preview` ที่ต้องวัด (ติด daily quota ของ Google อยู่ ดูหัวข้อ "สถานะปัจจุบัน" ด้านล่าง) กับ OpenAI/Anthropic ที่ยังไม่มี API key ให้ทดสอบ ที่เหลือยังเป็นค่าประมาณ ดู `src/registry.rs`)
+- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — วัดจริงแล้วสำหรับ 3 model คือ `openai/gpt-oss-120b` (Groq), `gemini-3.1-flash-lite` และ `gemini-3.6-flash`; ที่เหลือยังเป็นค่าประมาณหรือรอวัดใหม่ ดูหัวข้อ "สถานะปัจจุบัน" ด้านล่างสำหรับรายละเอียด — Groq เพิ่ง decommission 2 โมเดลเดิมไป ดู `src/registry.rs`)
 - **Fallback อัตโนมัติ**: ถ้า provider หลักโดน rate limit (429) หรือ overloaded (503) จะลองยิง provider ถัดไปในเชนให้อัตโนมัติ ไม่ต้องเขียน retry logic เอง
 - **Ollama เป็นด่านสุดท้าย**: ถ้า cloud provider ทั้งหมดโดน rate limit พร้อมกัน หรือไม่มี API key เลย แต่มี Ollama รันอยู่ในเครื่อง จะ fallback ไปใช้ local model โดยอัตโนมัติ
 
@@ -173,7 +173,7 @@ Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แ�
 - **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
 - **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) เพิ่มแล้ว — รัน benchmark ค้างกลางคันแล้วรันคำสั่งเดิมซ้ำได้โดยไม่เสีย quota กับเคสที่เสร็จแล้ว ดูหัวข้อ "Resume" ด้านบน
 - **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` (Expert tier) โดน daily quota หมดตั้งแต่ request แรก ต้องรอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำ — resume system จะจัดการให้เอง ไม่ต้องรันเคสที่เสร็จแล้วซ้ำ
-- **สถานะ Thai benchmark ปัจจุบัน**: วัดจริงแล้ว 5 model — Groq ทั้ง 3 ตัว (`llama-3.1-8b-instant`, `llama-3.3-70b-versatile`, `openai/gpt-oss-120b`) และ Gemini 2 ตัว (`gemini-3.1-flash-lite`, `gemini-3.6-flash`) เหลือ `gemini-3.1-pro-preview` ที่ยังวัดไม่ได้เพราะติด quota และ OpenAI/Anthropic ที่ยังไม่มี API key ทดสอบ
+- **สถานะ Thai benchmark ปัจจุบัน**: มี 3 model ที่วัดจริงแต่ **ใช้ไม่ได้แล้ว** — `llama-3.1-8b-instant` และ `llama-3.3-70b-versatile` ถูก Groq decommission ไปแล้ว (ยืนยันแล้ว 2026-08-28 ว่า 404) ตอนนี้แทนที่ Small tier ด้วย `openai/gpt-oss-20b` (ราคาจริงจาก Groq docs แต่ **`thai_score` ยังเป็นค่าประมาณ ไม่ได้วัดจริง** — ต้องรัน benchmark ใหม่) ส่วน Mid tier ของ Groq ถูกถอดออกชั่วคราวเพราะยังไม่มีโมเดลราคาเหมาะสมมาแทน `llama-3.3-70b-versatile` วัดจริงแล้วมีแค่ `openai/gpt-oss-120b` (Top tier), `gemini-3.1-flash-lite`, `gemini-3.6-flash` — เหลือ `openai/gpt-oss-20b` (re-benchmark), `gemini-3.1-pro-preview` (ติด quota) และ OpenAI/Anthropic ที่ยังไม่มี API key ทดสอบ
 - `src/registry.rs` มีทั้ง `thai_score` ที่มาจาก benchmark จริงและค่าประมาณ (ดู comment ในไฟล์) — อย่าเชื่อว่าทุกค่าวัดจริงหมด
 
 ## Roadmap
