@@ -8,7 +8,7 @@ Intelligent AI router — automatically picks the cheapest model that can actual
 
 OpenPair แก้ปัญหานี้ด้วย:
 - **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง top-tier model (เช่น GPT-5.5 / Claude Opus 5) ทุกครั้ง
-- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — วัดจริงแล้วสำหรับ 4 model คือ Groq ทั้ง 3 ตัวกับ `gemini-3.1-flash-lite`, ที่เหลือยังเป็นค่าประมาณ ดู `src/registry.rs`)
+- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — วัดจริงแล้วสำหรับ 5 model คือ Groq ทั้ง 3 ตัวกับ `gemini-3.1-flash-lite` และ `gemini-3.6-flash`, ยังเหลือ `gemini-3.1-pro-preview` ที่ต้องวัด (ติด daily quota ของ Google อยู่ ดูหัวข้อ "สถานะปัจจุบัน" ด้านล่าง) กับ OpenAI/Anthropic ที่ยังไม่มี API key ให้ทดสอบ ที่เหลือยังเป็นค่าประมาณ ดู `src/registry.rs`)
 - **Fallback อัตโนมัติ**: ถ้า provider หลักโดน rate limit (429) หรือ overloaded (503) จะลองยิง provider ถัดไปในเชนให้อัตโนมัติ ไม่ต้องเขียน retry logic เอง
 - **Ollama เป็นด่านสุดท้าย**: ถ้า cloud provider ทั้งหมดโดน rate limit พร้อมกัน หรือไม่มี API key เลย แต่มี Ollama รันอยู่ในเครื่อง จะ fallback ไปใช้ local model โดยอัตโนมัติ
 
@@ -27,6 +27,7 @@ python/openpair/           ← Python wrapper รอบ Rust core (ผูกก�
   config.py                ← จัดการ API keys จาก .env / env vars
   errors.py                ← ตรวจว่า error ไหน retry ได้ (429/503) ไหน raise ทันที
   benchmark/                ← ระบบวัดคุณภาพภาษาไทยของแต่ละ model (20 test cases, 6 หมวด)
+    checkpoint.py            ← resume support — เซฟผลทีละเคสลง .jsonl กัน progress หายตอน quota หมด/process โดน kill
 ```
 
 Routing decision (tier + model + ราคา) คำนวณฝั่ง Rust เพื่อความเร็ว ส่วนการเรียก API จริง, retry, fallback ทำฝั่ง Python
@@ -139,24 +140,40 @@ python run_benchmark.py --detail                            # แสดงผล
 
 ผลจะถูก suggest กลับมาเป็น `thai_score` ให้ไปอัปเดตใน `src/registry.rs` เอง (ยังไม่ auto-patch)
 
+### Resume — รันต่อได้เองถ้าโดน quota หมดกลางคัน
+
+ทุกครั้งที่รัน, ผลแต่ละ test case จะถูกเซฟทันทีลง checkpoint file (`<output ตัดนามสกุล>.checkpoint.jsonl`) คีย์ด้วย `(model_id, case_id)`:
+
+- **ครั้งถัดไปที่รันคำสั่งเดิมซ้ำ** เคสที่เคยผ่านแล้วจะถูก**ข้ามอัตโนมัติ** ยิง API เฉพาะเคสที่ยังไม่เสร็จ — เพิ่ม test case ใหม่เข้า dataset แล้วรันซ้ำก็ไม่เสีย quota/เวลากับเคสเก่า
+- ถ้า Google API ตอบว่าโดน **daily quota** หมด (ไม่ใช่ rate limit ชั่วคราว) ระบบจะหยุดรันทันทีแทนที่จะวน retry เปล่าๆ — ผลที่ทำได้ก่อนหน้าถูกเซฟไว้แล้ว รันคำสั่งเดิมซ้ำได้พอ quota reset (ปกติเที่ยงคืน Pacific Time)
+- ต้องการรันใหม่ทั้งหมดจริงๆ (ไม่ resume): เพิ่ม `--fresh`
+- กำหนด path checkpoint เอง: `--checkpoint path/to/file.jsonl`
+
+```bash
+python run_benchmark.py --fresh                             # ไม่สนใจ checkpoint เดิม รันใหม่หมด
+python run_benchmark.py --checkpoint my_ckpt.jsonl           # ใช้ checkpoint file ที่กำหนดเอง
+```
+
 ## Testing
 
 ```bash
 cargo test                    # Rust — 16 tests
-pytest -m "not live"          # Python — 77 tests (mocked, ไม่ต้องมี API key)
+pytest -m "not live"          # Python — 92 tests (mocked, ไม่ต้องมี API key)
 pytest tests/test_live.py -m live   # 5 tests ที่เรียก API จริง (ต้องมี key จริง, เสียเงินจริง)
 ```
 
 Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แต่ละ test จะ `pytest.skip()` เองถ้าไม่มี key ของ provider นั้นใน `.env`
 
-> **หมายเหตุ**: พิมพ์ `pytest` เฉยๆ (ไม่ใส่ `-m`) จะพยายามรันทั้ง 82 ตัว รวม live tests ด้วย — ตัวที่ไม่มี key ตรงกันจะถูก skip อัตโนมัติ แต่ตัวที่มี key จริงใน `.env` (เช่น groq/google) **จะยิง API จริงและเสียเงินจริง** ผลจริงบนเครื่องนี้ (มีแค่ `GOOGLE_API_KEY`/`GROQ_API_KEY`) คือ `80 passed, 2 skipped` — ถ้ามีครบทั้ง 4 provider key จะได้ `82 passed` ถ้าไม่ได้ตั้งใจจะเสียเงิน ให้ใส่ `-m "not live"` เสมอ
+> **หมายเหตุ**: พิมพ์ `pytest` เฉยๆ (ไม่ใส่ `-m`) จะพยายามรันทั้ง 97 ตัว รวม live tests ด้วย — ตัวที่ไม่มี key ตรงกันจะถูก skip อัตโนมัติ แต่ตัวที่มี key จริงใน `.env` (เช่น groq/google) **จะยิง API จริงและเสียเงินจริง** ผลจริงบนเครื่องนี้ (มีแค่ `GOOGLE_API_KEY`/`GROQ_API_KEY`) ตอนนี้คือ `94 passed, 2 skipped, 1 failed` — ตัวที่ fail คือ `test_live_groq` เพราะ `GROQ_API_KEY` ปัจจุบันหมดอายุแล้ว (401 Invalid API Key) ไม่เกี่ยวกับโค้ด แค่ key ต้องเปลี่ยนใหม่ ถ้ามีครบทั้ง 4 provider key ที่ยัง valid จะได้ `97 passed` ถ้าไม่ได้ตั้งใจจะเสียเงิน ให้ใส่ `-m "not live"` เสมอ
 
 ## สถานะปัจจุบัน / ข้อจำกัดที่รู้อยู่แล้ว
 
 - **CLI พร้อมใช้แล้ว** — `openpair "..."` เป็นคำสั่ง shell จริง (`pyproject.toml` มี `[project.scripts]` → `openpair = "openpair.cli:main"`) ดูวิธีใช้ในหัวข้อ "วิธีใช้ (CLI)" ด้านบน
 - **OpenRouter** ยังไม่ implement (มีแผนอยู่ใน `list_to_add.md`)
 - **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
-- `gemini-3.6-flash` free tier มี quota **20 requests/วัน ต่อ project ต่อ model** — รัน benchmark ซ้ำในวันเดียวกันจะชน quota แน่นอน
+- **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) เพิ่มแล้ว — รัน benchmark ค้างกลางคันแล้วรันคำสั่งเดิมซ้ำได้โดยไม่เสีย quota กับเคสที่เสร็จแล้ว ดูหัวข้อ "Resume" ด้านบน
+- **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` (Expert tier) โดน daily quota หมดตั้งแต่ request แรก ต้องรอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำ — resume system จะจัดการให้เอง ไม่ต้องรันเคสที่เสร็จแล้วซ้ำ
+- **สถานะ Thai benchmark ปัจจุบัน**: วัดจริงแล้ว 5 model — Groq ทั้ง 3 ตัว (`llama-3.1-8b-instant`, `llama-3.3-70b-versatile`, `openai/gpt-oss-120b`) และ Gemini 2 ตัว (`gemini-3.1-flash-lite`, `gemini-3.6-flash`) เหลือ `gemini-3.1-pro-preview` ที่ยังวัดไม่ได้เพราะติด quota และ OpenAI/Anthropic ที่ยังไม่มี API key ทดสอบ
 - `src/registry.rs` มีทั้ง `thai_score` ที่มาจาก benchmark จริงและค่าประมาณ (ดู comment ในไฟล์) — อย่าเชื่อว่าทุกค่าวัดจริงหมด
 
 ## Roadmap

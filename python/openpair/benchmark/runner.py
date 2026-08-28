@@ -20,8 +20,16 @@ from typing import Optional
 from ..caller import make_call
 from ..config import ApiKeys
 from ..errors import is_retryable_error as _is_retryable
+from .checkpoint import CaseCheckpoint
 from .dataset import ThaiTestCase, THAI_TEST_CASES
 from .scorer import score_response, ResponseScore, ModelBenchmarkResult
+
+
+class QuotaExhausted(Exception):
+    """Daily quota (ไม่ใช่ rate limit รายนาที) หมด — ไม่ควรรอแล้วลองใหม่ ต้องหยุด"""
+
+
+QUOTA_STOP_THRESHOLD_S = 300.0
 
 
 # ── Retry helpers ─────────────────────────────────────────────────────────────
@@ -35,7 +43,7 @@ def _extract_retry_delay(error: Exception, default: float = 60.0) -> float:
     msg = str(error)
 
     # Google format: "retryDelay": "44.5s"
-    m = re.search(r'"retryDelay"\s*:\s*"(\d+(?:\.\d+))s"', msg)
+    m = re.search(r'"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"', msg)
     if m:
         return float(m.group(1))
 
@@ -71,6 +79,10 @@ def _call_with_retry(
 
             if _is_retryable(e) and attempt < max_retries:
                 delay = _extract_retry_delay(e)
+
+                if delay >= QUOTA_STOP_THRESHOLD_S or "perday" in str(e).lower() or "per day" in str(e).lower():
+                    raise QuotaExhausted(f"quota รายวันหมด: {str(e)[:120]}") from e
+
                 delay = min(delay + 2, 180)  # buffer 2 วิ, cap ที่ 3 นาที
 
                 if verbose:
@@ -102,6 +114,7 @@ def run_model_benchmark(
     max_tokens:  int = 512,
     max_retries: int = 3,
     verbose:     bool = True,
+    checkpoint:  Optional[CaseCheckpoint] = None,
 ) -> ModelBenchmarkResult:
     """
     รัน benchmark ทุก test case กับ model ที่ระบุ
@@ -119,6 +132,8 @@ def run_model_benchmark(
     """
     test_cases = cases or THAI_TEST_CASES
     scores: list[ResponseScore] = []
+    error_count = 0
+    quota_stopped = False
 
     if verbose:
         print(f"\n{'═'*60}")
@@ -134,6 +149,14 @@ def run_model_benchmark(
                 end=" ", flush=True,
             )
 
+        if checkpoint is not None:
+            cached = checkpoint.get(model_id, case)
+            if cached is not None:
+                scores.append(cached)
+                if verbose:
+                    print("⏭️  ข้าม (ทำแล้ว)")
+                continue
+
         try:
             text, in_tok, out_tok, latency_ms = _call_with_retry(
                 provider    = provider,
@@ -148,6 +171,15 @@ def run_model_benchmark(
             score = score_response(text, case)
             scores.append(score)
 
+            if checkpoint is not None:
+                checkpoint.append(
+                    model_id   = model_id,
+                    model_name = model_name,
+                    provider   = provider,
+                    case       = case,
+                    score      = score,
+                )
+
             if verbose:
                 status = "✅" if score.passed else "❌"
                 print(
@@ -157,23 +189,30 @@ def run_model_benchmark(
                     f"({latency_ms:.0f}ms)"
                 )
 
-        except Exception as e:
+        except QuotaExhausted as e:
             if verbose:
-                print(f"💥 ERROR: {str(e)[:120]}")
-            scores.append(ResponseScore(
-                test_case_id     = case.id,
-                category         = case.category,
-                difficulty       = case.difficulty,
-                keyword_score    = 0.0,
-                thai_ratio       = 0.0,
-                length_ok        = False,
-                final_score      = 0.0,
-                passed           = False,
-                response_preview = f"ERROR: {str(e)[:60]}",
-            ))
+                print(f"\n  🛑 quota หมด — หยุดรัน {model_name} (ผลที่ทำได้ถูกเซฟไว้แล้ว): {str(e)[:120]}")
+            quota_stopped = True
+            break
+
+        except Exception as e:
+            error_count += 1
+            if verbose:
+                print(f"💥 ERROR (จะลองใหม่รอบหน้า): {str(e)[:120]}")
 
         # หน่วงเล็กน้อยระหว่าง case เพื่อลด rate limit
         time.sleep(1.0)
+
+    if verbose:
+        done = len(scores)
+        total = len(test_cases)
+        pending = total - done
+        print(
+            f"\n  📌 สรุป: สำเร็จ {done}/{total} เคส"
+            + (f" | ค้าง {pending} เคส" if pending else "")
+            + (f" | error {error_count} เคส" if error_count else "")
+            + (" | หยุดเพราะ quota หมด" if quota_stopped else "")
+        )
 
     result = ModelBenchmarkResult(
         model_id   = model_id,
@@ -193,12 +232,14 @@ def run_model_benchmark(
 
 
 def run_full_benchmark(
-    models:      list[dict],
-    api_keys:    ApiKeys,
-    cases:       Optional[list[ThaiTestCase]] = None,
-    output_path: Optional[str] = None,
-    max_retries: int = 3,
-    verbose:     bool = True,
+    models:          list[dict],
+    api_keys:        ApiKeys,
+    cases:           Optional[list[ThaiTestCase]] = None,
+    output_path:     Optional[str] = None,
+    max_retries:     int = 3,
+    verbose:         bool = True,
+    resume:          bool = True,
+    checkpoint_path: Optional[str] = None,
 ) -> list[ModelBenchmarkResult]:
     """
     รัน benchmark กับหลาย model พร้อมกัน
@@ -217,6 +258,17 @@ def run_full_benchmark(
     """
     results: list[ModelBenchmarkResult] = []
 
+    if checkpoint_path is None and output_path:
+        checkpoint_path = str(Path(output_path).with_suffix("")) + ".checkpoint.jsonl"
+
+    checkpoint: Optional[CaseCheckpoint] = None
+    if checkpoint_path:
+        if not resume:
+            Path(checkpoint_path).unlink(missing_ok=True)
+        checkpoint = CaseCheckpoint(checkpoint_path)
+
+    total_cases = len(cases) if cases is not None else len(THAI_TEST_CASES)
+
     for m in models:
         provider = m["provider"]
         key = api_keys.for_provider(provider)
@@ -232,20 +284,25 @@ def run_full_benchmark(
             cases       = cases,
             max_retries = max_retries,
             verbose     = verbose,
+            checkpoint  = checkpoint,
         )
         results.append(result)
 
     results.sort(key=lambda r: r.avg_final_score, reverse=True)
 
     if output_path:
-        _save_results(results, output_path)
+        _save_results(results, output_path, total_cases=total_cases)
         if verbose:
             print(f"\n💾 บันทึกผลลัพธ์ที่: {output_path}")
 
     return results
 
 
-def _save_results(results: list[ModelBenchmarkResult], path: str) -> None:
+def _save_results(
+    results: list[ModelBenchmarkResult],
+    path: str,
+    total_cases: Optional[int] = None,
+) -> None:
     """บันทึกผลลัพธ์เป็น JSON"""
     data = {
         "run_at": datetime.now().isoformat(),
@@ -259,6 +316,9 @@ def _save_results(results: list[ModelBenchmarkResult], path: str) -> None:
                 "avg_thai_ratio":       r.avg_thai_ratio,
                 "pass_rate":            r.pass_rate,
                 "suggested_thai_score": r.suggested_thai_score,
+                "completed_cases":      len(r.scores),
+                "total_cases":          total_cases,
+                "pending_cases":        (total_cases - len(r.scores)) if total_cases is not None else None,
                 "scores": [
                     {
                         "id":            s.test_case_id,

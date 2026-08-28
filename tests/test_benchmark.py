@@ -5,9 +5,13 @@ Unit tests สำหรับ Thai Benchmark System
 
 import pytest
 from unittest.mock import patch, MagicMock
+from openpair.benchmark.checkpoint import CaseCheckpoint
 from openpair.benchmark.dataset import THAI_TEST_CASES, ThaiTestCase, CATEGORIES
 from openpair.benchmark.scorer import score_response, _thai_ratio, _keyword_score
-from openpair.benchmark.runner import _is_retryable, _extract_retry_delay, _call_with_retry
+from openpair.benchmark.runner import (
+    _is_retryable, _extract_retry_delay, _call_with_retry,
+    run_model_benchmark, QuotaExhausted,
+)
 
 
 # ── Dataset tests ─────────────────────────────────────────────────────────────
@@ -260,3 +264,135 @@ class TestCallWithRetry:
                 )
 
         assert call_count == 1  # raise ทันที ไม่ retry
+
+    def test_large_retry_delay_raises_quota_exhausted(self):
+        """retryDelay >= threshold ต้อง raise QuotaExhausted แทนการ sleep"""
+        err = Exception('429 RESOURCE_EXHAUSTED "retryDelay": "600s"')
+        with patch("openpair.benchmark.runner.make_call", side_effect=err):
+            with patch("openpair.benchmark.runner.time.sleep") as mock_sleep:
+                with pytest.raises(QuotaExhausted):
+                    _call_with_retry(
+                        provider="google", model_id="m", prompt="p",
+                        api_key="k", max_retries=3, verbose=False,
+                    )
+                mock_sleep.assert_not_called()
+
+    def test_per_day_message_raises_quota_exhausted(self):
+        err = Exception("429 quota exceeded, limit: 50 requests per day")
+        with patch("openpair.benchmark.runner.make_call", side_effect=err):
+            with patch("openpair.benchmark.runner.time.sleep") as mock_sleep:
+                with pytest.raises(QuotaExhausted):
+                    _call_with_retry(
+                        provider="google", model_id="m", prompt="p",
+                        api_key="k", max_retries=3, verbose=False,
+                    )
+                mock_sleep.assert_not_called()
+
+    def test_integer_retry_delay_now_matches(self):
+        """Bug A: "44s" (ไม่มีทศนิยม) เคยไม่ match — ตอนนี้ต้อง parse ได้"""
+        err = Exception('"retryDelay": "44s"')
+        assert _extract_retry_delay(err) == pytest.approx(44.0)
+
+
+# ── Resume / checkpoint flow tests ──────────────────────────────────────────
+
+def _fake_case(id_, prompt=None):
+    return ThaiTestCase(
+        id=id_, category="qa", difficulty="easy",
+        prompt=prompt or f"เมืองหลวงของไทยคืออะไร? [{id_}]",
+        expected_keywords=["กรุงเทพ"], keyword_threshold=0.5,
+        min_thai_ratio=0.2, min_length=5,
+    )
+
+
+class TestErrorDoesNotHurtAverage:
+    def test_error_case_excluded_from_scores_and_average(self):
+        cases = [_fake_case("c1"), _fake_case("c2"), _fake_case("c3")]
+
+        def fake_call(**kwargs):
+            if kwargs["prompt"] == cases[1].prompt:
+                raise ValueError("boom, not retryable")
+            return ("กรุงเทพมหานคร", 5, 5, 10.0)
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                result = run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="google",
+                    api_key="k", cases=cases, verbose=False,
+                )
+
+        # เคส error ต้องไม่ถูกนับเข้า scores เลย
+        assert len(result.scores) == 2
+        assert all(s.final_score > 0 for s in result.scores)
+        assert result.avg_final_score > 0
+
+
+class TestResumeFlow:
+    def test_fresh_then_resume_only_hits_new_cases(self, tmp_path):
+        ckpt_path = tmp_path / "ckpt.jsonl"
+        cases_round1 = [_fake_case("c1"), _fake_case("c2")]
+        calls = []
+
+        def fake_call(**kwargs):
+            calls.append(kwargs["prompt"])
+            return ("กรุงเทพมหานคร", 5, 5, 10.0)
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                ckpt = CaseCheckpoint(ckpt_path)
+                result1 = run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="google",
+                    api_key="k", cases=cases_round1, verbose=False, checkpoint=ckpt,
+                )
+
+        assert len(result1.scores) == 2
+        assert len(calls) == 2
+
+        # เพิ่มเคสใหม่ แล้ว resume — ต้องยิงเฉพาะเคสใหม่
+        cases_round2 = cases_round1 + [_fake_case("c3")]
+        calls.clear()
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                ckpt2 = CaseCheckpoint(ckpt_path)  # reload from disk (simulates new process)
+                result2 = run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="google",
+                    api_key="k", cases=cases_round2, verbose=False, checkpoint=ckpt2,
+                )
+
+        assert len(result2.scores) == 3
+        assert len(calls) == 1  # เฉพาะ c3 เท่านั้นที่ยิง API จริง
+
+    def test_quota_exhausted_mid_run_saves_partial_then_resume_completes(self, tmp_path):
+        ckpt_path = tmp_path / "ckpt.jsonl"
+        cases = [_fake_case("c1"), _fake_case("c2"), _fake_case("c3")]
+
+        def fake_call_quota_at_c2(**kwargs):
+            if kwargs["prompt"] == cases[1].prompt:
+                raise Exception('429 RESOURCE_EXHAUSTED "retryDelay": "600s"')
+            return ("กรุงเทพมหานคร", 5, 5, 10.0)
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call_quota_at_c2):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                ckpt = CaseCheckpoint(ckpt_path)
+                result1 = run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="google",
+                    api_key="k", cases=cases, verbose=False, checkpoint=ckpt,
+                )
+
+        # ทำได้แค่ c1 ก่อนหยุดเพราะ quota
+        assert len(result1.scores) == 1
+
+        # resume รอบถัดไปด้วย call ปกติ (quota กลับมาแล้ว) — ทำต่อจนครบ
+        def fake_call_ok(**kwargs):
+            return ("กรุงเทพมหานคร", 5, 5, 10.0)
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call_ok):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                ckpt2 = CaseCheckpoint(ckpt_path)
+                result2 = run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="google",
+                    api_key="k", cases=cases, verbose=False, checkpoint=ckpt2,
+                )
+
+        assert len(result2.scores) == 3

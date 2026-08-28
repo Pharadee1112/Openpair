@@ -58,6 +58,14 @@ def parse_args():
         "--detail", action="store_true",
         help="แสดงผลแบบละเอียดแต่ละ test case",
     )
+    parser.add_argument(
+        "--fresh", action="store_true",
+        help="รันใหม่ทั้งหมด ไม่ resume จาก checkpoint เดิม (default คือ resume)",
+    )
+    parser.add_argument(
+        "--checkpoint", type=str, default=None,
+        help="path ของ checkpoint file (default: <output ตัดนามสกุล>.checkpoint.jsonl)",
+    )
     return parser.parse_args()
 
 
@@ -96,11 +104,13 @@ def main():
     print(f"🔑 ใช้ provider: {api_keys.available_providers()}")
 
     results = run_full_benchmark(
-        models      = models,
-        api_keys    = api_keys,
-        cases       = cases,
-        output_path = args.output,
-        verbose     = True,
+        models          = models,
+        api_keys        = api_keys,
+        cases           = cases,
+        output_path     = args.output,
+        verbose         = True,
+        resume          = not args.fresh,
+        checkpoint_path = args.checkpoint,
     )
 
     # ── แสดงผล ────────────────────────────────────────────────────
