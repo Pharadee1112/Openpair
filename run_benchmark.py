@@ -5,6 +5,7 @@ Usage:
     python run_benchmark.py
     python run_benchmark.py --models gemini-2.5-flash,gemini-2.5-flash-lite
     python run_benchmark.py --category qa
+    python run_benchmark.py --suite full          # 600 เคส (100 ต่อหมวด)
     python run_benchmark.py --output results.json
 """
 
@@ -20,9 +21,15 @@ from openpair.benchmark import (
     run_full_benchmark,
     print_summary,
     print_detail,
-    THAI_TEST_CASES,
+    SUITES,
+    get_suite,
 )
 from openpair.benchmark.dataset import get_cases_by_category
+
+# Windows console ภาษาไทย (cp874) พิมพ์ emoji ไม่ได้ → บังคับ stdout เป็น UTF-8
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 
 # ── Models ที่จะทดสอบ (เปลี่ยนได้) ──────────────────────────────────────────
@@ -49,6 +56,10 @@ def parse_args():
     parser.add_argument(
         "--category", type=str, default=None,
         help="รัน test เฉพาะหมวด: qa / translation / summarization / classification / code_thai / creative",
+    )
+    parser.add_argument(
+        "--suite", choices=SUITES, default="core",
+        help="ชุดข้อสอบ: core = 20 เคสเดิม (default) / full = 600 เคส (100 ต่อหมวด รวมข่าวปัจจุบัน + สแลง)",
     )
     parser.add_argument(
         "--output", type=str, default="benchmark_results.json",
@@ -84,15 +95,15 @@ def main():
 
     # ── เลือก test cases ──────────────────────────────────────────
     if args.category:
-        cases = get_cases_by_category(args.category)
+        cases = get_cases_by_category(args.category, suite=args.suite)
         if not cases:
             print(f"❌ ไม่พบ category '{args.category}'")
             print(f"   ตัวเลือก: qa, translation, summarization, classification, code_thai, creative")
             sys.exit(1)
         print(f"📂 รัน category: {args.category} ({len(cases)} cases)")
     else:
-        cases = THAI_TEST_CASES
-        print(f"📋 รัน benchmark ทั้งหมด ({len(cases)} cases × {len(models)} models)")
+        cases = get_suite(args.suite)
+        print(f"📋 รัน benchmark ทั้งหมด [{args.suite}] ({len(cases)} cases × {len(models)} models)")
 
     # ── รัน benchmark ─────────────────────────────────────────────
     api_keys = ApiKeys()

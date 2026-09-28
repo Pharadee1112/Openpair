@@ -21,7 +21,7 @@ Usage:
 from .runner import run_model_benchmark, run_full_benchmark, QuotaExhausted
 from .checkpoint import CaseCheckpoint, prompt_hash
 from .reporter import print_summary, print_detail, print_registry_suggestion
-from .dataset import THAI_TEST_CASES, ThaiTestCase, CATEGORIES, load_custom_cases
+from .dataset import THAI_TEST_CASES, ThaiTestCase, CATEGORIES, SUITES, load_custom_cases, get_suite
 from .scorer import ResponseScore, ModelBenchmarkResult
 
 __all__ = [
@@ -36,7 +36,9 @@ __all__ = [
     "THAI_TEST_CASES",
     "ThaiTestCase",
     "CATEGORIES",
+    "SUITES",
     "load_custom_cases",
+    "get_suite",
     "ResponseScore",
     "ModelBenchmarkResult",
 ]

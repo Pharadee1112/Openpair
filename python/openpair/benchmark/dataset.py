@@ -324,12 +324,42 @@ THAI_TEST_CASES: list[ThaiTestCase] = [
 ]
 
 
-def get_cases_by_category(category: str) -> list[ThaiTestCase]:
-    return [c for c in THAI_TEST_CASES if c.category == category]
+DATA_DIR = Path(__file__).parent / "data"
+SUITES = ("core", "full")
 
 
-def get_cases_by_difficulty(difficulty: str) -> list[ThaiTestCase]:
-    return [c for c in THAI_TEST_CASES if c.difficulty == difficulty]
+def load_extended_cases() -> list[ThaiTestCase]:
+    """
+    โหลดชุดข้อสอบขยาย (data/<category>.json) — ต่อ id จากชุด core ให้แต่ละหมวดครบ 100 เคส
+    มีเคสข่าวปัจจุบัน (ก.ย. 2569 — ใส่เนื้อข่าวในโจทย์), สแลง/ภาษาวัยรุ่น และสำนวนไทย
+    """
+    cases: list[ThaiTestCase] = []
+    for category in CATEGORIES:
+        path = DATA_DIR / f"{category}.json"
+        if path.exists():
+            cases.extend(load_custom_cases(path))
+    return cases
+
+
+def get_suite(suite: str = "core") -> list[ThaiTestCase]:
+    """
+    core — 20 เคสเดิม (default, ประหยัด quota)
+    full — core + ชุดขยาย = 100 เคสต่อหมวด (600 เคส) เรียงตามหมวด
+    """
+    if suite == "core":
+        return list(THAI_TEST_CASES)
+    if suite == "full":
+        merged = THAI_TEST_CASES + load_extended_cases()
+        return sorted(merged, key=lambda c: CATEGORIES.index(c.category))
+    raise ValueError(f"suite {suite!r} ไม่รองรับ (ต้องเป็น {' / '.join(SUITES)})")
+
+
+def get_cases_by_category(category: str, suite: str = "core") -> list[ThaiTestCase]:
+    return [c for c in get_suite(suite) if c.category == category]
+
+
+def get_cases_by_difficulty(difficulty: str, suite: str = "core") -> list[ThaiTestCase]:
+    return [c for c in get_suite(suite) if c.difficulty == difficulty]
 
 
 def load_custom_cases(path: Union[str, Path]) -> list[ThaiTestCase]:

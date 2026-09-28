@@ -6,7 +6,9 @@ Unit tests สำหรับ Thai Benchmark System
 import pytest
 from unittest.mock import patch, MagicMock
 from openpair.benchmark.checkpoint import CaseCheckpoint
-from openpair.benchmark.dataset import THAI_TEST_CASES, ThaiTestCase, CATEGORIES
+from openpair.benchmark.dataset import (
+    THAI_TEST_CASES, ThaiTestCase, CATEGORIES, get_suite, get_cases_by_category,
+)
 from openpair.benchmark.scorer import score_response, _thai_ratio, _keyword_score
 from openpair.benchmark.runner import (
     _is_retryable, _extract_retry_delay, _call_with_retry,
@@ -47,6 +49,63 @@ class TestDataset:
         """prompt ส่วนใหญ่ควรมีภาษาไทยอยู่ด้วย"""
         thai_prompts = [c for c in THAI_TEST_CASES if _thai_ratio(c.prompt) > 0.1]
         assert len(thai_prompts) >= len(THAI_TEST_CASES) * 0.7
+
+
+@pytest.fixture(scope="module")
+def full():
+    return get_suite("full")
+
+
+class TestFullSuite:
+    """ชุดขยาย data/*.json — 100 เคสต่อหมวด"""
+
+    def test_core_is_default_and_unchanged(self):
+        assert get_suite() == THAI_TEST_CASES
+
+    def test_100_cases_per_category(self, full):
+        for cat in CATEGORIES:
+            n = sum(1 for c in full if c.category == cat)
+            assert n == 100, f"หมวด {cat} มี {n} เคส (ควรเป็น 100)"
+
+    def test_ids_unique_and_prefixed_like_core(self, full):
+        ids = [c.id for c in full]
+        assert len(ids) == len(set(ids)), "มี id ซ้ำกันระหว่าง core กับชุดขยาย"
+        prefix = {c.category: c.id.rsplit("_", 1)[0] for c in THAI_TEST_CASES}
+        for c in full:
+            assert c.id.rsplit("_", 1)[0] == prefix[c.category], f"{c.id}: prefix ไม่ตรงหมวด {c.category}"
+
+    def test_prompts_unique(self, full):
+        prompts = [c.prompt for c in full]
+        assert len(prompts) == len(set(prompts)), "มี prompt ซ้ำกัน"
+
+    def test_fields_valid(self, full):
+        for c in full:
+            assert c.difficulty in {"easy", "medium", "hard"}, c.id
+            assert c.expected_keywords and all(k.strip() for k in c.expected_keywords), c.id
+            assert 0 < c.keyword_threshold <= 1.0, c.id
+            assert 0 <= c.min_thai_ratio <= 1.0, c.id
+            assert c.min_length > 0, c.id
+
+    def test_prompts_contain_thai(self, full):
+        for c in full:
+            assert _thai_ratio(c.prompt) > 0.05, f"{c.id}: prompt แทบไม่มีภาษาไทย"
+
+    def test_classification_labels_not_substrings_of_each_other(self, full):
+        # keyword scorer ใช้ substring match — ถ้าป้าย A อยู่ในป้าย B (เช่น "ทางการ" ใน "กึ่งทางการ")
+        # model ที่ตอบผิดเป็น B จะได้คะแนนป้าย A ไปด้วย
+        labels = {c.expected_keywords[0] for c in full
+                  if c.category == "classification" and len(c.expected_keywords) == 1}
+        for a in labels:
+            for b in labels:
+                assert a == b or a not in b, f"ป้าย {a!r} เป็น substring ของ {b!r}"
+
+    def test_category_filter_respects_suite(self):
+        assert len(get_cases_by_category("qa")) == 5
+        assert len(get_cases_by_category("qa", suite="full")) == 100
+
+    def test_unknown_suite_raises(self):
+        with pytest.raises(ValueError):
+            get_suite("huge")
 
 
 # ── Scorer tests ──────────────────────────────────────────────────────────────

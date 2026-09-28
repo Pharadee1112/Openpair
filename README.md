@@ -26,7 +26,8 @@ python/openpair/           ← Python wrapper รอบ Rust core (ผูกก�
   caller.py                ← ยิง API จริงไปแต่ละ provider (openai / anthropic / google / groq / ollama)
   config.py                ← จัดการ API keys จาก .env / env vars
   errors.py                ← ตรวจว่า error ไหน retry ได้ (429/503) ไหน raise ทันที
-  benchmark/                ← ระบบวัดคุณภาพภาษาไทยของแต่ละ model (20 test cases, 6 หมวด)
+  benchmark/                ← ระบบวัดคุณภาพภาษาไทยของแต่ละ model (6 หมวด — ชุด core 20 เคส / ชุด full 600 เคส)
+    data/*.json              ← ชุดข้อสอบขยาย หมวดละ 1 ไฟล์ (รวมกับ core = 100 เคสต่อหมวด)
     checkpoint.py            ← resume support — เซฟผลทีละเคสลง .jsonl กัน progress หายตอน quota หมด/process โดน kill
 ```
 
@@ -136,7 +137,19 @@ python run_benchmark.py                                    # รันทุก 
 python run_benchmark.py --models gemini-3.6-flash           # เจาะจง model
 python run_benchmark.py --category qa                       # เจาะจงหมวด
 python run_benchmark.py --detail                            # แสดงผลละเอียดทุก test case
+python run_benchmark.py --suite full                        # ชุดเต็ม 600 เคส (100 ต่อหมวด)
 ```
+
+### ชุดข้อสอบ: `core` กับ `full`
+
+- **`core`** (default) — 20 เคสเดิม ใช้เปรียบเทียบกับผลที่วัดไว้แล้ว และประหยัด quota
+- **`full`** — 600 เคส (qa / translation / summarization / classification / code_thai / creative หมวดละ 100) ชุดขยายอยู่ใน `python/openpair/benchmark/data/*.json` เนื้อหาเน้นของปัจจุบัน:
+  - **ข่าวปัจจุบัน (ก.ย. 2569)** — น้ำท่วม, ภูริพลเหรียญทองเอเชียนเกมส์, ส่งออก, ADB, วีซ่า 30 วัน, ราคาดีเซล ฯลฯ **ใส่เนื้อข่าวไว้ในโจทย์** (วัดการอ่าน/สรุป/แปลภาษาไทย ไม่ได้วัดว่า model รู้ข่าวล่าสุดไหม ซึ่งจะขึ้นกับ training cutoff)
+  - **ภาษาวัยรุ่น/สแลง 2025–2026** — ตัวมัม, มองบน, ป้ายยา, ทัวร์ลง, ฮ้อป, situationship, rizz, no cap ฯลฯ (ถามความหมาย, แปลสแลงอังกฤษ→ไทย, แปลงภาษาทางการ↔ภาษาวัยรุ่น, วิเคราะห์ sentiment ที่มีประชด)
+  - **สำนวนไทย / ภาษาถิ่น** — สำนวนดั้งเดิมที่ยังใช้กัน + อีสาน/เหนือ/ใต้ในงานเขียน
+  - **โค้ดบริบทไทย** — เลขบัตรประชาชน, พ.ศ.↔ค.ศ., บาทเป็นคำอ่าน, พร้อมเพย์ QR, เบอร์มือถือไทย
+- ⚠️ `full` = 600 request ต่อ model — Gemini free tier (≈20 req/วัน/model) ต้องใช้หลายวัน (resume ช่วยได้) Groq เร็วกว่ามาก
+- ⚠️ ข้อมูลข่าว/สแลงจะเก่าลงเรื่อยๆ ควรทบทวนทุก 6–12 เดือน และคะแนนจาก `full` เทียบตรงๆ กับ `core` ไม่ได้ (ชุดข้อสอบต่างกัน)
 
 ผลจะถูก suggest กลับมาเป็น `thai_score` ให้ไปอัปเดตใน `src/registry.rs` เอง (ยังไม่ auto-patch)
 
@@ -172,8 +185,8 @@ Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แ�
 - **OpenRouter** ยังไม่ implement (มีแผนอยู่ใน `list_to_add.md`)
 - **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
 - **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) เพิ่มแล้ว — รัน benchmark ค้างกลางคันแล้วรันคำสั่งเดิมซ้ำได้โดยไม่เสีย quota กับเคสที่เสร็จแล้ว ดูหัวข้อ "Resume" ด้านบน
-- **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` (Expert tier) โดน daily quota หมดตั้งแต่ request แรก ต้องรอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำ — resume system จะจัดการให้เอง ไม่ต้องรันเคสที่เสร็จแล้วซ้ำ
-- **สถานะ Thai benchmark ปัจจุบัน**: มี 3 model ที่วัดจริงแต่ **ใช้ไม่ได้แล้ว** — `llama-3.1-8b-instant` และ `llama-3.3-70b-versatile` ถูก Groq decommission ไปแล้ว (ยืนยันแล้ว 2026-08-28 ว่า 404) ตอนนี้แทนที่ Small tier ด้วย `openai/gpt-oss-20b` (ราคาจริงจาก Groq docs แต่ **`thai_score` ยังเป็นค่าประมาณ ไม่ได้วัดจริง** — ต้องรัน benchmark ใหม่) ส่วน Mid tier ของ Groq ถูกถอดออกชั่วคราวเพราะยังไม่มีโมเดลราคาเหมาะสมมาแทน `llama-3.3-70b-versatile` วัดจริงแล้วมีแค่ `openai/gpt-oss-120b` (Top tier), `gemini-3.1-flash-lite`, `gemini-3.6-flash` — เหลือ `openai/gpt-oss-20b` (re-benchmark), `gemini-3.1-pro-preview` (ติด quota) และ OpenAI/Anthropic ที่ยังไม่มี API key ทดสอบ
+- **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` (Expert tier) ได้ 429 ตั้งแต่ request แรก และ error ระบุ `limit: 0` คือ **free tier ไม่มี quota ให้ model นี้เลย** (เช็คซ้ำ 2026-09-28) รอ reset ก็ไม่ช่วย ต้องเปิด billing ก่อน — ส่วน model ที่ quota รายวันหมดจริง (limit > 0) รอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำได้ resume system จะข้ามเคสที่เสร็จแล้วให้เอง
+- **สถานะ Thai benchmark ปัจจุบัน**: มี 3 model ที่วัดจริงแต่ **ใช้ไม่ได้แล้ว** — `llama-3.1-8b-instant` และ `llama-3.3-70b-versatile` ถูก Groq decommission ไปแล้ว (ยืนยันแล้ว 2026-08-28 ว่า 404) ตอนนี้แทนที่ Small tier ด้วย `openai/gpt-oss-20b` (ราคาจริงจาก Groq docs แต่ **`thai_score` ยังเป็นค่าประมาณ ไม่ได้วัดจริง** — ต้องรัน benchmark ใหม่) ส่วน Mid tier ของ Groq ถูกถอดออกชั่วคราวเพราะยังไม่มีโมเดลราคาเหมาะสมมาแทน `llama-3.3-70b-versatile` วัดจริงแล้วมีแค่ `openai/gpt-oss-120b` (Top tier), `gemini-3.1-flash-lite`, `gemini-3.6-flash` — เหลือ `openai/gpt-oss-20b` (re-benchmark), `gemini-3.1-pro-preview` (free tier quota = 0 ต้องเปิด billing) และ OpenAI/Anthropic ที่ยังไม่มี API key ทดสอบ
 - `src/registry.rs` มีทั้ง `thai_score` ที่มาจาก benchmark จริงและค่าประมาณ (ดู comment ในไฟล์) — อย่าเชื่อว่าทุกค่าวัดจริงหมด
 
 ## Roadmap

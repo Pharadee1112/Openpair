@@ -1,0 +1,1568 @@
+[
+  {
+    "id": "tr_05",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'I'm running late because of the traffic.'",
+    "expected_keywords": [
+      "สาย",
+      "รถติด"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_06",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Could you please send me the file by tomorrow?'",
+    "expected_keywords": [
+      "ไฟล์",
+      "พรุ่งนี้",
+      "ส่ง"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_07",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'The weather is very hot today.'",
+    "expected_keywords": [
+      "อากาศ",
+      "ร้อน",
+      "วันนี้"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_08",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Please turn off the lights when you leave the room.'",
+    "expected_keywords": [
+      "ปิดไฟ",
+      "ออกจากห้อง"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_09",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'My phone battery is almost dead.'",
+    "expected_keywords": [
+      "แบต",
+      "โทรศัพท์",
+      "หมด"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_10",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'How much is this shirt?'",
+    "expected_keywords": [
+      "เสื้อ",
+      "เท่าไหร่",
+      "ราคา"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_11",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'I would like to order a large iced latte with less sugar.'",
+    "expected_keywords": [
+      "ลาเต้",
+      "เย็น",
+      "หวานน้อย",
+      "น้ำตาล"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_12",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'The meeting has been moved to Friday afternoon.'",
+    "expected_keywords": [
+      "ประชุม",
+      "วันศุกร์",
+      "บ่าย",
+      "เลื่อน"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_13",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Don't forget to drink enough water.'",
+    "expected_keywords": [
+      "อย่าลืม",
+      "ดื่มน้ำ"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_14",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'We apologize for any inconvenience this may cause.'",
+    "expected_keywords": [
+      "ขออภัย",
+      "ความไม่สะดวก"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_15",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Your order has been shipped and will arrive within 3 business days.'",
+    "expected_keywords": [
+      "คำสั่งซื้อ",
+      "จัดส่ง",
+      "3 วัน",
+      "ทำการ"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_16",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Thank you for your patience while we resolve this issue.'",
+    "expected_keywords": [
+      "ขอบคุณ",
+      "รอ",
+      "ปัญหา",
+      "แก้ไข"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_17",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'The concert tickets sold out within five minutes.'",
+    "expected_keywords": [
+      "บัตร",
+      "คอนเสิร์ต",
+      "หมด",
+      "5 นาที",
+      "ห้านาที"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_18",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'She has been working from home since the start of the year.'",
+    "expected_keywords": [
+      "ทำงาน",
+      "ที่บ้าน",
+      "ต้นปี"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_19",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'If it rains tomorrow, the outdoor event will be postponed.'",
+    "expected_keywords": [
+      "ฝน",
+      "พรุ่งนี้",
+      "กิจกรรม",
+      "เลื่อน",
+      "กลางแจ้ง"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_20",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Please keep your personal belongings with you at all times.'",
+    "expected_keywords": [
+      "สัมภาระ",
+      "ของใช้ส่วนตัว",
+      "ตลอดเวลา",
+      "ติดตัว"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_21",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Actions speak louder than words.'",
+    "expected_keywords": [
+      "การกระทำ",
+      "คำพูด"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สุภาษิต — ควรแปลแบบความหมาย ไม่ใช่ตรงตัว"
+  },
+  {
+    "id": "tr_22",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Don't count your chickens before they hatch.'",
+    "expected_keywords": [
+      "อย่า",
+      "ก่อน",
+      "แน่นอน",
+      "นับ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สำนวนอังกฤษ"
+  },
+  {
+    "id": "tr_23",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'It's not rocket science — anyone can learn to cook this dish.'",
+    "expected_keywords": [
+      "ไม่ได้ยาก",
+      "ใครก็",
+      "ทำอาหาร",
+      "เมนู"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สำนวนอังกฤษ"
+  },
+  {
+    "id": "tr_24",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Let's call it a day and continue tomorrow morning.'",
+    "expected_keywords": [
+      "พอ",
+      "วันนี้",
+      "พรุ่งนี้",
+      "เช้า"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สำนวนอังกฤษ"
+  },
+  {
+    "id": "tr_25",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Please update the app to the latest version to fix the login issue.'",
+    "expected_keywords": [
+      "อัปเดต",
+      "แอป",
+      "เวอร์ชัน",
+      "เข้าสู่ระบบ",
+      "ล็อกอิน"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_26",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Never share your OTP with anyone, including bank staff.'",
+    "expected_keywords": [
+      "OTP",
+      "ห้าม",
+      "ธนาคาร",
+      "พนักงาน",
+      "ใคร"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_27",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'The model generates answers based on patterns it learned from data.'",
+    "expected_keywords": [
+      "โมเดล",
+      "คำตอบ",
+      "รูปแบบ",
+      "ข้อมูล",
+      "เรียนรู้"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_28",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Our startup is looking for a backend developer with Python experience.'",
+    "expected_keywords": [
+      "สตาร์ทอัพ",
+      "นักพัฒนา",
+      "Python",
+      "ประสบการณ์",
+      "backend"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_29",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Cybersecurity experts warn that phishing attacks are becoming harder to detect.'",
+    "expected_keywords": [
+      "ผู้เชี่ยวชาญ",
+      "ความปลอดภัย",
+      "ฟิชชิง",
+      "ตรวจจับ",
+      "เตือน"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_30",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Generative AI can boost productivity, but companies must manage risks such as data leaks and biased outputs.'",
+    "expected_keywords": [
+      "AI",
+      "ประสิทธิภาพ",
+      "ความเสี่ยง",
+      "ข้อมูล",
+      "รั่วไหล",
+      "อคติ"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_31",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'The routing layer picks the cheapest model that can still handle the task reliably.'",
+    "expected_keywords": [
+      "เลือก",
+      "โมเดล",
+      "ถูก",
+      "งาน",
+      "เชื่อถือ"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_32",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Two-factor authentication adds an extra layer of security to your account.'",
+    "expected_keywords": [
+      "ยืนยันตัวตน",
+      "สองขั้นตอน",
+      "ความปลอดภัย",
+      "บัญชี"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_33",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'The company reported a 20% increase in revenue compared to last year.'",
+    "expected_keywords": [
+      "บริษัท",
+      "รายได้",
+      "20%",
+      "ปีที่แล้ว",
+      "เพิ่มขึ้น"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_34",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Due to rising operating costs, we will adjust our subscription prices starting next month.'",
+    "expected_keywords": [
+      "ต้นทุน",
+      "ปรับ",
+      "ราคา",
+      "สมาชิก",
+      "เดือนหน้า"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_35",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Electric vehicle sales in Southeast Asia continue to grow rapidly.'",
+    "expected_keywords": [
+      "รถยนต์ไฟฟ้า",
+      "ยอดขาย",
+      "เอเชียตะวันออกเฉียงใต้",
+      "เติบโต"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_36",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Remote work has blurred the line between personal life and professional life.'",
+    "expected_keywords": [
+      "ทำงาน",
+      "ระยะไกล",
+      "ชีวิตส่วนตัว",
+      "การทำงาน",
+      "เส้นแบ่ง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_37",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Please scan the QR code to pay.'",
+    "expected_keywords": [
+      "สแกน",
+      "QR",
+      "จ่าย",
+      "ชำระ"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_38",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Content creators earn money through sponsorships and affiliate links.'",
+    "expected_keywords": [
+      "ครีเอเตอร์",
+      "รายได้",
+      "สปอนเซอร์",
+      "ลิงก์",
+      "เงิน"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_39",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'The algorithm pushes content that keeps users scrolling, which can harm mental health.'",
+    "expected_keywords": [
+      "อัลกอริทึม",
+      "เนื้อหา",
+      "ผู้ใช้",
+      "เลื่อน",
+      "สุขภาพจิต"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_40",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข้อความต่อไปนี้เป็นภาษาไทยให้เป็นธรรมชาติ: 'Small modular reactors are seen as a potential low-carbon energy source for data centers.'",
+    "expected_keywords": [
+      "เครื่องปฏิกรณ์",
+      "โมดูลาร์",
+      "คาร์บอนต่ำ",
+      "พลังงาน",
+      "ดาต้าเซ็นเตอร์"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10
+  },
+  {
+    "id": "tr_41",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Heavy rain from September 24 to 27 caused widespread flooding in Bangkok and nearby provinces.'",
+    "expected_keywords": [
+      "ฝนตกหนัก",
+      "น้ำท่วม",
+      "กรุงเทพ",
+      "จังหวัด",
+      "24"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_42",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'The government declared September 28 and 29 special holidays for four flood-hit provinces.'",
+    "expected_keywords": [
+      "รัฐบาล",
+      "วันหยุดพิเศษ",
+      "28",
+      "29",
+      "น้ำท่วม",
+      "4 จังหวัด"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_43",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'All eight expressways will be toll-free until September 29.'",
+    "expected_keywords": [
+      "ทางด่วน",
+      "8",
+      "ฟรี",
+      "29"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_44",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'The Prime Minister will propose a 250-billion-baht water management project to the Cabinet.'",
+    "expected_keywords": [
+      "นายกรัฐมนตรี",
+      "250,000 ล้าน",
+      "บริหารจัดการน้ำ",
+      "คณะรัฐมนตรี",
+      "ครม."
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_45",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Puripol Boonson won the men's 200m gold at the Asian Games in 19.88 seconds.'",
+    "expected_keywords": [
+      "ภูริพล",
+      "เหรียญทอง",
+      "200 เมตร",
+      "เอเชียนเกมส์",
+      "19.88"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_46",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Thai exports rose 24.3% year-on-year in August, driven by strong demand for electronics.'",
+    "expected_keywords": [
+      "ส่งออก",
+      "24.3",
+      "สิงหาคม",
+      "อิเล็กทรอนิกส์",
+      "เทียบกับปีก่อน"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_47",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'The Asian Development Bank raised its 2026 growth forecast for Thailand to 2.0 percent.'",
+    "expected_keywords": [
+      "ธนาคารพัฒนาเอเชีย",
+      "ADB",
+      "คาดการณ์",
+      "2.0",
+      "เติบโต"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_48",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Visitors from 60 countries can now stay in Thailand visa-free for up to 30 days.'",
+    "expected_keywords": [
+      "นักท่องเที่ยว",
+      "60 ประเทศ",
+      "วีซ่า",
+      "30 วัน"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_49",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Passengers carrying bicycles could ride all four MRT lines for free on World Car Free Day.'",
+    "expected_keywords": [
+      "ผู้โดยสาร",
+      "จักรยาน",
+      "MRT",
+      "ฟรี",
+      "4 สาย"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_50",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'The government cut ex-refinery diesel prices by 4 baht per litre until the end of October.'",
+    "expected_keywords": [
+      "รัฐบาล",
+      "ดีเซล",
+      "โรงกลั่น",
+      "4 บาท",
+      "ตุลาคม"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_51",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'A 16-year-old Thai singer from Phuket reached the final of America's Got Talent.'",
+    "expected_keywords": [
+      "นักร้อง",
+      "16 ปี",
+      "ภูเก็ต",
+      "รอบชิง",
+      "America's Got Talent"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_52",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Police charged a man who rode a jet ski on a flooded Bangkok road.'",
+    "expected_keywords": [
+      "ตำรวจ",
+      "เจ็ตสกี",
+      "ถนน",
+      "น้ำท่วม",
+      "ข้อหา"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_53",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'State banks offered a three-month debt moratorium at zero interest for flood victims.'",
+    "expected_keywords": [
+      "ธนาคารรัฐ",
+      "พักชำระหนี้",
+      "3 เดือน",
+      "ดอกเบี้ย",
+      "ผู้ประสบภัย"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_54",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Thailand is studying the feasibility of a 600-megawatt small modular nuclear reactor.'",
+    "expected_keywords": [
+      "ศึกษา",
+      "ความเป็นไปได้",
+      "600 เมกะวัตต์",
+      "นิวเคลียร์",
+      "โมดูลาร์"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_55",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Prices of instant coffee, canned fish and cooking oil are expected to rise 5 to 10 percent.'",
+    "expected_keywords": [
+      "กาแฟสำเร็จรูป",
+      "ปลากระป๋อง",
+      "น้ำมันพืช",
+      "ราคา",
+      "5"
+    ],
+    "keyword_threshold": 0.5,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_56",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'The disaster insurance scheme will cover floods, storms and earthquakes for one year.'",
+    "expected_keywords": [
+      "ประกันภัยพิบัติ",
+      "น้ำท่วม",
+      "พายุ",
+      "วาตภัย",
+      "แผ่นดินไหว",
+      "1 ปี"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_57",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Schools under the Bangkok Metropolitan Administration were closed due to flooding.'",
+    "expected_keywords": [
+      "โรงเรียน",
+      "กรุงเทพมหานคร",
+      "กทม.",
+      "ปิด",
+      "น้ำท่วม"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_58",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'The new submarine cable will link Thailand and the United States through five ASEAN countries.'",
+    "expected_keywords": [
+      "สายเคเบิลใต้น้ำ",
+      "ไทย",
+      "สหรัฐ",
+      "อาเซียน",
+      "5 ประเทศ"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_59",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'The Department of Fisheries requested 70 million baht to control the spread of blackchin tilapia.'",
+    "expected_keywords": [
+      "กรมประมง",
+      "70 ล้านบาท",
+      "ปลาหมอคางดำ",
+      "ควบคุม",
+      "แพร่"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_60",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลข่าวภาษาอังกฤษต่อไปนี้เป็นภาษาไทยแบบภาษาข่าว: 'Customs collected over 4 billion baht in duties from low-value imported parcels this fiscal year.'",
+    "expected_keywords": [
+      "ศุลกากร",
+      "4,000 ล้าน",
+      "อากร",
+      "พัสดุ",
+      "นำเข้า"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 30,
+    "notes": "ข่าวปัจจุบัน ก.ย. 2569 (เรียบเรียงใหม่)"
+  },
+  {
+    "id": "tr_61",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'This song slaps!'",
+    "expected_keywords": [
+      "เพลง",
+      "ปัง",
+      "ดี",
+      "เพราะ",
+      "ต๊าช"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_62",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'Your outfit is fire today.'",
+    "expected_keywords": [
+      "ชุด",
+      "ปัง",
+      "จึ้ง",
+      "สวย",
+      "ต๊าช"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_63",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'I'm dead 💀 that's so funny.'",
+    "expected_keywords": [
+      "ตาย",
+      "ขำ",
+      "ฮา",
+      "ตุย"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_64",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'He ghosted me after our second date.'",
+    "expected_keywords": [
+      "หาย",
+      "เงียบ",
+      "เดท",
+      "ครั้งที่สอง",
+      "โกสต์"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_65",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'That's a huge red flag, bestie.'",
+    "expected_keywords": [
+      "เรดแฟล็ก",
+      "red flag",
+      "สัญญาณ",
+      "แก",
+      "เพื่อน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_66",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'No cap, this is the best mookata in town.'",
+    "expected_keywords": [
+      "หมูกระทะ",
+      "จริง",
+      "ไม่โม้",
+      "ที่สุด",
+      "อร่อย"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_67",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'I'm lowkey obsessed with this cafe.'",
+    "expected_keywords": [
+      "คาเฟ่",
+      "ติด",
+      "ชอบ",
+      "แอบ"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_68",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'She's the main character today, periodt.'",
+    "expected_keywords": [
+      "นางเอก",
+      "ตัวหลัก",
+      "ตัวแม่",
+      "จบ",
+      "วันนี้"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_69",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'Stop flexing your new iPhone, bro.'",
+    "expected_keywords": [
+      "ขิง",
+      "อวด",
+      "ไอโฟน",
+      "iPhone"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_70",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'The vibes at this party are immaculate.'",
+    "expected_keywords": [
+      "บรรยากาศ",
+      "ฟีล",
+      "ปาร์ตี้",
+      "ดี",
+      "ไวบ์"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_71",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'I'm so done with this group project.'",
+    "expected_keywords": [
+      "เบื่อ",
+      "พอ",
+      "งานกลุ่ม",
+      "ไม่ไหว"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_72",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'Spill the tea! What happened last night?'",
+    "expected_keywords": [
+      "เล่า",
+      "เมื่อคืน",
+      "เผือก",
+      "เรื่อง",
+      "เกิดอะไร"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_73",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'It's giving rich auntie energy.'",
+    "expected_keywords": [
+      "ป้า",
+      "รวย",
+      "ฟีล",
+      "ไฮโซ",
+      "คุณนาย"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_74",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'He has zero rizz, it's giving the ick.'",
+    "expected_keywords": [
+      "จีบ",
+      "เสน่ห์",
+      "ไม่เป็น",
+      "หมดอารมณ์",
+      "ไม่ชอบ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_75",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'Low-key, the new menu is kinda mid.'",
+    "expected_keywords": [
+      "เมนู",
+      "ธรรมดา",
+      "เฉยๆ",
+      "กลางๆ",
+      "แอบ"
+    ],
+    "keyword_threshold": 0.4,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_76",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'We're in a situationship and I hate it here.'",
+    "expected_keywords": [
+      "สถานะ",
+      "ไม่ชัดเจน",
+      "คลุมเครือ",
+      "ความสัมพันธ์",
+      "เกลียด",
+      "ไม่ไหว"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_77",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'Bro really said 'trust me' and then vanished.'",
+    "expected_keywords": [
+      "เชื่อ",
+      "หาย",
+      "ไว้ใจ",
+      "แก",
+      "เพื่อน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_78",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'This deal is too good, I'm adding to cart rn.'",
+    "expected_keywords": [
+      "โปร",
+      "ดีล",
+      "ตะกร้า",
+      "ตำ",
+      "เดี๋ยวนี้",
+      "ถูก"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_79",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'Not me doomscrolling at 3 a.m. again.'",
+    "expected_keywords": [
+      "ตีสาม",
+      "ไถ",
+      "อีกแล้ว",
+      "นอน",
+      "โทรศัพท์"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_80",
+    "category": "translation",
+    "difficulty": "easy",
+    "prompt": "แปลประโยคภาษาอังกฤษสแลงต่อไปนี้เป็นภาษาไทยแบบที่วัยรุ่นไทยพูดกันจริงๆ (ไม่ต้องแปลตรงตัว): 'OMG, I can't even. This is too cute!'",
+    "expected_keywords": [
+      "น่ารัก",
+      "ไม่ไหว",
+      "ใจจะวาย",
+      "ตายแล้ว"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 10,
+    "notes": "สแลงอังกฤษ → ภาษาพูดวัยรุ่นไทย"
+  },
+  {
+    "id": "tr_81",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"งานนี้ปังมากแม่ ลูกค้าชอบฉ่ำ\"",
+    "expected_keywords": [
+      "ประสบความสำเร็จ",
+      "ลูกค้า",
+      "พึงพอใจ",
+      "อย่างมาก",
+      "ดีเยี่ยม"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_82",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"พรุ่งนี้เข้าออฟฟิศไม่ไหวอ่ะ ป่วยหนักมาก ขอ WFH นะคะ\"",
+    "expected_keywords": [
+      "ขออนุญาต",
+      "ทำงาน",
+      "ที่บ้าน",
+      "ไม่สบาย",
+      "พรุ่งนี้"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_83",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"ส่งงานช้าไปหน่อยนะ ระบบล่มตุยทั้งคืนเลย\"",
+    "expected_keywords": [
+      "ขออภัย",
+      "ล่าช้า",
+      "ระบบ",
+      "ขัดข้อง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_84",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"ไอเดียนี้มิดมาก ไม่ว้าว ลองคิดใหม่ดีกว่าป่ะ\"",
+    "expected_keywords": [
+      "แนวคิด",
+      "ยัง",
+      "ปรับปรุง",
+      "พิจารณา",
+      "ใหม่"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_85",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"ลูกค้าเทนัดเฉยเลย ไม่บอกสักคำ\"",
+    "expected_keywords": [
+      "ลูกค้า",
+      "ยกเลิก",
+      "นัดหมาย",
+      "ไม่ได้แจ้ง",
+      "ไม่มาตามนัด"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_86",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"โปรเจกต์นี้ต้องขิงคู่แข่งให้ได้ งบก็ฉ่ำแล้ว ห้ามนก\"",
+    "expected_keywords": [
+      "โครงการ",
+      "คู่แข่ง",
+      "งบประมาณ",
+      "เพียงพอ",
+      "สำเร็จ",
+      "เหนือกว่า"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_87",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"เดี๋ยวแชร์สไลด์ให้ในแชทนะ ช่วยเช็กให้ทีงับ\"",
+    "expected_keywords": [
+      "สไลด์",
+      "แชร์",
+      "ตรวจสอบ",
+      "รบกวน",
+      "ส่ง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_88",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"หัวหน้าชอบเผือกเรื่องส่วนตัวลูกน้อง แบบลำไยมาก\"",
+    "expected_keywords": [
+      "ผู้บังคับบัญชา",
+      "หัวหน้า",
+      "ส่วนตัว",
+      "พนักงาน",
+      "ไม่เหมาะสม",
+      "ก้าวก่าย"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_89",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"ขอเลื่อนประชุมไปบ่ายสองได้ป่ะ ติดธุระด่วน\"",
+    "expected_keywords": [
+      "ขอ",
+      "เลื่อน",
+      "ประชุม",
+      "14.00",
+      "บ่ายสอง",
+      "ธุระ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_90",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "เรียบเรียงข้อความภาษาวัยรุ่น/ภาษาพูดต่อไปนี้ใหม่เป็นภาษาไทยทางการ สำหรับใช้ในอีเมลหรือรายงาน: \"ทีมเราเบิร์นเอาท์กันหมดแล้ว OT ทุกวันไม่ไหวจะเคลียร์\"",
+    "expected_keywords": [
+      "ทีม",
+      "เหนื่อยล้า",
+      "หมดไฟ",
+      "ทำงานล่วงเวลา",
+      "ทุกวัน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 20,
+    "notes": "ภาษาพูด/สแลง → ภาษาทางการ"
+  },
+  {
+    "id": "tr_91",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"ร้านอาหารแห่งนี้มีรสชาติอร่อยเป็นอย่างยิ่ง และราคาเหมาะสมกับคุณภาพ\"",
+    "expected_keywords": [
+      "อร่อย",
+      "ราคา",
+      "คุ้ม",
+      "ฉ่ำ",
+      "ปัง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_92",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"ข้าพเจ้ารู้สึกเหนื่อยล้าจากการทำงานเป็นอย่างมากในสัปดาห์นี้\"",
+    "expected_keywords": [
+      "เหนื่อย",
+      "งาน",
+      "อาทิตย์นี้",
+      "ไม่ไหว",
+      "เบิร์นเอาท์"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_93",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"ขอเชิญชวนเพื่อนทุกท่านเข้าร่วมงานเลี้ยงวันเกิดของข้าพเจ้าในวันเสาร์นี้\"",
+    "expected_keywords": [
+      "มา",
+      "วันเกิด",
+      "เสาร์นี้",
+      "ปาร์ตี้",
+      "เพื่อน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_94",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"บุคคลดังกล่าวยุติการติดต่อสื่อสารกับข้าพเจ้าโดยไม่แจ้งเหตุผล\"",
+    "expected_keywords": [
+      "หาย",
+      "เงียบ",
+      "โกสต์",
+      "ไม่บอก",
+      "ติดต่อ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_95",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"สินค้าชิ้นนี้ได้รับความนิยมอย่างสูงและจำหน่ายหมดอย่างรวดเร็ว\"",
+    "expected_keywords": [
+      "ของ",
+      "หมด",
+      "ไว",
+      "ฮิต",
+      "ปัง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_96",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"ข้าพเจ้าไม่เห็นด้วยกับพฤติกรรมการอวดทรัพย์สินในสื่อสังคมออนไลน์\"",
+    "expected_keywords": [
+      "ขิง",
+      "อวด",
+      "โซเชียล",
+      "ไม่โอเค",
+      "ไม่ปลื้ม"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_97",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"การแสดงคอนเสิร์ตเมื่อคืนนี้ยอดเยี่ยมและสร้างความประทับใจอย่างมาก\"",
+    "expected_keywords": [
+      "คอนเสิร์ต",
+      "เมื่อคืน",
+      "ปัง",
+      "ดีมาก",
+      "ฟิน",
+      "ต๊าช"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_98",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"เนื่องจากฝนตกหนัก ข้าพเจ้าจึงขอยกเลิกนัดหมายในวันนี้\"",
+    "expected_keywords": [
+      "ฝน",
+      "หนัก",
+      "ยกเลิก",
+      "นัด",
+      "วันนี้",
+      "ไม่ไป"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_99",
+    "category": "translation",
+    "difficulty": "hard",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"ข้าพเจ้าประสบปัญหาในการตัดใจจากบุคคลที่เคยมีความสัมพันธ์ด้วย\"",
+    "expected_keywords": [
+      "มูฟออน",
+      "ตัดใจ",
+      "แฟนเก่า",
+      "ไม่ได้",
+      "ยาก"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  },
+  {
+    "id": "tr_100",
+    "category": "translation",
+    "difficulty": "medium",
+    "prompt": "เรียบเรียงข้อความทางการต่อไปนี้ใหม่เป็นภาษาพูดสบายๆ แบบที่วัยรุ่นไทยโพสต์ในโซเชียล: \"ผลิตภัณฑ์นี้ได้รับการแนะนำจากผู้มีอิทธิพลทางออนไลน์หลายท่าน\"",
+    "expected_keywords": [
+      "ป้ายยา",
+      "อินฟลู",
+      "รีวิว",
+      "แนะนำ",
+      "ของ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.4,
+    "min_length": 15,
+    "notes": "ภาษาทางการ → ภาษาพูดวัยรุ่น"
+  }
+]

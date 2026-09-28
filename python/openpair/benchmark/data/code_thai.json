@@ -1,0 +1,1622 @@
+[
+  {
+    "id": "code_04",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nnums = [3, 8, 1, 9]\nprint(max(nums), min(nums), sum(nums) / len(nums))\n```",
+    "expected_keywords": [
+      "ค่ามากที่สุด",
+      "ค่าน้อยที่สุด",
+      "ค่าเฉลี่ย",
+      "ลิสต์",
+      "list"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_05",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nfor i in range(1, 11):\n    if i % 2 == 0:\n        print(i)\n```",
+    "expected_keywords": [
+      "วนลูป",
+      "เลขคู่",
+      "หาร",
+      "1",
+      "10"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_06",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nname = input(\"ชื่ออะไร: \")\nprint(f\"สวัสดี {name}!\")\n```",
+    "expected_keywords": [
+      "รับค่า",
+      "input",
+      "ผู้ใช้",
+      "แสดง",
+      "ทักทาย"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_07",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nwords = \"แมว หมา แมว นก แมว\".split()\ncount = {}\nfor w in words:\n    count[w] = count.get(w, 0) + 1\nprint(count)\n```",
+    "expected_keywords": [
+      "นับ",
+      "คำ",
+      "dictionary",
+      "ดิกชันนารี",
+      "split"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_08",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nsquares = [x * x for x in range(5)]\n```",
+    "expected_keywords": [
+      "list comprehension",
+      "กำลังสอง",
+      "ลิสต์",
+      "0",
+      "4"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_09",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\ndef to_buddhist_year(ad_year: int) -> int:\n    return ad_year + 543\n```",
+    "expected_keywords": [
+      "พ.ศ.",
+      "ค.ศ.",
+      "543",
+      "แปลง",
+      "ฟังก์ชัน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_10",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nimport re\ndef is_thai_mobile(s: str) -> bool:\n    return re.fullmatch(r\"0[689]\\d{8}\", s) is not None\n```",
+    "expected_keywords": [
+      "เบอร์โทร",
+      "มือถือ",
+      "regex",
+      "10 หลัก",
+      "0"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_11",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\ndef valid_thai_id(pid: str) -> bool:\n    if len(pid) != 13 or not pid.isdigit():\n        return False\n    total = sum(int(pid[i]) * (13 - i) for i in range(12))\n    return (11 - total % 11) % 10 == int(pid[12])\n```",
+    "expected_keywords": [
+      "บัตรประชาชน",
+      "13 หลัก",
+      "checksum",
+      "หลักสุดท้าย",
+      "11"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_12",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nwith open(\"data.csv\", encoding=\"utf-8\") as f:\n    rows = [line.strip().split(\",\") for line in f]\n```",
+    "expected_keywords": [
+      "ไฟล์",
+      "CSV",
+      "utf-8",
+      "บรรทัด",
+      "เปิด"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_13",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nimport requests\nr = requests.get(\"https://api.example.com/weather?city=Bangkok\", timeout=5)\nr.raise_for_status()\nprint(r.json()[\"temp\"])\n```",
+    "expected_keywords": [
+      "API",
+      "request",
+      "timeout",
+      "JSON",
+      "อุณหภูมิ",
+      "error"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_14",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nfrom functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    return n if n < 2 else fib(n - 1) + fib(n - 2)\n```",
+    "expected_keywords": [
+      "cache",
+      "แคช",
+      "Fibonacci",
+      "ฟีโบนัชชี",
+      "เรียกซ้ำ",
+      "recursion"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_15",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nclass BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def withdraw(self, amount):\n        if amount > self.balance:\n            raise ValueError(\"ยอดเงินไม่พอ\")\n        self.balance -= amount\n```",
+    "expected_keywords": [
+      "คลาส",
+      "class",
+      "ถอนเงิน",
+      "ยอดเงิน",
+      "exception",
+      "ValueError"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_16",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nimport asyncio\n\nasync def fetch(i):\n    await asyncio.sleep(1)\n    return i\n\nasync def main():\n    results = await asyncio.gather(*(fetch(i) for i in range(10)))\n    print(results)\n\nasyncio.run(main())\n```",
+    "expected_keywords": [
+      "async",
+      "พร้อมกัน",
+      "gather",
+      "await",
+      "1 วินาที"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_17",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\ndef chunks(lst, n):\n    for i in range(0, len(lst), n):\n        yield lst[i:i + n]\n```",
+    "expected_keywords": [
+      "generator",
+      "yield",
+      "แบ่ง",
+      "ชิ้น",
+      "หน่วยความจำ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_18",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nimport pandas as pd\ndf = pd.read_csv(\"sales.csv\")\nprint(df.groupby(\"province\")[\"amount\"].sum().sort_values(ascending=False).head(5))\n```",
+    "expected_keywords": [
+      "pandas",
+      "จังหวัด",
+      "ยอดขาย",
+      "รวม",
+      "5 อันดับ",
+      "groupby"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_19",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nfrom dataclasses import dataclass, field\n\n@dataclass(frozen=True)\nclass Order:\n    id: str\n    items: tuple = field(default_factory=tuple)\n```",
+    "expected_keywords": [
+      "dataclass",
+      "frozen",
+      "แก้ไขไม่ได้",
+      "immutable",
+      "ค่าเริ่มต้น"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_20",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```javascript\nconst prices = [120, 45, 300];\nconst total = prices.reduce((sum, p) => sum + p, 0);\nconsole.log(total);\n```",
+    "expected_keywords": [
+      "reduce",
+      "ผลรวม",
+      "ราคา",
+      "อาร์เรย์",
+      "array"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_21",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```javascript\ndocument.querySelector(\"#btn\").addEventListener(\"click\", () => {\n  alert(\"กดแล้ว!\");\n});\n```",
+    "expected_keywords": [
+      "ปุ่ม",
+      "คลิก",
+      "event",
+      "alert",
+      "แจ้งเตือน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_22",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```javascript\nasync function getUser(id) {\n  try {\n    const res = await fetch(`/api/users/${id}`);\n    if (!res.ok) throw new Error(res.status);\n    return await res.json();\n  } catch (e) {\n    console.error(\"โหลดผู้ใช้ไม่สำเร็จ\", e);\n    return null;\n  }\n}\n```",
+    "expected_keywords": [
+      "async",
+      "fetch",
+      "ผู้ใช้",
+      "error",
+      "try",
+      "JSON"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_23",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```javascript\nconst debounce = (fn, ms) => {\n  let t;\n  return (...args) => {\n    clearTimeout(t);\n    t = setTimeout(() => fn(...args), ms);\n  };\n};\n```",
+    "expected_keywords": [
+      "debounce",
+      "หน่วงเวลา",
+      "setTimeout",
+      "เรียกซ้ำ",
+      "ค้นหา"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_24",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```javascript\nconst formatted = new Intl.NumberFormat(\"th-TH\", {\n  style: \"currency\", currency: \"THB\"\n}).format(1234567.5);\n```",
+    "expected_keywords": [
+      "สกุลเงิน",
+      "บาท",
+      "THB",
+      "รูปแบบ",
+      "ภาษาไทย"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_25",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```javascript\nconst [count, setCount] = useState(0);\nuseEffect(() => {\n  const id = setInterval(() => setCount(c => c + 1), 1000);\n  return () => clearInterval(id);\n}, []);\n```",
+    "expected_keywords": [
+      "React",
+      "state",
+      "useEffect",
+      "ทุกวินาที",
+      "cleanup",
+      "ล้าง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_26",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```typescript\ntype Status = \"pending\" | \"paid\" | \"shipped\";\ninterface Order { id: string; status: Status; total: number }\nfunction isPaid(o: Order): boolean { return o.status === \"paid\"; }\n```",
+    "expected_keywords": [
+      "type",
+      "interface",
+      "สถานะ",
+      "union",
+      "ชำระ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_27",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```sql\nSELECT name, price FROM products WHERE price < 100 ORDER BY price;\n```",
+    "expected_keywords": [
+      "สินค้า",
+      "ราคา",
+      "น้อยกว่า 100",
+      "เรียง",
+      "ตาราง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_28",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```sql\nSELECT c.province, COUNT(*) AS orders\nFROM orders o JOIN customers c ON o.customer_id = c.id\nGROUP BY c.province\nHAVING COUNT(*) > 50;\n```",
+    "expected_keywords": [
+      "JOIN",
+      "จังหวัด",
+      "นับ",
+      "GROUP BY",
+      "HAVING",
+      "50"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_29",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```sql\nSELECT user_id, amount,\n       SUM(amount) OVER (PARTITION BY user_id ORDER BY created_at) AS running_total\nFROM payments;\n```",
+    "expected_keywords": [
+      "window function",
+      "ผลรวมสะสม",
+      "PARTITION",
+      "ผู้ใช้",
+      "เรียงตามเวลา"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_30",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```bash\nfor f in *.jpg; do\n  mv \"$f\" \"photo_$f\"\ndone\n```",
+    "expected_keywords": [
+      "ไฟล์",
+      "เปลี่ยนชื่อ",
+      "jpg",
+      "วนลูป",
+      "photo_"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_31",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```bash\ngrep -rn \"TODO\" src/ | wc -l\n```",
+    "expected_keywords": [
+      "ค้นหา",
+      "TODO",
+      "นับ",
+      "บรรทัด",
+      "โฟลเดอร์"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_32",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```rust\nfn divide(a: f64, b: f64) -> Result<f64, String> {\n    if b == 0.0 { return Err(\"หารด้วยศูนย์ไม่ได้\".into()); }\n    Ok(a / b)\n}\n```",
+    "expected_keywords": [
+      "Result",
+      "Err",
+      "Ok",
+      "หารด้วยศูนย์",
+      "error"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_33",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```rust\nlet names: Vec<String> = users.iter()\n    .filter(|u| u.active)\n    .map(|u| u.name.clone())\n    .collect();\n```",
+    "expected_keywords": [
+      "iterator",
+      "filter",
+      "map",
+      "active",
+      "collect",
+      "ชื่อ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_34",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```go\nfunc worker(jobs <-chan int, results chan<- int) {\n    for j := range jobs {\n        results <- j * 2\n    }\n}\n```",
+    "expected_keywords": [
+      "goroutine",
+      "channel",
+      "งาน",
+      "ผลลัพธ์",
+      "คูณ 2"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_35",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```html\n<form action=\"/login\" method=\"post\">\n  <input type=\"email\" name=\"email\" required>\n  <input type=\"password\" name=\"password\" required>\n  <button>เข้าสู่ระบบ</button>\n</form>\n```",
+    "expected_keywords": [
+      "ฟอร์ม",
+      "อีเมล",
+      "รหัสผ่าน",
+      "POST",
+      "required",
+      "เข้าสู่ระบบ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_36",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```css\n.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }\n```",
+    "expected_keywords": [
+      "grid",
+      "คอลัมน์",
+      "200px",
+      "ปรับ",
+      "หน้าจอ",
+      "ช่องว่าง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_37",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nfrom openai import OpenAI\nclient = OpenAI()\nresp = client.chat.completions.create(\n    model=\"gpt-5.4-nano\",\n    messages=[{\"role\": \"user\", \"content\": \"สรุปข่าวนี้ให้หน่อย\"}],\n)\nprint(resp.choices[0].message.content)\n```",
+    "expected_keywords": [
+      "API",
+      "โมเดล",
+      "ข้อความ",
+      "role",
+      "ผลลัพธ์",
+      "สรุป"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_38",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\ndef route(prompt: str) -> str:\n    if len(prompt) < 200 and not any(k in prompt for k in [\"code\", \"โค้ด\"]):\n        return \"small-model\"\n    if \"วิเคราะห์\" in prompt or len(prompt) > 4000:\n        return \"top-model\"\n    return \"mid-model\"\n```",
+    "expected_keywords": [
+      "เลือกโมเดล",
+      "ความยาว",
+      "prompt",
+      "เงื่อนไข",
+      "ค่าใช้จ่าย"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_39",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nimport hashlib, hmac\ndef verify(body: bytes, sig: str, secret: bytes) -> bool:\n    expected = hmac.new(secret, body, hashlib.sha256).hexdigest()\n    return hmac.compare_digest(expected, sig)\n```",
+    "expected_keywords": [
+      "HMAC",
+      "ลายเซ็น",
+      "webhook",
+      "SHA256",
+      "compare_digest",
+      "timing"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_40",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\nfrom datetime import datetime\nfrom zoneinfo import ZoneInfo\nnow = datetime.now(ZoneInfo(\"Asia/Bangkok\"))\nprint(now.strftime(\"%d/%m/\") + str(now.year + 543))\n```",
+    "expected_keywords": [
+      "เวลา",
+      "กรุงเทพ",
+      "timezone",
+      "พ.ศ.",
+      "543",
+      "วันที่"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_41",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```python\ndef baht_text(n: int) -> str:\n    digits = \"ศูนย์ หนึ่ง สอง สาม สี่ ห้า หก เจ็ด แปด เก้า\".split()\n    places = [\"\", \"สิบ\", \"ร้อย\", \"พัน\", \"หมื่น\", \"แสน\"]\n    s = str(n)[::-1]\n    out = []\n    for i, d in enumerate(s):\n        d = int(d)\n        if d == 0: continue\n        if i == 1 and d == 1: word = \"สิบ\"\n        elif i == 1 and d == 2: word = \"ยี่สิบ\"\n        elif i == 0 and d == 1 and len(s) > 1: word = \"เอ็ด\"\n        else: word = digits[d] + places[i]\n        out.append(word)\n    return \"\".join(reversed(out)) + \"บาทถ้วน\"\n```",
+    "expected_keywords": [
+      "ตัวเลข",
+      "คำอ่าน",
+      "บาท",
+      "เอ็ด",
+      "ยี่สิบ",
+      "หลัก"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_42",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```dockerfile\nFROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\nCOPY . .\nCMD [\"python\", \"main.py\"]\n```",
+    "expected_keywords": [
+      "Docker",
+      "image",
+      "ติดตั้ง",
+      "คัดลอก",
+      "รัน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_43",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย code ต่อไปนี้เป็นภาษาไทยให้เข้าใจง่าย:\n\n```yaml\non: [push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pip install -e . && pytest\n```",
+    "expected_keywords": [
+      "GitHub Actions",
+      "CI",
+      "push",
+      "ทดสอบ",
+      "pytest"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40
+  },
+  {
+    "id": "code_44",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\ndef average(nums):\n    return sum(nums) / len(nums)\n\nprint(average([]))\n```",
+    "expected_keywords": [
+      "ลิสต์ว่าง",
+      "ZeroDivisionError",
+      "หารด้วยศูนย์",
+      "ตรวจสอบ",
+      "if"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_45",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\ntotal = 0\nfor i in range(1, 10):\n    total += i\nprint(\"ผลรวม 1 ถึง 10 =\", total)\n```",
+    "expected_keywords": [
+      "range",
+      "11",
+      "ไม่รวม",
+      "10"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_46",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\ndef add_item(item, cart=[]):\n    cart.append(item)\n    return cart\n```",
+    "expected_keywords": [
+      "mutable",
+      "default",
+      "None",
+      "ค่าเริ่มต้น",
+      "แชร์"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_47",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nprice = input(\"ราคา: \")\nvat = price * 0.07\nprint(vat)\n```",
+    "expected_keywords": [
+      "string",
+      "สตริง",
+      "float",
+      "แปลง",
+      "ชนิดข้อมูล"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_48",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nusers = [\"a\", \"b\", \"c\"]\nfor u in users:\n    if u == \"b\":\n        users.remove(u)\n```",
+    "expected_keywords": [
+      "ลบ",
+      "ระหว่างวนลูป",
+      "ข้าม",
+      "สำเนา",
+      "list comprehension"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_49",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nif 0.1 + 0.2 == 0.3:\n    print(\"เท่ากัน\")\n```",
+    "expected_keywords": [
+      "ทศนิยม",
+      "floating",
+      "ความคลาดเคลื่อน",
+      "isclose",
+      "Decimal"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_50",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nquery = f\"SELECT * FROM users WHERE name = '{name}'\"\ncursor.execute(query)\n```",
+    "expected_keywords": [
+      "SQL injection",
+      "parameter",
+      "พารามิเตอร์",
+      "ความปลอดภัย",
+      "placeholder"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_51",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nimport threading\ncounter = 0\ndef inc():\n    global counter\n    for _ in range(100000):\n        counter += 1\nthreads = [threading.Thread(target=inc) for _ in range(4)]\n[t.start() for t in threads]; [t.join() for t in threads]\nprint(counter)\n```",
+    "expected_keywords": [
+      "race condition",
+      "Lock",
+      "thread",
+      "พร้อมกัน",
+      "400000"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_52",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nf = open(\"log.txt\", \"w\")\nf.write(\"เริ่มทำงาน\")\nrisky_operation()\nf.close()\n```",
+    "expected_keywords": [
+      "with",
+      "ปิดไฟล์",
+      "exception",
+      "context manager",
+      "finally"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_53",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nAPI_KEY = \"sk-live-8f3a9c...\"\nrequests.post(url, headers={\"Authorization\": API_KEY})\n```",
+    "expected_keywords": [
+      "hardcode",
+      "environment",
+      "ตัวแปรสภาพแวดล้อม",
+      "รั่วไหล",
+      "ความลับ",
+      ".env"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_54",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```javascript\nif (age = 18) {\n  console.log(\"อายุ 18 ปี\");\n}\n```",
+    "expected_keywords": [
+      "===",
+      "กำหนดค่า",
+      "เปรียบเทียบ",
+      "="
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_55",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```javascript\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 100);\n}\n```",
+    "expected_keywords": [
+      "var",
+      "let",
+      "closure",
+      "3",
+      "scope"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_56",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```javascript\nconst data = fetch(\"/api/items\");\nconsole.log(data.length);\n```",
+    "expected_keywords": [
+      "Promise",
+      "await",
+      "async",
+      "then",
+      "json"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_57",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```javascript\nconst nums = [10, 1, 5, 100];\nnums.sort();\nconsole.log(nums);\n```",
+    "expected_keywords": [
+      "sort",
+      "string",
+      "ตัวอักษร",
+      "(a, b) => a - b",
+      "เปรียบเทียบ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_58",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```javascript\nelement.innerHTML = \"สวัสดี \" + userInput;\n```",
+    "expected_keywords": [
+      "XSS",
+      "textContent",
+      "ความปลอดภัย",
+      "HTML",
+      "escape"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_59",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```sql\nUPDATE users SET status = 'inactive';\n-- ตั้งใจจะปิดเฉพาะผู้ใช้ id = 42\n```",
+    "expected_keywords": [
+      "WHERE",
+      "ทุกแถว",
+      "ผู้ใช้ทั้งหมด",
+      "id = 42"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_60",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```sql\nSELECT * FROM orders WHERE coupon = NULL;\n```",
+    "expected_keywords": [
+      "IS NULL",
+      "NULL",
+      "เปรียบเทียบ",
+      "="
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_61",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```rust\nlet v = vec![1, 2, 3];\nlet first = &v[0];\nv.push(4);\nprintln!(\"{}\", first);\n```",
+    "expected_keywords": [
+      "borrow",
+      "ยืม",
+      "mutable",
+      "mut",
+      "push"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_62",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\ndef is_leap(year):\n    return year % 4 == 0\n```",
+    "expected_keywords": [
+      "ปีอธิกสุรทิน",
+      "100",
+      "400",
+      "1900",
+      "2000"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_63",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "code ต่อไปนี้มีบั๊ก หาให้เจอ อธิบายสาเหตุเป็นภาษาไทย และเขียน code ที่แก้แล้ว:\n\n```python\nfrom datetime import datetime\nd = datetime.strptime(\"28/09/2569\", \"%d/%m/%Y\")\nage_days = (datetime.now() - d).days\n```",
+    "expected_keywords": [
+      "พ.ศ.",
+      "ค.ศ.",
+      "543",
+      "ติดลบ",
+      "แปลงปี"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 60,
+    "notes": "หาบั๊ก + อธิบายไทย"
+  },
+  {
+    "id": "code_64",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "เขียนฟังก์ชัน Python คำนวณภาษีมูลค่าเพิ่ม (VAT 7%) จากราคาสินค้า แล้วคืนค่าราคารวม VAT พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "def",
+      "0.07",
+      "VAT",
+      "ราคา",
+      "return"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_65",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "เขียนฟังก์ชัน Python แปลงปี ค.ศ. เป็น พ.ศ. และในทางกลับกัน พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "def",
+      "543",
+      "พ.ศ.",
+      "ค.ศ."
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_66",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียนฟังก์ชัน Python ตรวจสอบเลขบัตรประชาชนไทย 13 หลักว่าถูกต้องตาม checksum หรือไม่ พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "def",
+      "13",
+      "11",
+      "checksum",
+      "บัตรประชาชน"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_67",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียนฟังก์ชัน Python แปลงตัวเลขจำนวนเงิน (ไม่เกินล้าน) เป็นคำอ่านภาษาไทยแบบเช็คธนาคาร เช่น 121 → หนึ่งร้อยยี่สิบเอ็ดบาทถ้วน พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "def",
+      "เอ็ด",
+      "ยี่สิบ",
+      "บาทถ้วน",
+      "ร้อย"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_68",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "เขียนฟังก์ชัน JavaScript ตรวจสอบว่าเบอร์มือถือไทย (ขึ้นต้น 06/08/09 และมี 10 หลัก) ถูกรูปแบบหรือไม่ พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "function",
+      "regex",
+      "test",
+      "10",
+      "0"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_69",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน Python นับความถี่ของแต่ละคำในประโยคภาษาไทย โดยใช้ไลบรารีตัดคำ (เช่น PyThaiNLP) พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "pythainlp",
+      "word_tokenize",
+      "Counter",
+      "ตัดคำ",
+      "ความถี่"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_70",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน SQL หายอดขายรวมรายเดือนของปี 2569 จากตาราง orders(id, amount, created_at) พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "SELECT",
+      "SUM",
+      "GROUP BY",
+      "เดือน",
+      "2026"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_71",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน Python อ่านไฟล์ CSV รายชื่อนักเรียน (ชื่อ, คะแนน) แล้วตัดเกรด A/B/C/D/F ตามเกณฑ์ 80/70/60/50 พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "csv",
+      "def",
+      "80",
+      "เกรด",
+      "if"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_72",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "เขียน Python ส่งข้อความแจ้งเตือนเข้า LINE ผ่าน Messaging API เมื่อราคาทองขึ้นเกินที่กำหนด พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "requests",
+      "LINE",
+      "token",
+      "ราคาทอง",
+      "Authorization"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_73",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน JavaScript แสดงวันที่ปัจจุบันเป็นรูปแบบภาษาไทย เช่น 'วันอาทิตย์ที่ 28 กันยายน พ.ศ. 2569' พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "toLocaleDateString",
+      "th-TH",
+      "Intl",
+      "พ.ศ.",
+      "Date"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_74",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "เขียน FastAPI endpoint รับข้อความภาษาไทย แล้วคืนค่าว่าเป็นความรู้สึกบวก/ลบ/กลาง (ใช้ keyword ง่ายๆ ก็ได้) พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "FastAPI",
+      "@app.post",
+      "บวก",
+      "ลบ",
+      "return"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_75",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน Python คำนวณค่างวดผ่อนบ้านรายเดือน จากเงินต้น ดอกเบี้ยต่อปี และจำนวนปี พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "def",
+      "ดอกเบี้ย",
+      "12",
+      "**",
+      "ค่างวด"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_76",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "เขียน Python สร้าง QR พร้อมเพย์ (PromptPay) จากเบอร์โทรและจำนวนเงิน ตามมาตรฐาน EMVCo พร้อมคำนวณ CRC16 พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "CRC",
+      "0066",
+      "PromptPay",
+      "พร้อมเพย์",
+      "def"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_77",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "เขียน Python สุ่มเลขท้าย 2 ตัวสำหรับเกมทายเลข และให้ผู้เล่นทายจนกว่าจะถูก พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "random",
+      "while",
+      "input",
+      "ทาย",
+      "if"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_78",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน Python retry เรียก API สูงสุด 3 ครั้ง โดยรอเพิ่มขึ้นแบบ exponential backoff เมื่อเจอ error 429 พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "429",
+      "retry",
+      "sleep",
+      "2 **",
+      "for"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_79",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "เขียน Python async ดึงข้อมูลจาก URL 10 อันพร้อมกัน แต่จำกัดให้ทำงานพร้อมกันได้ไม่เกิน 3 request พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "asyncio",
+      "Semaphore",
+      "gather",
+      "async",
+      "3"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_80",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน React component ปุ่ม 'กดถูกใจ' ที่นับจำนวนครั้งและเปลี่ยนสีเมื่อกดแล้ว พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "useState",
+      "onClick",
+      "React",
+      "ถูกใจ",
+      "className"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_81",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน Bash script สำรองโฟลเดอร์ ~/projects เป็นไฟล์ .tar.gz ใส่ชื่อวันที่ทุกวัน พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "tar",
+      "date",
+      "gz",
+      "cron",
+      "สำรอง"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_82",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "เขียน Python ตรวจจับข้อความ SMS ที่น่าจะเป็นมิจฉาชีพ โดยดูลิงก์ย่อ คำเร่งด่วน และการขอให้โอนเงิน พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "def",
+      "re",
+      "bit.ly",
+      "โอน",
+      "ด่วน",
+      "return"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_83",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "เขียน Python แปลงอุณหภูมิจากฟาเรนไฮต์เป็นเซลเซียส สำหรับรายการค่าหลายๆ ค่า พร้อมอธิบายการทำงานเป็นภาษาไทยสั้นๆ และใส่ comment ภาษาไทยใน code",
+    "expected_keywords": [
+      "def",
+      "32",
+      "5",
+      "9",
+      "เซลเซียส"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.1,
+    "min_length": 80,
+    "notes": "เขียน code จากโจทย์ภาษาไทย"
+  },
+  {
+    "id": "code_84",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nIndexError: list index out of range\n```",
+    "expected_keywords": [
+      "index",
+      "ลิสต์",
+      "เกิน",
+      "ตำแหน่ง",
+      "len"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_85",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nNameError: name 'pritn' is not defined\n```",
+    "expected_keywords": [
+      "สะกดผิด",
+      "print",
+      "ไม่ได้ประกาศ",
+      "ชื่อ"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_86",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nTypeError: can only concatenate str (not \"int\") to str\n```",
+    "expected_keywords": [
+      "str",
+      "int",
+      "ต่อ",
+      "แปลง",
+      "ชนิดข้อมูล"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_87",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nUnicodeDecodeError: 'charmap' codec can't decode byte 0xe0 in position 12\n```",
+    "expected_keywords": [
+      "encoding",
+      "utf-8",
+      "ภาษาไทย",
+      "เปิดไฟล์",
+      "ถอดรหัส"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_88",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nModuleNotFoundError: No module named 'pandas'\n```",
+    "expected_keywords": [
+      "ติดตั้ง",
+      "pip install",
+      "pandas",
+      "virtual environment",
+      "โมดูล"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_89",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nTypeError: Cannot read properties of undefined (reading 'map')\n```",
+    "expected_keywords": [
+      "undefined",
+      "ข้อมูล",
+      "ยังไม่มา",
+      "ตรวจสอบ",
+      "?."
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_90",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nCORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.\n```",
+    "expected_keywords": [
+      "CORS",
+      "โดเมน",
+      "เซิร์ฟเวอร์",
+      "header",
+      "เบราว์เซอร์"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_91",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\n429 Too Many Requests: rate limit exceeded, retry after 60 seconds\n```",
+    "expected_keywords": [
+      "429",
+      "จำกัด",
+      "rate limit",
+      "รอ",
+      "retry"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_92",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nerror[E0382]: borrow of moved value: `name`\n```",
+    "expected_keywords": [
+      "move",
+      "ownership",
+      "เจ้าของ",
+      "clone",
+      "ยืม"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_93",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "อธิบาย error ต่อไปนี้เป็นภาษาไทย ว่าเกิดจากอะไรและแก้อย่างไร:\n\n```\nfatal: refusing to merge unrelated histories\n```",
+    "expected_keywords": [
+      "git",
+      "ประวัติ",
+      "--allow-unrelated-histories",
+      "merge",
+      "repository"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.2,
+    "min_length": 40,
+    "notes": "อธิบาย error"
+  },
+  {
+    "id": "code_94",
+    "category": "code_thai",
+    "difficulty": "easy",
+    "prompt": "Git branch คืออะไร และทำไมทีมถึงควรแยก branch ทำงาน? อธิบายเป็นภาษาไทยให้มือใหม่เข้าใจ พร้อมตัวอย่าง",
+    "expected_keywords": [
+      "branch",
+      "แยก",
+      "merge",
+      "ทีม",
+      "main"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 60,
+    "notes": "แนวคิดการเขียนโปรแกรม"
+  },
+  {
+    "id": "code_95",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "REST API กับ GraphQL ต่างกันอย่างไร? อธิบายเป็นภาษาไทยให้มือใหม่เข้าใจ พร้อมตัวอย่าง",
+    "expected_keywords": [
+      "REST",
+      "GraphQL",
+      "endpoint",
+      "query",
+      "ข้อมูล"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 60,
+    "notes": "แนวคิดการเขียนโปรแกรม"
+  },
+  {
+    "id": "code_96",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "Docker container ต่างจาก virtual machine อย่างไร? อธิบายเป็นภาษาไทยให้มือใหม่เข้าใจ พร้อมตัวอย่าง",
+    "expected_keywords": [
+      "container",
+      "VM",
+      "ระบบปฏิบัติการ",
+      "เบา",
+      "kernel"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 60,
+    "notes": "แนวคิดการเขียนโปรแกรม"
+  },
+  {
+    "id": "code_97",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "การทำ unit test คืออะไร ทำไมถึงสำคัญ? อธิบายเป็นภาษาไทยให้มือใหม่เข้าใจ พร้อมตัวอย่าง",
+    "expected_keywords": [
+      "ทดสอบ",
+      "ฟังก์ชัน",
+      "บั๊ก",
+      "อัตโนมัติ",
+      "assert"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 60,
+    "notes": "แนวคิดการเขียนโปรแกรม"
+  },
+  {
+    "id": "code_98",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "RAG (Retrieval-Augmented Generation) คืออะไร ใช้ช่วยให้แชตบอต AI ตอบคำถามจากเอกสารบริษัทได้อย่างไร? อธิบายเป็นภาษาไทยให้มือใหม่เข้าใจ พร้อมตัวอย่าง",
+    "expected_keywords": [
+      "ค้นหา",
+      "เอกสาร",
+      "embedding",
+      "เวกเตอร์",
+      "บริบท",
+      "LLM"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 60,
+    "notes": "แนวคิดการเขียนโปรแกรม"
+  },
+  {
+    "id": "code_99",
+    "category": "code_thai",
+    "difficulty": "hard",
+    "prompt": "Prompt caching ของ LLM API คืออะไร และช่วยลดค่าใช้จ่ายได้อย่างไร? อธิบายเป็นภาษาไทยให้มือใหม่เข้าใจ พร้อมตัวอย่าง",
+    "expected_keywords": [
+      "cache",
+      "prompt",
+      "ค่าใช้จ่าย",
+      "ซ้ำ",
+      "token"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 60,
+    "notes": "แนวคิดการเขียนโปรแกรม"
+  },
+  {
+    "id": "code_100",
+    "category": "code_thai",
+    "difficulty": "medium",
+    "prompt": "ทำไมไม่ควรเก็บรหัสผ่านผู้ใช้เป็น plain text และควรเก็บแบบไหน? อธิบายเป็นภาษาไทยให้มือใหม่เข้าใจ พร้อมตัวอย่าง",
+    "expected_keywords": [
+      "hash",
+      "bcrypt",
+      "salt",
+      "รหัสผ่าน",
+      "รั่วไหล"
+    ],
+    "keyword_threshold": 0.3,
+    "min_thai_ratio": 0.3,
+    "min_length": 60,
+    "notes": "แนวคิดการเขียนโปรแกรม"
+  }
+]
