@@ -47,6 +47,19 @@ DEFAULT_MODELS = [
 ]
 
 
+def infer_provider(model_id: str) -> str:
+    """เดา provider จาก model ID — Groq ใช้ชื่อแบบ org/model (เช่น openai/gpt-oss-120b)"""
+    if model_id.startswith("gemini-"):
+        return "google"
+    if model_id.startswith("claude-"):
+        return "anthropic"
+    if model_id.startswith("gpt-"):
+        return "openai"
+    if "/" in model_id or model_id.startswith(("llama", "qwen", "mixtral")):
+        return "groq"
+    return "google"
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="OpenPair — Thai Language Benchmark")
     parser.add_argument(
@@ -87,7 +100,7 @@ def main():
     if args.models:
         model_ids = [m.strip() for m in args.models.split(",")]
         models = [
-            {"model_id": mid, "model_name": mid, "provider": "google"}
+            {"model_id": mid, "model_name": mid, "provider": infer_provider(mid)}
             for mid in model_ids
         ]
     else:

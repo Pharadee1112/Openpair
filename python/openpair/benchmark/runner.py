@@ -102,6 +102,10 @@ def _call_with_retry(
     raise last_error  # type: ignore[misc]
 
 
+class EmptyResponse(Exception):
+    """model ตอบกลับมาเป็นข้อความว่าง — นับเป็น error (retry รอบหน้า) ไม่ใช่คะแนน 0"""
+
+
 # ── Core benchmark functions ──────────────────────────────────────────────────
 
 def run_model_benchmark(
@@ -111,7 +115,7 @@ def run_model_benchmark(
     provider:    str,
     api_key:     str,
     cases:       Optional[list[ThaiTestCase]] = None,
-    max_tokens:  int = 512,
+    max_tokens:  int = 2048,
     max_retries: int = 3,
     verbose:     bool = True,
     checkpoint:  Optional[CaseCheckpoint] = None,
@@ -126,7 +130,8 @@ def run_model_benchmark(
         provider:    "google" | "openai" | "anthropic"
         api_key:     API key สำหรับ provider นั้น
         cases:       ชุดข้อสอบ (ถ้าไม่ระบุจะใช้ทั้งหมด)
-        max_tokens:  token สูงสุดของคำตอบ
+        max_tokens:  token สูงสุดของคำตอบ — reasoning model (gpt-oss, Gemini thinking) นับ token
+                     ที่ใช้คิดรวมในนี้ด้วย ตั้งต่ำไป (512) คิดจนหมดแล้วได้คำตอบว่างเปล่า
         max_retries: จำนวนครั้งสูงสุดที่จะ retry เมื่อเจอ rate limit
         verbose:     แสดงผลระหว่างรันไหม
     """
@@ -167,6 +172,12 @@ def run_model_benchmark(
                 max_retries = max_retries,
                 verbose     = verbose,
             )
+
+            if not (text or "").strip():
+                # คำตอบว่าง = ไม่ได้คำตอบ ไม่ใช่คำตอบที่แย่ — ไม่ให้คะแนน 0 และไม่ลง checkpoint
+                raise EmptyResponse(
+                    f"คำตอบว่าง (out_tok={out_tok}) — มักเกิดจาก reasoning ใช้ max_tokens={max_tokens} หมด"
+                )
 
             score = score_response(text, case)
             scores.append(score)

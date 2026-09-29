@@ -385,6 +385,26 @@ class TestErrorDoesNotHurtAverage:
         assert all(s.final_score > 0 for s in result.scores)
         assert result.avg_final_score > 0
 
+    def test_empty_response_not_scored_or_checkpointed(self, tmp_path):
+        # reasoning model ที่คิดจน max_tokens หมดจะคืนข้อความว่าง — ต้องไม่ถูกนับเป็นคะแนน 0
+        cases = [_fake_case("c1"), _fake_case("c2")]
+
+        def fake_call(**kwargs):
+            if kwargs["prompt"] == cases[1].prompt:
+                return ("", 5, 512, 10.0)
+            return ("กรุงเทพมหานคร", 5, 5, 10.0)
+
+        ckpt = CaseCheckpoint(tmp_path / "ckpt.jsonl")
+        with patch("openpair.benchmark.runner.make_call", side_effect=fake_call):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                result = run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="groq",
+                    api_key="k", cases=cases, verbose=False, checkpoint=ckpt,
+                )
+
+        assert len(result.scores) == 1
+        assert ckpt.get("m1", cases[1]) is None  # จะถูกยิงใหม่ตอน resume
+
 
 class TestResumeFlow:
     def test_fresh_then_resume_only_hits_new_cases(self, tmp_path):
