@@ -162,6 +162,12 @@ def run_model_benchmark(
                     print("⏭️  ข้าม (ทำแล้ว)")
                 continue
 
+        if quota_stopped:
+            # quota หมดแล้ว — ไม่เรียก API อีก แต่ยังวนต่อเพื่อโหลดผลจาก checkpoint ของเคสที่เหลือ
+            if verbose:
+                print("⏸️  ค้าง (quota หมด)")
+            continue
+
         try:
             text, in_tok, out_tok, latency_ms = _call_with_retry(
                 provider    = provider,
@@ -204,7 +210,7 @@ def run_model_benchmark(
             if verbose:
                 print(f"\n  🛑 quota หมด — หยุดรัน {model_name} (ผลที่ทำได้ถูกเซฟไว้แล้ว): {str(e)[:120]}")
             quota_stopped = True
-            break
+            continue
 
         except Exception as e:
             error_count += 1

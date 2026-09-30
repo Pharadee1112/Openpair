@@ -475,3 +475,34 @@ class TestResumeFlow:
                 )
 
         assert len(result2.scores) == 3
+
+    def test_quota_exhausted_still_loads_later_cached_cases(self, tmp_path):
+        # เคสที่ทำแล้วซึ่งอยู่ "หลัง" จุดที่ quota หมด ต้องยังถูกนับ (เดิม break ทิ้ง → หมวดหลัง ๆ ได้ 0.0)
+        ckpt_path = tmp_path / "ckpt.jsonl"
+        cases = [_fake_case("c1"), _fake_case("c2"), _fake_case("c3")]
+        ok = lambda **kwargs: ("กรุงเทพมหานคร", 5, 5, 10.0)
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=ok):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="groq",
+                    api_key="k", cases=[cases[0], cases[2]], verbose=False,
+                    checkpoint=CaseCheckpoint(ckpt_path),
+                )
+
+        calls = []
+
+        def quota(**kwargs):
+            calls.append(kwargs["prompt"])
+            raise Exception('429 RESOURCE_EXHAUSTED "retryDelay": "600s"')
+
+        with patch("openpair.benchmark.runner.make_call", side_effect=quota):
+            with patch("openpair.benchmark.runner.time.sleep"):
+                result = run_model_benchmark(
+                    model_id="m1", model_name="M1", provider="groq",
+                    api_key="k", cases=cases, verbose=False,
+                    checkpoint=CaseCheckpoint(ckpt_path),
+                )
+
+        assert len(result.scores) == 2  # c1 + c3 จาก checkpoint
+        assert calls == [cases[1].prompt]  # หลัง quota หมดไม่ยิง API อีก
