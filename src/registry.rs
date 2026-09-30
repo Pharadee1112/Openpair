@@ -73,6 +73,10 @@ impl ModelRegistry {
                 // thai_score for the Groq models and gemini-3.1-flash-lite was measured
                 // 2026-07-28 via run_benchmark.py (20 Thai test cases; see
                 // benchmark_results_groq_2026.json / benchmark_results_gemini_2026.json).
+                // 2026-10-01: re-checked on the 600-case --suite full (benchmark_results_groq_full.json /
+                // benchmark_results_gemini_full.json): gpt-oss-120b 9, gemini-3.1-flash-lite 9 (unchanged),
+                // gpt-oss-20b 8 -> 9 (547/600 cases, avg 8.71). gemini-3.6-flash was dropped from the full
+                // suite (free quota too small) and keeps its 20-case score.
                 // OpenAI and Anthropic have no API key available in this environment —
                 // their thai_score values are still unmeasured placeholders.
                 // gemini-3.1-pro returns 404 NOT_FOUND from the real Google API — this model
@@ -103,8 +107,8 @@ impl ModelRegistry {
                 // llama-3.3-70b-versatile at a comparable price today (qwen3.6/3.8-27b price above
                 // gpt-oss-120b, groq/compound(-mini) pricing not published) — Mid tier drops its Groq
                 // option until one appears; Small tier gets gpt-oss-20b (price confirmed via Groq docs,
-                // thai_score inherited as an estimate, not yet re-benchmarked).
-                ModelMeta { id: "openai/gpt-oss-20b",         name: "GPT-OSS 20B",       provider: "groq",      tier: ModelTier::Small,  context_window: 131_072,   cost_per_1k_input: 0.000075, cost_per_1k_output: 0.00030, thai_score: 8 }, // TODO: re-benchmark thai_score
+                // thai_score measured 2026-10-01 on the 600-case full suite).
+                ModelMeta { id: "openai/gpt-oss-20b",         name: "GPT-OSS 20B",       provider: "groq",      tier: ModelTier::Small,  context_window: 131_072,   cost_per_1k_input: 0.000075, cost_per_1k_output: 0.00030, thai_score: 9 }, // measured
                 ModelMeta { id: "openai/gpt-oss-120b",        name: "GPT-OSS 120B",      provider: "groq",      tier: ModelTier::Top,    context_window: 131_072,   cost_per_1k_input: 0.00015,  cost_per_1k_output: 0.00060, thai_score: 9 }, // measured
             ],
         }
