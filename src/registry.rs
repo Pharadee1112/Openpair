@@ -33,6 +33,9 @@ impl ModelTier {
     }
 }
 
+// context_window / cost_per_1k_output / thai_score are catalog data that the router
+// doesn't read yet (scripts/update_registry_scores.py patches thai_score in this file).
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct ModelMeta {
     pub id:                  &'static str,
@@ -143,10 +146,6 @@ impl ModelRegistry {
 
     pub fn get_by_id(&self, id: &str) -> Option<&ModelMeta> {
         self.models.iter().find(|m| m.id == id)
-    }
-
-    pub fn all(&self) -> &[ModelMeta] {
-        &self.models
     }
 }
 
