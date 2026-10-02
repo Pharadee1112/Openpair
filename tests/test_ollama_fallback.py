@@ -64,7 +64,7 @@ class TestClientFallsBackToOllama:
         def _raise(*_args, **_kwargs):
             raise Exception("429 rate limit")
 
-        for provider in ("openai", "anthropic", "google", "groq"):
+        for provider in ("google", "groq"):
             monkeypatch.setitem(caller._CALLERS, provider, _raise)
 
     def test_falls_back_to_ollama_when_no_cloud_keys(self, monkeypatch, fake_ollama):
@@ -84,9 +84,7 @@ class TestClientFallsBackToOllama:
         self._fail_cloud_providers(monkeypatch)
         fake_ollama.response_text = "rescued by ollama"
 
-        client = OpenPair(api_keys=ApiKeys(
-            openai="sk-fake", anthropic="sk-fake", google="sk-fake", groq="gsk-fake",
-        ))
+        client = OpenPair(api_keys=ApiKeys(google="sk-fake", groq="gsk-fake"))
         result = client.call("Hello!")
 
         assert result.provider == "ollama"
@@ -94,25 +92,20 @@ class TestClientFallsBackToOllama:
         assert len(fake_ollama.calls) == 1
 
     def test_does_not_use_ollama_when_a_cloud_provider_succeeds(self, monkeypatch, fake_ollama):
-        # groq/google/openai fail; anthropic (last in the default chain)
-        # succeeds before Ollama is ever reached. All four are stubbed here
-        # (rather than hitting real provider SDKs) — only Ollama's code path
-        # is under test.
+        # groq fails; google (last in the default chain) succeeds before
+        # Ollama is ever reached. Both are stubbed here (rather than hitting
+        # real provider SDKs) — only Ollama's code path is under test.
         def _raise(*_args, **_kwargs):
             raise Exception("429 rate limit")
 
         def _succeed(*_args, **_kwargs):
-            return "ok from anthropic", 5, 10
+            return "ok from google", 5, 10
 
         monkeypatch.setitem(caller._CALLERS, "groq", _raise)
-        monkeypatch.setitem(caller._CALLERS, "google", _raise)
-        monkeypatch.setitem(caller._CALLERS, "openai", _raise)
-        monkeypatch.setitem(caller._CALLERS, "anthropic", _succeed)
+        monkeypatch.setitem(caller._CALLERS, "google", _succeed)
 
-        client = OpenPair(api_keys=ApiKeys(
-            openai="sk-fake", anthropic="sk-fake", google="sk-fake", groq="gsk-fake",
-        ))
+        client = OpenPair(api_keys=ApiKeys(google="sk-fake", groq="gsk-fake"))
         result = client.call("Hello!", preferred_provider="groq")
 
-        assert result.provider == "anthropic"
+        assert result.provider == "google"
         assert fake_ollama.calls == []

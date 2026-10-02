@@ -31,7 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--provider",
         default=None,
-        help="Pin to a specific provider: openai | anthropic | google | groq | ollama",
+        help="Pin to a specific provider: google | groq | ollama",
     )
     parser.add_argument(
         "--route-only",

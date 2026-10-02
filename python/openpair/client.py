@@ -25,7 +25,8 @@ if TYPE_CHECKING:
 
 
 # Tried, in order, after the routed provider — before falling back to Ollama.
-_DEFAULT_FALLBACK_ORDER = ["groq", "google", "openai", "anthropic"]
+# Only providers with models in the Rust registry (Gemini + Groq since 2026-10-02).
+_DEFAULT_FALLBACK_ORDER = ["groq", "google"]
 
 
 class OpenPair:
@@ -35,9 +36,9 @@ class OpenPair:
     Args:
         api_keys (ApiKeys | dict | None):
             API keys for each provider. If None, reads from environment variables:
-            OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY
+            GOOGLE_API_KEY, GROQ_API_KEY
         preferred_provider (str | None):
-            Pin to a specific provider: "openai" | "anthropic" | "google"
+            Pin to a specific provider: "google" | "groq"
 
     Examples:
         >>> client = OpenPair()
@@ -114,7 +115,8 @@ class OpenPair:
         / quota exhausted, 503 overloaded), automatically retries the same
         prompt against the next provider in the fallback chain instead of
         raising immediately. Default chain (when `fallback_providers` isn't
-        given): routed provider → groq → google → openai → anthropic → Ollama.
+        given): routed provider → groq → google → Ollama. A provider with no
+        model in the registry (e.g. "openai") is skipped even if it has a key.
         Ollama is always tried last, and only if a local server is actually
         reachable — it's the fallback of last resort for when every cloud
         provider is rate-limited, or when no cloud API key is configured at
@@ -160,9 +162,13 @@ class OpenPair:
             api_key = self._keys.for_provider(candidate)
             if not api_key:
                 continue
-            attempted = True
 
             candidate_decision = self._decision_for(candidate, prompt, decision)
+            if candidate_decision.provider != candidate:
+                # The registry has no model for this provider — routing fell back to
+                # another provider's model, which this provider's API can't serve.
+                continue
+            attempted = True
 
             try:
                 text, in_tok, out_tok, latency_ms = make_call(
@@ -204,7 +210,7 @@ class OpenPair:
         if not attempted:
             raise RuntimeError(
                 f"No API key found for any provider. "
-                f"Set OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, or GROQ_API_KEY, "
+                f"Set GOOGLE_API_KEY or GROQ_API_KEY, "
                 f"run Ollama locally, or pass api_keys={{...}} to OpenPair()."
             )
         raise last_error  # type: ignore[misc]
@@ -226,8 +232,7 @@ class OpenPair:
     def _build_fallback_chain(self, primary: str, explicit_fallbacks: Optional[list[str]]) -> list[str]:
         """
         Ordered list of providers to attempt: primary, then the fallback
-        order (explicit override or the default groq/google/openai/anthropic
-        chain), then Ollama last — only if its local server is reachable.
+        order (explicit override or the default groq/google chain), then Ollama last — only if its local server is reachable.
         """
         if explicit_fallbacks:
             chain = [primary] + [p for p in explicit_fallbacks if p != primary]

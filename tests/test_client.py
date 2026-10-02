@@ -137,7 +137,7 @@ class TestRouting:
     def test_route_returns_decision(self):
         d = self.client.route("Hello!")
         assert d.model_id
-        assert d.provider in ("openai", "anthropic", "google", "groq")
+        assert d.provider in ("google", "groq")
         assert d.tier in ("small", "mid", "top", "expert")
         assert 1 <= d.complexity_score <= 10
 
@@ -155,9 +155,17 @@ class TestRouting:
         assert d.complexity_score >= 6
 
     def test_preferred_provider_respected(self):
-        for provider in ("openai", "anthropic", "google", "groq"):
+        for provider in ("google", "groq"):
             d = self.client.route("What is Python?", preferred_provider=provider)
             assert d.provider == provider
+
+    def test_removed_provider_pin_routes_to_available_model(self):
+        d = self.client.route("What is Python?", preferred_provider="openai")
+        assert d.provider in ("google", "groq")
+
+    def test_thai_prompts_route_to_measured_models(self):
+        simple = self.client.route("สวัสดีครับ")
+        assert simple.model_id == "gemini-3.1-flash-lite"
 
     def test_thai_prompt_detected(self):
         d = self.client.route("สวัสดีครับ คุณเป็นอย่างไรบ้าง")
@@ -213,7 +221,7 @@ class TestCall:
         with self._mock_make_call():
             result = self.client.call("Hello!")
         assert result.model_id
-        assert result.provider in ("openai", "anthropic", "google", "groq")
+        assert result.provider in ("google", "groq")
         assert result.tier in ("small", "mid", "top", "expert")
         assert result.routing_reason
 
@@ -240,12 +248,23 @@ class TestCall:
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
         monkeypatch.delenv("GROQ_API_KEY",      raising=False)
         monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
-        # Only anthropic key is set
-        client = OpenPair(api_keys=ApiKeys(anthropic="sk-ant-test"))
+        # Only google key is set; "Hello!" routes to groq (cheapest small model) first
+        client = OpenPair(api_keys=ApiKeys(google="gk-test"))
         with patch("openpair.client.make_call", return_value=("ok", 5, 10, 100.0)):
             result = client.call("Hello!")
-        # Should have used anthropic (the only available key)
-        assert result.provider == "anthropic"
+        # Should have used google (the only available key)
+        assert result.provider == "google"
+
+    def test_provider_without_registry_models_is_skipped(self, monkeypatch):
+        # An OpenAI key alone can't be used: no OpenAI model is in the registry,
+        # so calling it would send it another provider's model id.
+        for var in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY"):
+            monkeypatch.delenv(var, raising=False)
+        client = OpenPair(api_keys=ApiKeys(openai="sk-test"))
+        with patch.object(ApiKeys, "is_ollama_available", return_value=False),              patch("openpair.client.make_call") as mock_call:
+            with pytest.raises(RuntimeError, match="No API key"):
+                client.call("Hello!", fallback_providers=["openai"])
+        mock_call.assert_not_called()
 
     def test_groq_provider_used_when_preferred(self):
         with self._mock_make_call():
@@ -360,8 +379,6 @@ class TestFallbackChain:
                 side_effect=[
                     Exception("429 rate limit"),   # groq
                     Exception("503 UNAVAILABLE"),  # google
-                    Exception("429 rate limit"),   # openai
-                    Exception("429 rate limit"),   # anthropic
                     ("ok from local model", 5, 10, 100.0),  # ollama
                 ],
             ):

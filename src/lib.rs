@@ -26,7 +26,7 @@ fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
 ///
 /// Args:
 ///     prompt (str): The user's prompt.
-///     preferred_provider (str | None): "openai" | "anthropic" | "google"
+///     preferred_provider (str | None): "google" | "groq"
 ///
 /// Returns:
 ///     RoutingDecision: model_id, provider, tier, complexity_score, reason, cost_per_1k_input

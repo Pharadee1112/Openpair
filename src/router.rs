@@ -122,15 +122,15 @@ mod tests {
     }
 
     #[test]
-    fn preferred_provider_openai() {
-        let d = route_prompt("What is the capital of France?", Some("openai"));
-        assert_eq!(d.provider, "openai");
+    fn preferred_provider_groq() {
+        let d = route_prompt("What is the capital of France?", Some("groq"));
+        assert_eq!(d.provider, "groq");
     }
 
     #[test]
-    fn preferred_provider_anthropic() {
-        let d = route_prompt("What is the capital of France?", Some("anthropic"));
-        assert_eq!(d.provider, "anthropic");
+    fn removed_provider_falls_back_to_available_model() {
+        let d = route_prompt("What is the capital of France?", Some("openai"));
+        assert!(d.provider == "google" || d.provider == "groq");
     }
 
     #[test]

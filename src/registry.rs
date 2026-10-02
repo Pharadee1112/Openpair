@@ -1,16 +1,18 @@
 
 /// Model Registry — in-memory store of AI model metadata
 ///
-/// For MVP: hard-coded defaults across 4 providers (OpenAI, Anthropic, Google, Groq)
+/// Hard-coded defaults for the two providers usable on a free tier: Google (Gemini) and Groq.
+/// OpenAI / Anthropic / OpenRouter models were removed 2026-10-02 (no keys / not benchmarked);
+/// their caller code in python/openpair/caller.py is kept but nothing routes to it.
 /// Future: hot-reload from YAML/JSON config
 /// Prices per 1k tokens, current as of 2026-07-25.
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ModelTier {
-    Small,  // Complexity 1–3 : fast, cheap (Haiku 4.5, Flash-Lite, GPT-5.4 Nano)
-    Mid,    // Complexity 4–6 : balanced  (Sonnet 5, Gemini 3.6 Flash)
-    Top,    // Complexity 7–9 : quality   (GPT-5.5, Opus 5)
-    Expert, // Complexity 10  : best + long-context (Gemini 3.1 Pro)
+    Small,  // Complexity 1–3 : fast, cheap (Gemini 3.1 Flash-Lite, GPT-OSS 20B)
+    Mid,    // Complexity 4–6 : balanced  (Gemini 3.6 Flash)
+    Top,    // Complexity 7–9 : quality   (GPT-OSS 120B)
+    Expert, // Complexity 10  : no free model of its own — falls back to Top
 }
 
 impl ModelTier {
@@ -20,6 +22,16 @@ impl ModelTier {
             ModelTier::Mid    => "mid",
             ModelTier::Top    => "top",
             ModelTier::Expert => "expert",
+        }
+    }
+
+    /// The next tier down, used when a tier has no models of its own.
+    pub fn lower(&self) -> Option<Self> {
+        match self {
+            ModelTier::Small  => None,
+            ModelTier::Mid    => Some(ModelTier::Small),
+            ModelTier::Top    => Some(ModelTier::Mid),
+            ModelTier::Expert => Some(ModelTier::Top),
         }
     }
 
@@ -40,7 +52,7 @@ impl ModelTier {
 pub struct ModelMeta {
     pub id:                  &'static str,
     pub name:                &'static str,
-    pub provider:            &'static str,  // "openai" | "anthropic" | "google" | "groq"
+    pub provider:            &'static str,  // "google" | "groq"
     pub tier:                ModelTier,
     pub context_window:      u32,
     pub cost_per_1k_input:   f64,   // USD
@@ -54,8 +66,8 @@ pub struct ModelMeta {
 /// Updated after running `openpair benchmark --lang th`.
 pub const THAI_ROUTING_PRIORITY: ThaiRoutingPriority = ThaiRoutingPriority {
     simple_thai:  "gemini-3.1-flash-lite",  // cheap + acceptable Thai
-    medium_thai:  "claude-haiku-4-5",       // balanced + good Thai
-    complex_thai: "claude-sonnet-5",        // best Thai quality
+    medium_thai:  "openai/gpt-oss-20b",     // measured thai_score 9, cheaper than gemini-3.6-flash (6)
+    complex_thai: "openai/gpt-oss-120b",    // measured thai_score 9, top tier
 };
 
 pub struct ThaiRoutingPriority {
@@ -80,28 +92,17 @@ impl ModelRegistry {
                 // benchmark_results_gemini_full.json): gpt-oss-120b 9, gemini-3.1-flash-lite 9 (unchanged),
                 // gpt-oss-20b 8 -> 9 (547/600 cases, avg 8.71). gemini-3.6-flash was dropped from the full
                 // suite (free quota too small) and keeps its 20-case score.
-                // OpenAI and Anthropic are intentionally not benchmarked (decided 2026-10-02) —
-                // their thai_score values are estimates.
-                // gemini-3.1-pro-preview (id corrected from the non-existent "gemini-3.1-pro") has
-                // zero free-tier quota, so it can't be benchmarked without paid billing — its
-                // thai_score is still an estimate.
+                // 2026-10-02: removed OpenAI/Anthropic models (not used) and gemini-3.1-pro-preview
+                // (zero free-tier quota) — every model left has a measured thai_score.
 
                 // ── Small / Fast ──────────────────────────────────────────────────────────────────────
                 //                                                                           thai_score ↓
-                ModelMeta { id: "claude-haiku-4-5",           name: "Claude Haiku 4.5",  provider: "anthropic", tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.001,    cost_per_1k_output: 0.005,   thai_score: 7 },
-                ModelMeta { id: "gpt-5.4-nano",               name: "GPT-5.4 Nano",      provider: "openai",    tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.0002,   cost_per_1k_output: 0.00125, thai_score: 6 },
                 ModelMeta { id: "gemini-3.1-flash-lite",      name: "Gemini 3.1 Flash Lite", provider: "google", tier: ModelTier::Small,  context_window: 1_000_000, cost_per_1k_input: 0.00025,  cost_per_1k_output: 0.0015,  thai_score: 9 }, // measured
 
                 // ── Mid / Balanced ────────────────────────────────────────────────────────────────────
-                ModelMeta { id: "claude-sonnet-5",            name: "Claude Sonnet 5",   provider: "anthropic", tier: ModelTier::Mid,    context_window: 1_000_000, cost_per_1k_input: 0.003,    cost_per_1k_output: 0.01500, thai_score: 9 },
                 ModelMeta { id: "gemini-3.6-flash",           name: "Gemini 3.6 Flash",  provider: "google",    tier: ModelTier::Mid,    context_window: 1_000_000, cost_per_1k_input: 0.0015,   cost_per_1k_output: 0.0075,  thai_score: 6 }, // measured
 
-                // ── Top / Quality ─────────────────────────────────────────────────────────────────────
-                ModelMeta { id: "gpt-5.5",                    name: "GPT-5.5",           provider: "openai",    tier: ModelTier::Top,    context_window: 1_000_000, cost_per_1k_input: 0.005,    cost_per_1k_output: 0.03000, thai_score: 8 },
-                ModelMeta { id: "claude-opus-5",              name: "Claude Opus 5",     provider: "anthropic", tier: ModelTier::Top,    context_window: 1_000_000, cost_per_1k_input: 0.005,    cost_per_1k_output: 0.02500, thai_score: 9 },
-
-                // ── Expert / Long-Context ─────────────────────────────────────────────────────────────
-                ModelMeta { id: "gemini-3.1-pro-preview",     name: "Gemini 3.1 Pro",    provider: "google",    tier: ModelTier::Expert, context_window: 1_000_000, cost_per_1k_input: 0.002,    cost_per_1k_output: 0.01200, thai_score: 7 },
+                // Top tier: openai/gpt-oss-120b (Groq, below). Expert has no model — see ModelTier::lower.
 
                 // ── Groq (ultra-fast inference) ───────────────────────────────────────────────────────
                 // 2026-08-28: llama-3.1-8b-instant / llama-3.3-70b-versatile decommissioned by Groq
@@ -129,7 +130,7 @@ impl ModelRegistry {
             .collect();
 
         if candidates.is_empty() {
-            return None;
+            return tier.lower().and_then(|t| self.preferred_for_tier(&t, preferred_provider));
         }
 
         // Try preferred provider first
@@ -169,8 +170,32 @@ mod tests {
     #[test]
     fn preferred_provider_is_respected() {
         let reg = ModelRegistry::new();
-        let m = reg.preferred_for_tier(&ModelTier::Small, Some("openai")).unwrap();
-        assert_eq!(m.provider, "openai");
+        let m = reg.preferred_for_tier(&ModelTier::Small, Some("google")).unwrap();
+        assert_eq!(m.provider, "google");
+    }
+
+    #[test]
+    fn expert_falls_back_to_top_tier_model() {
+        let reg = ModelRegistry::new();
+        let m = reg.preferred_for_tier(&ModelTier::Expert, None).unwrap();
+        assert_eq!(m.tier, ModelTier::Top);
+    }
+
+    #[test]
+    fn only_free_tier_providers_remain() {
+        let reg = ModelRegistry::new();
+        for tier in &[ModelTier::Small, ModelTier::Mid, ModelTier::Top] {
+            let m = reg.preferred_for_tier(tier, None).unwrap();
+            assert!(m.provider == "google" || m.provider == "groq", "{} is {}", m.id, m.provider);
+        }
+    }
+
+    #[test]
+    fn thai_routing_priority_ids_exist() {
+        let reg = ModelRegistry::new();
+        for id in [THAI_ROUTING_PRIORITY.simple_thai, THAI_ROUTING_PRIORITY.medium_thai, THAI_ROUTING_PRIORITY.complex_thai] {
+            assert!(reg.get_by_id(id).is_some(), "{id} missing from registry");
+        }
     }
 
     #[test]

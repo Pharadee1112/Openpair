@@ -7,8 +7,8 @@ Intelligent AI router — automatically picks the cheapest model that can actual
 เวลาใช้ LLM หลาย provider พร้อมกัน คนส่วนใหญ่จะ hardcode เลือก model เดียวไว้ตายตัว — ทำให้จ่ายแพงเกินไปสำหรับ prompt ง่ายๆ หรือได้คุณภาพไม่พอสำหรับ prompt ที่ซับซ้อน แถมพอ provider ไหน rate-limit ก็ request พังทันที
 
 OpenPair แก้ปัญหานี้ด้วย:
-- **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง top-tier model (เช่น GPT-5.5 / Claude Opus 5) ทุกครั้ง
-- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — วัดจริงแล้วสำหรับ 3 model คือ `openai/gpt-oss-120b` (Groq), `gemini-3.1-flash-lite` และ `gemini-3.6-flash`; ที่เหลือยังเป็นค่าประมาณหรือรอวัดใหม่ ดูหัวข้อ "สถานะปัจจุบัน" ด้านล่างสำหรับรายละเอียด — Groq เพิ่ง decommission 2 โมเดลเดิมไป ดู `src/registry.rs`)
+- **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง top-tier model ทุกครั้ง — ตั้งแต่ 2026-10-02 registry มีแค่ model ที่ใช้ฟรีได้จริงของ **Gemini + Groq** (OpenAI/Anthropic/OpenRouter ถอดออกจาก registry แล้ว แต่โค้ด caller ยังอยู่)
+- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — ทุก model ใน registry วัดจริงแล้ว: `gemini-3.1-flash-lite`, `openai/gpt-oss-20b`, `openai/gpt-oss-120b` บนชุด full 600 เคส และ `gemini-3.6-flash` บนชุด core 20 เคส)
 - **Fallback อัตโนมัติ**: ถ้า provider หลักโดน rate limit (429) หรือ overloaded (503) จะลองยิง provider ถัดไปในเชนให้อัตโนมัติ ไม่ต้องเขียน retry logic เอง
 - **Ollama เป็นด่านสุดท้าย**: ถ้า cloud provider ทั้งหมดโดน rate limit พร้อมกัน หรือไม่มี API key เลย แต่มี Ollama รันอยู่ในเครื่อง จะ fallback ไปใช้ local model โดยอัตโนมัติ
 
@@ -91,11 +91,11 @@ print(decision.model_name, decision.tier, decision.complexity_score)
 result = client.call("Hello!", preferred_provider="groq")
 
 # กำหนด fallback order เอง (ปกติไม่ต้องทำ — มี default chain อยู่แล้ว)
-result = client.call("Hello!", fallback_providers=["anthropic", "openai"])
+result = client.call("Hello!", fallback_providers=["google", "groq"])
 ```
 
 **Default fallback chain** (ใช้เมื่อไม่ได้ระบุ `fallback_providers` เอง):
-`[provider ที่ router เลือก] → groq → google → openai → anthropic → ollama (ถ้า ping เจอ server จริง)`
+`[provider ที่ router เลือก] → groq → google → ollama (ถ้า ping เจอ server จริง)` — provider ที่ไม่มี model ใน registry (เช่น openai) จะถูกข้ามแม้มี key
 
 ## วิธีใช้ (CLI)
 
@@ -103,11 +103,11 @@ result = client.call("Hello!", fallback_providers=["anthropic", "openai"])
 openpair "อธิบาย recursion ให้เด็ก ป.6 ฟัง" --route-only
 ```
 ```
-Model:    Claude Haiku 4.5 (claude-haiku-4-5)
-Provider: anthropic
-Tier:     mid
-Score:    4/10
-Reason:   Medium complexity — using a balanced quality/cost model [Thai].
+Model:    Gemini 3.1 Flash Lite (gemini-3.1-flash-lite)
+Provider: google
+Tier:     small
+Score:    2/10
+Reason:   Low complexity — using a fast, cost-efficient model [Thai]. Score: 2/10 → Gemini 3.1 Flash Lite (Thai routing priority).
 ```
 
 `--route-only` แสดงแค่ผลการตัดสินใจ **ไม่เรียก API ไม่ต้องมี key** — ใช้ดูว่า router คิดยังไง
@@ -177,18 +177,17 @@ pytest tests/test_live.py -m live   # 5 tests ที่เรียก API จ�
 
 Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แต่ละ test จะ `pytest.skip()` เองถ้าไม่มี key ของ provider นั้นใน `.env`
 
-> **หมายเหตุ**: พิมพ์ `pytest` เฉยๆ (ไม่ใส่ `-m`) จะพยายามรันทั้ง 97 ตัว รวม live tests ด้วย — ตัวที่ไม่มี key ตรงกันจะถูก skip อัตโนมัติ แต่ตัวที่มี key จริงใน `.env` (เช่น groq/google) **จะยิง API จริงและเสียเงินจริง** ผลจริงบนเครื่องนี้ (มีแค่ `GOOGLE_API_KEY`/`GROQ_API_KEY`) ตอนนี้คือ `94 passed, 2 skipped, 1 failed` — ตัวที่ fail คือ `test_live_groq` เพราะ `GROQ_API_KEY` ปัจจุบันหมดอายุแล้ว (401 Invalid API Key) ไม่เกี่ยวกับโค้ด แค่ key ต้องเปลี่ยนใหม่ ถ้ามีครบทั้ง 4 provider key ที่ยัง valid จะได้ `97 passed` ถ้าไม่ได้ตั้งใจจะเสียเงิน ให้ใส่ `-m "not live"` เสมอ
+> **หมายเหตุ**: พิมพ์ `pytest` เฉยๆ (ไม่ใส่ `-m`) จะรันทั้ง 124 ตัว รวม live tests 3 ตัว (`test_live_google` / `test_live_groq` / `test_live_thai_routing`) ที่ **ยิง API จริง** — ใช้ free tier จึงไม่เสียเงิน แต่กิน quota รายวัน ผลล่าสุด (2026-10-02, มี `GOOGLE_API_KEY` + `GROQ_API_KEY`) คือ `124 passed` ถ้าไม่อยากใช้ quota ให้ใส่ `-m "not live"` (121 ตัว)
 
 ## สถานะปัจจุบัน / ข้อจำกัดที่รู้อยู่แล้ว
 
 - **CLI พร้อมใช้แล้ว** — `openpair "..."` เป็นคำสั่ง shell จริง (`pyproject.toml` มี `[project.scripts]` → `openpair = "openpair.cli:main"`) ดูวิธีใช้ในหัวข้อ "วิธีใช้ (CLI)" ด้านบน
-- **OpenRouter** ยังไม่ implement (มีแผนอยู่ใน `list_to_add.md`)
+- **OpenRouter** มี caller แล้ว (`run_benchmark.py --models openrouter:<org/model>`) แต่ไม่อยู่ใน registry/routing — ใช้แค่ benchmark
 - **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
 - **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) เพิ่มแล้ว — รัน benchmark ค้างกลางคันแล้วรันคำสั่งเดิมซ้ำได้โดยไม่เสีย quota กับเคสที่เสร็จแล้ว ดูหัวข้อ "Resume" ด้านบน
-- **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` (Expert tier) ได้ 429 ตั้งแต่ request แรก และ error ระบุ `limit: 0` คือ **free tier ไม่มี quota ให้ model นี้เลย** (เช็คซ้ำ 2026-09-28) รอ reset ก็ไม่ช่วย ต้องเปิด billing ก่อน — ส่วน model ที่ quota รายวันหมดจริง (limit > 0) รอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำได้ resume system จะข้ามเคสที่เสร็จแล้วให้เอง
-- **สถานะ Thai benchmark ปัจจุบัน**: มี 3 model ที่วัดจริงแต่ **ใช้ไม่ได้แล้ว** — `llama-3.1-8b-instant` และ `llama-3.3-70b-versatile` ถูก Groq decommission ไปแล้ว (ยืนยันแล้ว 2026-08-28 ว่า 404) ตอนนี้แทนที่ Small tier ด้วย `openai/gpt-oss-20b` (ราคาจริงจาก Groq docs แต่ **`thai_score` ยังเป็นค่าประมาณ ไม่ได้วัดจริง** — ต้องรัน benchmark ใหม่) ส่วน Mid tier ของ Groq ถูกถอดออกชั่วคราวเพราะยังไม่มีโมเดลราคาเหมาะสมมาแทน `llama-3.3-70b-versatile` วัดจริงแล้วมีแค่ `openai/gpt-oss-120b` (Top tier), `gemini-3.1-flash-lite`, `gemini-3.6-flash` — เหลือ `openai/gpt-oss-20b` (re-benchmark), `gemini-3.1-pro-preview` (free tier quota = 0 ต้องเปิด billing) และ OpenAI/Anthropic ที่ยังไม่มี API key ทดสอบ
-- `src/registry.rs` มีทั้ง `thai_score` ที่มาจาก benchmark จริงและค่าประมาณ (ดู comment ในไฟล์) — อย่าเชื่อว่าทุกค่าวัดจริงหมด
+- **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` ได้ 429 `limit: 0` คือ **free tier ไม่มี quota ให้ model นี้เลย** จึงถอดออกจาก registry แล้ว (2026-10-02) — tier Expert ไม่มี model ของตัวเอง router จะใช้ model ของ Top แทน — ส่วน model ที่ quota รายวันหมดจริง (limit > 0) รอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำได้ resume system จะข้ามเคสที่เสร็จแล้วให้เอง
+- **สถานะ Thai benchmark ปัจจุบัน** (2026-10-02): วัดจริงครบทุก model ใน registry — `gemini-3.1-flash-lite` 9, `openai/gpt-oss-20b` 9, `openai/gpt-oss-120b` 9 (ชุด full 600 เคส), `gemini-3.6-flash` 6 (ชุด core) — Thai routing: ง่าย → flash-lite, กลาง → gpt-oss-20b, ยาก → gpt-oss-120b
 
 ## Roadmap
 
-ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (OpenRouter, YAML-based model config)
+ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (YAML-based model config, fine-tuning)

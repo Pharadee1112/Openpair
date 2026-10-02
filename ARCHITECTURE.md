@@ -90,17 +90,12 @@
 
 | Model | Provider | Tier | Context | Cost/1K input |
 |---|---|---|---|---|
-| Claude Haiku 4.5 | anthropic | Small | 1M | $0.001 |
-| GPT-5.4 Nano | openai | Small | 1M | $0.0002 |
 | Gemini 3.1 Flash Lite | google | Small | 1M | $0.00025 |
-| Llama 3.1 8B | groq | Small | 128K | $0.00005 |
-| Claude Sonnet 5 | anthropic | Mid | 1M | $0.003 |
+| GPT-OSS 20B | groq | Small | 131K | $0.000075 |
 | Gemini 3.6 Flash | google | Mid | 1M | $0.0015 |
-| Llama 3.3 70B | groq | Mid | 128K | $0.00059 |
-| GPT-5.5 | openai | Top | 1M | $0.005 |
-| Claude Opus 5 | anthropic | Top | 1M | $0.005 |
 | GPT-OSS 120B | groq | Top | 131K | $0.00015 |
-| Gemini 3.1 Pro | google | Expert | 1M | $0.002 |
+
+> 2026-10-02: เหลือแค่ Gemini + Groq (ใช้ฟรีได้จริง) — tier Expert ไม่มี model ของตัวเอง `preferred_for_tier` จะถอยไปใช้ tier ที่ต่ำกว่า (Top)
 
 **Tier Mapping:**
 
