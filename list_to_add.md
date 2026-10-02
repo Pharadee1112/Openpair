@@ -8,18 +8,18 @@
 ## สถานะปัจจุบัน (2026-10-02) — เริ่มอ่านตรงนี้
 
 **ทำได้ต่อ (ไม่ต้องเสียเงิน):**
-- [ ] **OpenRouter: ทดสอบกับของจริง + เพิ่ม model ใน registry** — โค้ดฝั่ง caller/config เสร็จแล้ว (ดู DONE 2026-10-02) ต้องมี `OPENROUTER_API_KEY` ใน `.env` ก่อน (ตอนนี้ยังไม่มี) แล้วค่อย: เช็ค model id จริงจาก `https://openrouter.ai/api/v1/models` → benchmark ด้วย `--models openrouter:<id>` → ใส่ใน `registry.rs` พร้อม thai_score ที่วัดจริง
+- [x] ~~OpenRouter: ทดสอบกับของจริง~~ — ทำแล้ว 2026-10-02: `nvidia/nemotron-3-super-120b-a12b:free` ชุด core 20/20 avg 8.93 (`benchmark_results_openrouter_core.json`, ไม่ได้ commit) — gemma/qwen ฟรีโดน 429 upstream — **user ตัดสินใจไม่เอาเข้า registry**
 - [ ] **ตรวจความหมายสแลง `qa_52` ("ฮ้อป") กับ `qa_53` ("คลินิกจัดฟันใกล้ฉัน")** — ทั้ง 3 model ตอบไม่ตรง keyword และแต่ละตัวเดาความหมายไม่เหมือนกัน ต้องให้คนไทยยืนยันว่าความหมายที่ตั้งไว้ถูกจริงไหม ถ้าถูก = model ไม่รู้จักสแลงใหม่ (เคสดี เก็บไว้) ถ้าผิดหรือไม่มีคนใช้จริง = แก้ keyword หรือเปลี่ยนเคส
 - [ ] ทบทวนเคสข่าว/สแลงทุก 6–12 เดือน (ข้อมูลเก่าเร็ว) — รอบถัดไปประมาณ มี.ค.–ก.ย. 2570
 
 **ติดอยู่ / พักไว้:**
 - [ ] Ollama กับของจริง — ต้องติดตั้ง Ollama เองก่อน (user ไม่ให้ติดตั้งอัตโนมัติ)
-- [ ] `gemini-3.1-pro-preview` — ต้องเปิด billing (เสียเงิน) user พักไว้ 2026-10-02
+- [ ] `gemini-3.1-pro-preview` — ต้องเปิด billing (เสียเงิน) user พักไว้ 2026-10-02 และถอดออกจาก registry แล้ว
 - [ ] Fine-tuning — รอ GPU มหาวิทยาลัย ห้ามรันบนเครื่องนี้ แผนอยู่ที่ `finetune/README.md`
 
-**ตัดสินใจแล้ว:** benchmark แค่ Gemini + Groq (free tier) ไม่วัด OpenAI/Anthropic — thai_score ของ `claude-*` / `gpt-*` เป็นค่าประมาณ
+**ตัดสินใจแล้ว (2026-10-02):** registry มีแค่ Gemini + Groq (free tier) — ถอด OpenAI/Anthropic/`gemini-3.1-pro-preview` ออกแล้ว (`d731fa3`), OpenRouter ใช้แค่ benchmark, tier Expert ถอยไปใช้ model ของ Top — เป้าหมายโปรเจกต์คือทดสอบว่า model ไหนเหมาะกับ task แบบไหน (routing) ไม่ใช่รองรับทุก provider
 
-**วัด thai_score จริงแล้ว (registry.rs):** `gemini-3.1-flash-lite` 9, `openai/gpt-oss-120b` 9, `openai/gpt-oss-20b` 9 (ชุด full 600 เคส), `gemini-3.6-flash` 6 (ชุด core 20 เคส) — ที่เหลือเป็นค่าประมาณ
+**registry.rs ตอนนี้ (ทุกตัววัดจริง):** Small `gemini-3.1-flash-lite` 9 / `openai/gpt-oss-20b` 9, Mid `gemini-3.6-flash` 6 (ชุด core), Top `openai/gpt-oss-120b` 9 — Thai routing: ง่าย flash-lite / กลาง gpt-oss-20b / ยาก gpt-oss-120b
 
 ---
 
