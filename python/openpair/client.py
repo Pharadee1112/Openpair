@@ -59,6 +59,7 @@ class OpenPair:
                 anthropic = api_keys.get("anthropic"),
                 google    = api_keys.get("google"),
                 groq      = api_keys.get("groq"),
+                openrouter = api_keys.get("openrouter"),
             )
         elif isinstance(api_keys, ApiKeys):
             self._keys = api_keys

@@ -7,6 +7,7 @@ Usage:
     python run_benchmark.py --category qa
     python run_benchmark.py --suite full          # 600 เคส (100 ต่อหมวด)
     python run_benchmark.py --output results.json
+    python run_benchmark.py --models openrouter:meta-llama/llama-3.3-70b-instruct   # OpenRouter ต้องใส่ prefix
 """
 
 import argparse
@@ -45,6 +46,18 @@ DEFAULT_MODELS = [
         "provider":   "google",
     },
 ]
+
+
+def parse_model_spec(spec: str) -> dict:
+    """
+    แปลง model spec จาก --models เป็น dict สำหรับ runner
+    OpenRouter ใช้ชื่อแบบ org/model เหมือน Groq จึงเดาไม่ได้ ต้องระบุ prefix "openrouter:" เอง
+    เช่น openrouter:meta-llama/llama-3.3-70b-instruct
+    """
+    if spec.startswith("openrouter:"):
+        model_id = spec[len("openrouter:"):]
+        return {"model_id": model_id, "model_name": model_id, "provider": "openrouter"}
+    return {"model_id": spec, "model_name": spec, "provider": infer_provider(spec)}
 
 
 def infer_provider(model_id: str) -> str:
@@ -99,10 +112,7 @@ def main():
     # ── เลือก models ──────────────────────────────────────────────
     if args.models:
         model_ids = [m.strip() for m in args.models.split(",")]
-        models = [
-            {"model_id": mid, "model_name": mid, "provider": infer_provider(mid)}
-            for mid in model_ids
-        ]
+        models = [parse_model_spec(mid) for mid in model_ids]
     else:
         models = DEFAULT_MODELS
 

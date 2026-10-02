@@ -68,7 +68,7 @@ class TestClientFallsBackToOllama:
             monkeypatch.setitem(caller._CALLERS, provider, _raise)
 
     def test_falls_back_to_ollama_when_no_cloud_keys(self, monkeypatch, fake_ollama):
-        for var in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GROQ_API_KEY"):
+        for var in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY"):
             monkeypatch.delenv(var, raising=False)
         fake_ollama.response_text = "local model reply"
 

@@ -3,7 +3,8 @@ openpair.config — API key management
 =====================================
 Loads API keys from (in order of priority):
   1. Keys passed directly to OpenPair(api_keys={...})
-  2. Environment variables: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, GROQ_API_KEY
+  2. Environment variables: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, GROQ_API_KEY,
+     OPENROUTER_API_KEY
   3. .env file in the current directory (via python-dotenv)
 """
 
@@ -31,6 +32,7 @@ class ApiKeys:
         anthropic:    Optional[str] = None,
         google:       Optional[str] = None,
         groq:         Optional[str] = None,
+        openrouter:   Optional[str] = None,
         ollama_base_url: Optional[str] = None,
         ollama_model:    Optional[str] = None,
     ) -> None:
@@ -38,6 +40,7 @@ class ApiKeys:
         self.anthropic = anthropic or os.getenv("ANTHROPIC_API_KEY")
         self.google    = google    or os.getenv("GOOGLE_API_KEY")
         self.groq      = groq      or os.getenv("GROQ_API_KEY")
+        self.openrouter = openrouter or os.getenv("OPENROUTER_API_KEY")
 
         # Ollama doesn't use an API key — "available" means the local server responds.
         self.ollama_base_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
@@ -60,6 +63,7 @@ class ApiKeys:
             "anthropic": self.anthropic,
             "google":    self.google,
             "groq":      self.groq,
+            "openrouter": self.openrouter,
         }.get(provider)
 
     def has(self, provider: str) -> bool:
@@ -68,7 +72,7 @@ class ApiKeys:
 
     def available_providers(self) -> list[str]:
         """List providers that have a key configured."""
-        return [p for p in ("openai", "anthropic", "google", "groq") if self.has(p)]
+        return [p for p in ("openai", "anthropic", "google", "groq", "openrouter") if self.has(p)]
 
     def __repr__(self) -> str:
         def mask(k: Optional[str]) -> str:
@@ -77,5 +81,6 @@ class ApiKeys:
             f"ApiKeys(openai={mask(self.openai)}, "
             f"anthropic={mask(self.anthropic)}, "
             f"google={mask(self.google)}, "
-            f"groq={mask(self.groq)})"
+            f"groq={mask(self.groq)}, "
+            f"openrouter={mask(self.openrouter)})"
         )

@@ -37,6 +37,7 @@ class TestApiKeys:
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
         monkeypatch.delenv("GROQ_API_KEY",      raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         keys = ApiKeys(openai="sk-x", google="gk-x")
         assert "openai" in keys.available_providers()
         assert "google" in keys.available_providers()
@@ -79,6 +80,51 @@ class TestApiKeys:
             assert not keys.is_ollama_available()
             assert not keys.has("ollama")
             assert keys.for_provider("ollama") is None
+
+
+class TestOpenRouter:
+    def test_reads_key_from_env(self, monkeypatch):
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-env")
+        keys = ApiKeys()
+        assert keys.openrouter == "sk-or-env"
+        assert keys.for_provider("openrouter") == "sk-or-env"
+        assert "openrouter" in keys.available_providers()
+
+    def test_explicit_key_and_dict_input(self, monkeypatch):
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+        assert ApiKeys(openrouter="sk-or-x").has("openrouter")
+        client = OpenPair(api_keys={"openrouter": "sk-or-dict"})
+        assert "openrouter" in client.available_providers()
+
+    def test_repr_masks_openrouter_key(self):
+        r = repr(ApiKeys(openrouter="sk-or-1234567890abcdef"))
+        assert "openrouter=sk-or-12" in r
+        assert "abcdef" not in r
+
+    def test_make_call_hits_openrouter_endpoint(self, fake_ollama):
+        # fake_ollama patches openai.OpenAI — reused here since OpenRouter is the same SDK surface.
+        from openpair.caller import make_call
+        fake_ollama.response_text = "สวัสดีจาก OpenRouter"
+        text, in_tok, out_tok, latency_ms = make_call(
+            provider="openrouter",
+            model_id="meta-llama/llama-3.3-70b-instruct",
+            prompt="สวัสดี",
+            api_key="sk-or-test",
+            system="ตอบเป็นภาษาไทย",
+            max_tokens=128,
+        )
+        assert text == "สวัสดีจาก OpenRouter"
+        assert (in_tok, out_tok) == (8, 16)
+        assert fake_ollama.client_kwargs == [
+            {"api_key": "sk-or-test", "base_url": "https://openrouter.ai/api/v1"}
+        ]
+        call = fake_ollama.calls[0]
+        assert call["model"] == "meta-llama/llama-3.3-70b-instruct"
+        assert call["max_tokens"] == 128
+        assert call["messages"] == [
+            {"role": "system", "content": "ตอบเป็นภาษาไทย"},
+            {"role": "user", "content": "สวัสดี"},
+        ]
 
 
 # ── Routing tests (no API key needed) ────────────────────────────────────────
@@ -131,6 +177,7 @@ class TestRouting:
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
         monkeypatch.delenv("GROQ_API_KEY",      raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         client = OpenPair(api_keys=ApiKeys())
         assert client.available_providers() == []
 
@@ -180,6 +227,7 @@ class TestCall:
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
         monkeypatch.delenv("GROQ_API_KEY",      raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         client = OpenPair(api_keys=ApiKeys())
         with patch.object(ApiKeys, "is_ollama_available", return_value=False):
             with pytest.raises(RuntimeError, match="No API key"):
@@ -191,6 +239,7 @@ class TestCall:
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
         monkeypatch.delenv("GROQ_API_KEY",      raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         # Only anthropic key is set
         client = OpenPair(api_keys=ApiKeys(anthropic="sk-ant-test"))
         with patch("openpair.client.make_call", return_value=("ok", 5, 10, 100.0)):
@@ -326,6 +375,7 @@ class TestFallbackChain:
         monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY",    raising=False)
         monkeypatch.delenv("GROQ_API_KEY",      raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         client = OpenPair(api_keys=ApiKeys())
         with patch.object(ApiKeys, "is_ollama_available", return_value=True):
             with patch(

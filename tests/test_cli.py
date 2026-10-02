@@ -14,7 +14,7 @@ from openpair.config import ApiKeys
 @pytest.fixture(autouse=True)
 def clear_cloud_keys(monkeypatch):
     """Isolate every test from real .env keys so routing/fallback is deterministic."""
-    for var in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GROQ_API_KEY"):
+    for var in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY"):
         monkeypatch.delenv(var, raising=False)
 
 

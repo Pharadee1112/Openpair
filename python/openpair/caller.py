@@ -1,7 +1,7 @@
 """
 openpair.caller — Real API call layer
 =======================================
-Makes actual HTTP calls to OpenAI, Anthropic, and Google AI APIs.
+Makes actual HTTP calls to OpenAI, Anthropic, Google AI, Groq, OpenRouter, and Ollama.
 Called by OpenPair.call() after routing decides which model to use.
 """
 
@@ -203,6 +203,46 @@ def call_groq(
     return text, input_tokens, output_tokens
 
 
+# ── OpenRouter ───────────────────────────────────────────────────────────────
+
+def call_openrouter(
+    model_id: str,
+    prompt: str,
+    api_key: str,
+    system: Optional[str] = None,
+    max_tokens: int = 2048,
+) -> tuple[str, int, int]:
+    """
+    Call OpenRouter (OpenAI-compatible endpoint, hosts many open-source models).
+    model_id is OpenRouter's own ID, e.g. "meta-llama/llama-3.3-70b-instruct".
+    Returns (response_text, input_tokens, output_tokens).
+    """
+    try:
+        import openai
+    except ImportError:
+        raise ImportError("Install openai: pip install openai")
+
+    client = openai.OpenAI(
+        api_key=api_key,
+        base_url="https://openrouter.ai/api/v1",
+    )
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+
+    resp = client.chat.completions.create(
+        model=model_id,
+        messages=messages,
+        max_tokens=max_tokens,
+    )
+
+    text          = resp.choices[0].message.content or ""
+    input_tokens  = resp.usage.prompt_tokens if resp.usage else 0
+    output_tokens = resp.usage.completion_tokens if resp.usage else 0
+    return text, input_tokens, output_tokens
+
+
 # ── Ollama (local) ──────────────────────────────────────────────────────────
 
 def call_ollama(
@@ -247,6 +287,7 @@ _CALLERS = {
     "anthropic": call_anthropic,
     "google":    call_google,
     "groq":      call_groq,
+    "openrouter": call_openrouter,
     "ollama":    call_ollama,
 }
 
