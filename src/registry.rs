@@ -77,12 +77,11 @@ impl ModelRegistry {
                 // benchmark_results_gemini_full.json): gpt-oss-120b 9, gemini-3.1-flash-lite 9 (unchanged),
                 // gpt-oss-20b 8 -> 9 (547/600 cases, avg 8.71). gemini-3.6-flash was dropped from the full
                 // suite (free quota too small) and keeps its 20-case score.
-                // OpenAI and Anthropic have no API key available in this environment —
-                // their thai_score values are still unmeasured placeholders.
-                // gemini-3.1-pro returns 404 NOT_FOUND from the real Google API — this model
-                // id does not exist server-side. thai_score left as a placeholder (NOT set to
-                // the benchmark's suggested value, which was derived from all-error runs).
-                // Needs a corrected model id before it can be benchmarked or routed to.
+                // OpenAI and Anthropic are intentionally not benchmarked (decided 2026-10-02) —
+                // their thai_score values are estimates.
+                // gemini-3.1-pro-preview (id corrected from the non-existent "gemini-3.1-pro") has
+                // zero free-tier quota, so it can't be benchmarked without paid billing — its
+                // thai_score is still an estimate.
 
                 // ── Small / Fast ──────────────────────────────────────────────────────────────────────
                 //                                                                           thai_score ↓

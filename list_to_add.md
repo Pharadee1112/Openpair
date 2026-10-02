@@ -1,7 +1,38 @@
 # OpenPair — สิ่งที่จะเพิ่มเติม (Feature Backlog)
 
 > ไฟล์นี้เก็บ feature และ plan ที่อยากทำในอนาคต ยังไม่ได้อยู่ใน SRD หลัก  
-> Last updated: 2026-09-28
+> Last updated: 2026-10-02
+
+---
+
+## สถานะปัจจุบัน (2026-10-02) — เริ่มอ่านตรงนี้
+
+**ทำได้ต่อ (ไม่ต้องเสียเงิน):**
+- [ ] **OpenRouter: ทดสอบกับของจริง + เพิ่ม model ใน registry** — โค้ดฝั่ง caller/config เสร็จแล้ว (ดู DONE 2026-10-02) ต้องมี `OPENROUTER_API_KEY` ใน `.env` ก่อน (ตอนนี้ยังไม่มี) แล้วค่อย: เช็ค model id จริงจาก `https://openrouter.ai/api/v1/models` → benchmark ด้วย `--models openrouter:<id>` → ใส่ใน `registry.rs` พร้อม thai_score ที่วัดจริง
+- [ ] **ตรวจความหมายสแลง `qa_52` ("ฮ้อป") กับ `qa_53` ("คลินิกจัดฟันใกล้ฉัน")** — ทั้ง 3 model ตอบไม่ตรง keyword และแต่ละตัวเดาความหมายไม่เหมือนกัน ต้องให้คนไทยยืนยันว่าความหมายที่ตั้งไว้ถูกจริงไหม ถ้าถูก = model ไม่รู้จักสแลงใหม่ (เคสดี เก็บไว้) ถ้าผิดหรือไม่มีคนใช้จริง = แก้ keyword หรือเปลี่ยนเคส
+- [ ] ทบทวนเคสข่าว/สแลงทุก 6–12 เดือน (ข้อมูลเก่าเร็ว) — รอบถัดไปประมาณ มี.ค.–ก.ย. 2570
+
+**ติดอยู่ / พักไว้:**
+- [ ] Ollama กับของจริง — ต้องติดตั้ง Ollama เองก่อน (user ไม่ให้ติดตั้งอัตโนมัติ)
+- [ ] `gemini-3.1-pro-preview` — ต้องเปิด billing (เสียเงิน) user พักไว้ 2026-10-02
+- [ ] Fine-tuning — รอ GPU มหาวิทยาลัย ห้ามรันบนเครื่องนี้ แผนอยู่ที่ `finetune/README.md`
+
+**ตัดสินใจแล้ว:** benchmark แค่ Gemini + Groq (free tier) ไม่วัด OpenAI/Anthropic — thai_score ของ `claude-*` / `gpt-*` เป็นค่าประมาณ
+
+**วัด thai_score จริงแล้ว (registry.rs):** `gemini-3.1-flash-lite` 9, `openai/gpt-oss-120b` 9, `openai/gpt-oss-20b` 9 (ชุด full 600 เคส), `gemini-3.6-flash` 6 (ชุด core 20 เคส) — ที่เหลือเป็นค่าประมาณ
+
+---
+
+## DONE — รันชุด full + calibrate keyword + OpenRouter caller (2026-10-02)
+
+- [x] **รันชุด full 600 เคสครบ** — `gemini-3.1-flash-lite` 600/600 (`benchmark_results_gemini_full.json`), Groq `gpt-oss-120b` 600/600 + `gpt-oss-20b` 598/600 (`benchmark_results_groq_full.json`) — 2 เคสสุดท้ายของ 20b ได้คำตอบว่างทุกครั้ง (EmptyResponse) ถือว่าจบที่ 598 คะแนนไม่เปลี่ยน — commit `8d89ab1` push แล้ว
+- [x] **registry.rs**: `gpt-oss-20b` thai_score 8→9 (`b7d1eb5`), 120b / flash-lite คง 9 — รัน `maturin develop --release` แล้ว CLI ใช้ค่าใหม่
+- [x] **ตัด `gemini-3.6-flash` ออกจากชุด full** (free quota น้อยเกินไป) คะแนนคง 6 จากชุด core
+- [x] **Calibrate expected_keywords** — จาก 600 เคส มีแค่ **3 เคส** ที่ทั้ง 3 model ไม่ผ่าน (ทุกเคสพลาดที่ keyword ไม่ใช่ thai_ratio/length) = keyword ส่วนใหญ่ใช้ได้:
+  - `cls_50` (ดาต้าเซ็นเตอร์ใช้ไฟ 270 MW / ค่าไฟแพง) — เฉลยเดิม `เทคโนโลยี` แต่ 2 model ตอบ `พลังงาน` ซึ่งสมเหตุสมผลกว่า → **แก้เฉลยเป็น `พลังงาน` แล้ว** (ผลใน `*_full.json` ยังคิดด้วยเฉลยเดิม ต่างกันไม่ถึง 0.02 คะแนน/model ไม่ได้ rescore)
+  - `qa_52`, `qa_53` (สแลง) — ยังไม่แก้ ต้องให้คนตรวจ (ดูสถานะปัจจุบันด้านบน)
+- [x] **OpenRouter (ฝั่งโค้ด)** — `call_openrouter()` ใน `caller.py` (OpenAI SDK + `base_url=https://openrouter.ai/api/v1`), `ApiKeys.openrouter` / `OPENROUTER_API_KEY` ใน `config.py`, `OpenPair(api_keys={"openrouter": ...})`, `run_benchmark.py --models openrouter:<org/model>` (ต้องมี prefix เพราะ id แบบ `org/model` ชนกับ Groq) — เทส mock ใน `tests/test_client.py::TestOpenRouter` + `tests/test_run_benchmark.py`, `pytest -m "not live"` ผ่าน 118/118
+  - **ยังไม่ได้เพิ่ม model OpenRouter ใน `registry.rs` โดยตั้งใจ** — router เลือก model ถูกสุดใน tier เป็น default ถ้าใส่ model ฟรี/ราคาต่ำโดยยังไม่ได้วัด thai_score มันจะชนะทุก tier ทันที และ id ที่ไม่ได้เช็คกับ API จริงอาจ 404 แบบที่เคยเจอกับ `gemini-3.1-pro` — เพราะเหตุนี้ OpenRouter จึงยังไม่อยู่ใน fallback chain ของ `client.call()` ด้วย ตอนนี้ใช้ได้ผ่าน `make_call()` / `run_benchmark.py` เท่านั้น
 
 ---
 
@@ -11,8 +42,8 @@
 - [x] เนื้อหา: ข่าวปัจจุบัน ก.ย. 2569 ~140 เคส (ใส่เนื้อข่าวในโจทย์), สแลง/ภาษาวัยรุ่น ~110 เคส, สำนวนไทย + ภาษาถิ่น, โค้ดบริบทไทย
 - [x] test ใหม่ `TestFullSuite` ใน `tests/test_benchmark.py` (100 เคส/หมวด, id/prompt ไม่ซ้ำ, ป้าย classification ไม่เป็น substring กัน)
 - [x] `run_benchmark.py` บังคับ stdout เป็น UTF-8 แล้ว — ไม่ crash บน Windows console ภาษาไทย (cp874) อีก
-- [ ] **ยังไม่ได้รันชุด full กับ model จริง** — expected_keywords ตั้งจากการคาดคำตอบ ยังไม่ได้ calibrate ถ้ารันแล้วเคสไหน pass rate ต่ำผิดปกติทุก model ให้ตรวจ keyword ของเคสนั้นก่อนสรุปว่า model แย่
-- [ ] ทบทวนเคสข่าว/สแลงทุก 6–12 เดือน (ข้อมูลเก่าเร็ว)
+- [x] ~~ยังไม่ได้รันชุด full กับ model จริง~~ — รันครบและ calibrate keyword แล้ว 2026-10-02 (ดู DONE ด้านบน)
+- ทบทวนเคสข่าว/สแลงทุก 6–12 เดือน → ย้ายไปอยู่ใน "สถานะปัจจุบัน"
 
 ---
 
@@ -29,7 +60,7 @@
 - [x] **แก้ ARCHITECTURE.md** — ลบ/แก้ตารางเก่าที่บอกว่า "ยังเรียก API จริงไม่ได้" (ล้าสมัยมาก ตอนนี้เรียกได้จริงทั้ง 4 provider + Ollama fallback + CLI) เพิ่มบรรทัด อัปเดต 2026-07-28
 - [x] **`--version` flag** — เพิ่ม `__registry_snapshot__ = "2026-07-28"` ใน `python/openpair/__init__.py` + `--version` ใน `cli.py` (argparse `action="version"`), `pip install -e .` แล้ว ยืนยันด้วย `openpair --version` → `openpair 0.1.0 (registry snapshot: 2026-07-28)`, `pytest tests/test_cli.py` ผ่านครบ 8/8
 
-**ยังไม่จบ (ของจริง ไม่ใช่เดา) — สถานะ registry.rs หลัง 2026-07-28:**
+**สถานะ registry.rs หลัง 2026-07-28 (ล้าสมัยแล้ว — ดู "สถานะปัจจุบัน" ด้านบน; llama ทั้ง 2 ตัวถูก Groq ปลดไปแล้ว 2026-08-28):**
 - วัดจริงแล้ว: `llama-3.1-8b-instant`, `llama-3.3-70b-versatile`, `openai/gpt-oss-120b`, `gemini-3.1-flash-lite`, `gemini-3.6-flash` (5/10)
 - ยังเป็นค่าประมาณ: `claude-haiku-4-5`, `gpt-5.4-nano`, `claude-sonnet-5`, `gpt-5.5`, `claude-opus-5` (ไม่มี API key OpenAI/Anthropic), `gemini-3.1-pro-preview` (free tier quota = 0 ต้องเปิด billing ก่อน)
 
@@ -44,10 +75,10 @@
 
 ---
 
-## ยังไม่ได้ทำ (blocked หรือ user บอกให้ข้ามไปก่อน — 2026-07-28)
+## ยังไม่ได้ทำ (blocked หรือ user บอกให้ข้ามไปก่อน — 2026-07-28, ยังเป็นจริง ณ 2026-10-02)
 
 - [ ] **Ollama fallback กับของจริง** — เครื่องนี้ไม่มี Ollama ติดตั้งเลย (`ollama` command not found ทั้ง bash/PowerShell) เทสตอนนี้ผ่านแค่ mock (`tests/test_ollama_fallback.py` ใช้ `FakeOllama` fixture) ยังไม่เคยพิสูจน์กับ server จริง — user เลือก "ข้ามไปก่อน" (ไม่ให้ติดตั้ง Ollama อัตโนมัติ) ถ้าจะทำต่อ ต้องติดตั้ง Ollama เองก่อน (`ollama pull llama3.2` แล้วรัน `ollama serve`) แล้วค่อยรัน integration test จริง
-- [ ] **`gemini-3.1-pro-preview` ยังไม่ได้วัดจริง** — ลองรันแล้วค้าง ~50 นาทีไม่จบ (rate limit ของ preview model) ยกเลิกไปแล้ว ตาม user บอกให้รันใหม่วันถัดไป — รันใหม่ 2026-09-28 แล้ว: free tier `limit: 0` ต้องเปิด billing ก่อน
+- [ ] **`gemini-3.1-pro-preview` ยังไม่ได้วัดจริง** — ลองรันแล้วค้าง ~50 นาทีไม่จบ (rate limit ของ preview model) ยกเลิกไปแล้ว ตาม user บอกให้รันใหม่วันถัดไป — รันใหม่ 2026-09-28 แล้ว: free tier `limit: 0` ต้องเปิด billing ก่อน — **2026-10-02: user ไม่เปิด billing (เสียเงิน) พักไว้ก่อน**
 
 ---
 
@@ -63,13 +94,14 @@
 
 ---
 
-## ยังค้างอยู่ (next action — เริ่มตรงนี้เมื่อกลับมา)
+## ยังค้างอยู่ (ของ 2026-07-28 — ดู "สถานะปัจจุบัน" ด้านบนแทน)
 
 - [x] ~~เพิ่ม `--version` flag ให้ CLI จริง~~ — ทำแล้ว 2026-07-28: เพิ่ม `__registry_snapshot__ = "2026-07-28"` ใน `python/openpair/__init__.py` + `--version` ใน `cli.py` (argparse `action="version"`), `pip install -e .` แล้ว, ยืนยันด้วย `openpair --version` → `openpair 0.1.0 (registry snapshot: 2026-07-28)`, `pytest tests/test_cli.py` ผ่านครบ 8/8 — ยังไม่ได้ commit/push
 - [x] ~~อัปเดต README~~ — แก้แล้ว 2026-07-28 (ดู DONE ด้านล่าง)
 - [x] ~~รัน benchmark~~ — รันแล้ว 4/10 model จริง 2026-07-28 (Groq ทั้ง 3 + gemini-3.1-flash-lite), อัปเดต `thai_score` ใน `registry.rs` แล้วด้วยผลจริง (ดู DONE ด้านล่าง)
-- [ ] **ตัดสินใจเรื่อง score ที่เหมาะสม** — "Design a distributed database..." ตอนนี้มีผลจริงแล้วว่า Llama 3.3 70B ได้ avg 8.44/10 แต่ทำ code_thai แย่สุด (6.0/10, `code_01` ได้ 3.0 kw=0%) → เป็นสัญญาณว่า Llama 3.3 70B ไม่ควรถูกดันขึ้น tier สำหรับงาน code — รอ human ตัดสินใจ ไม่เดาเอง
-- [ ] **วัด thai_score ที่เหลือ** — OpenAI/Anthropic ต้องมี API key ก่อน (ไม่มีใน `.env` ตอนนี้), Gemini เหลือ `gemini-3.1-pro-preview` ซึ่ง free tier ให้ quota = 0 (เช็ค 2026-09-28) ต้องเปิด billing ก่อน
+- [x] ~~ตัดสินใจเรื่อง score ที่เหมาะสม~~ — **ไม่ต้องตัดสินใจแล้ว:** Groq ปลด `llama-3.3-70b-versatile` ไปเมื่อ 2026-08-28 (ลบออกจาก registry แล้ว) — ข้อความเดิม: "Design a distributed database..." ตอนนี้มีผลจริงแล้วว่า Llama 3.3 70B ได้ avg 8.44/10 แต่ทำ code_thai แย่สุด (6.0/10, `code_01` ได้ 3.0 kw=0%) → เป็นสัญญาณว่า Llama 3.3 70B ไม่ควรถูกดันขึ้น tier สำหรับงาน code — รอ human ตัดสินใจ ไม่เดาเอง
+- [ ] **(พักไว้ — อนาคต) วัด `gemini-3.1-pro-preview`** — free tier ให้ quota = 0 (เช็ค 2026-09-28) ต้องเปิด billing (เสียเงิน ~$5–15 สำหรับชุด full) — user ตัดสินใจ 2026-10-02 ว่ายังไม่ทำ รอไว้ถ้ากลับมาทำเรื่องนี้ต่อในอนาคต, thai_score คงค่าประมาณ 7 ไว้
+- **ตัดสินใจแล้ว (2026-10-02): ไม่วัด OpenAI/Anthropic** — benchmark แค่ Gemini + Groq ก็พอ, thai_score ของ `claude-*` / `gpt-*` ใน registry.rs คงเป็นค่าประมาณต่อไป
 - [x] ~~Custom benchmark (ให้ user เพิ่ม test case เอง)~~ — ทำแล้ว: `load_custom_cases()` ใน `python/openpair/benchmark/dataset.py` (โหลด test case จาก JSON, มี validation + `custom_cases.example.json`) export ไว้ใน `benchmark/__init__.py` แล้ว (ตรวจโค้ดจริง 2026-07-28)
 
 **ตัดสินใจแล้วว่ายังไม่ทำ:** แยก registry ออกเป็น YAML — เข้าใจภาพแล้ว (แยกข้อมูลออกจากโค้ด แก้ราคาโดยไม่ต้อง compile) แต่เป็นงานใหญ่ (ต้อง `serde_yaml` + error handling) ถ้าทำ ให้ไฟล์ติดไปกับโปรเจกต์ + มีค่า default ในตัว (โปรแกรมไม่พังถ้า yaml หาย)
@@ -107,6 +139,8 @@ python/openpair/benchmark/
 ```
 
 ### Thai Routing Priority ที่ใช้อยู่ใน registry.rs
+
+> ล้าสมัย — ค่าปัจจุบัน (2026-10-02): simple `gemini-3.1-flash-lite` / medium `claude-haiku-4-5` / complex `claude-sonnet-5`
 
 ```
 simple_thai  → gemini-2.5-flash-lite   (thai_score: 9, ราคาถูกสุด)
@@ -232,7 +266,7 @@ caller.py make_call()
 
 ### Test Plan
 
-- [ ] Unit test: call_openrouter() mock response
+- [x] Unit test: call_openrouter() mock response — `tests/test_client.py::TestOpenRouter` (2026-10-02)
 - [x] Unit test: call_ollama() mock response — `tests/conftest.py` (`fake_ollama` fixture, patches `openai.OpenAI` + `is_ollama_available`) + `tests/test_ollama_fallback.py` (2026-07-20)
 - [x] Unit test: fallback เมื่อ Ollama ไม่ available — same file, `TestClientFallsBackToOllama` (no-keys case + all-cloud-rate-limited case + "doesn't use Ollama when a cloud provider succeeds" case)
 - [ ] Integration test (optional): Ollama รันจริง → ได้ response จริง
@@ -249,4 +283,4 @@ caller.py make_call()
 
 ---
 
-> Next session: เริ่มที่ OpenRouter ก่อน แล้วค่อยทำ Ollama fallback
+> ~~Next session: เริ่มที่ OpenRouter ก่อน แล้วค่อยทำ Ollama fallback~~ — OpenRouter caller + Ollama fallback (mock) ทำแล้ว ดู "สถานะปัจจุบัน" ด้านบนสำหรับงานถัดไป
