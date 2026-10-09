@@ -8,6 +8,7 @@ Usage:
     python run_benchmark.py --suite full          # 600 เคส (100 ต่อหมวด)
     python run_benchmark.py --output results.json
     python run_benchmark.py --models openrouter:meta-llama/llama-3.3-70b-instruct   # OpenRouter ต้องใส่ prefix
+    python run_benchmark.py --models ollama:qwen2.5:3b                               # Ollama (local) ต้องใส่ prefix
 """
 
 import argparse
@@ -53,10 +54,13 @@ def parse_model_spec(spec: str) -> dict:
     แปลง model spec จาก --models เป็น dict สำหรับ runner
     OpenRouter ใช้ชื่อแบบ org/model เหมือน Groq จึงเดาไม่ได้ ต้องระบุ prefix "openrouter:" เอง
     เช่น openrouter:meta-llama/llama-3.3-70b-instruct
+    Ollama ก็ต้องใส่ prefix "ollama:" เพราะชื่ออย่าง qwen2.5:3b จะถูกเดาเป็น Groq เช่น ollama:qwen2.5:3b
     """
-    if spec.startswith("openrouter:"):
-        model_id = spec[len("openrouter:"):]
-        return {"model_id": model_id, "model_name": model_id, "provider": "openrouter"}
+    for provider in ("openrouter", "ollama"):
+        prefix = f"{provider}:"
+        if spec.startswith(prefix):
+            model_id = spec[len(prefix):]
+            return {"model_id": model_id, "model_name": model_id, "provider": provider}
     return {"model_id": spec, "model_name": spec, "provider": infer_provider(spec)}
 
 

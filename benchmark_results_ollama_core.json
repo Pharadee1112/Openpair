@@ -1,0 +1,220 @@
+{
+  "run_at": "2026-10-09T10:46:00.977565",
+  "models": [
+    {
+      "model_id": "qwen2.5:3b",
+      "model_name": "qwen2.5:3b",
+      "provider": "ollama",
+      "avg_final_score": 8.1,
+      "avg_keyword_score": 0.623,
+      "avg_thai_ratio": 0.8,
+      "pass_rate": 0.8,
+      "suggested_thai_score": 8,
+      "completed_cases": 20,
+      "total_cases": 20,
+      "pending_cases": 0,
+      "scores": [
+        {
+          "id": "qa_01",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 1.0,
+          "passed": true,
+          "preview": "กรุงเทพฯ"
+        },
+        {
+          "id": "qa_02",
+          "category": "qa",
+          "difficulty": "easy",
+          "final_score": 5.0,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.85,
+          "passed": false,
+          "preview": "น้ำประกอบด้วยธาตุ Hydrogen (ฮีทรอสโบรน) และ Oxygen (ออโรเซน) ในอัตราคงที่คือ 2 ต"
+        },
+        {
+          "id": "qa_03",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.848,
+          "passed": true,
+          "preview": "AI (Artificial Intelligence) และ ML (Machine Learning) เป็นเรื่องที่เกี่ยวข้องกั"
+        },
+        {
+          "id": "qa_04",
+          "category": "qa",
+          "difficulty": "medium",
+          "final_score": 8.0,
+          "keyword_score": 0.6,
+          "thai_ratio": 0.931,
+          "passed": true,
+          "preview": "ภาวะโลกร้อนหรือเรียกว่าภาวะโลกร้อนแปลเป็นภาษาไทยคือความชื้นในชั้นบรรยากาศทั่วไปท"
+        },
+        {
+          "id": "qa_05",
+          "category": "qa",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.935,
+          "passed": true,
+          "preview": "ระบบเศรษฐกิจที่ใช้นิยามมาจากคติทุนนิยม (Capitalism) และสังคมนิยม (Socialism) มีว"
+        },
+        {
+          "id": "tr_01",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.19,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.286,
+          "passed": false,
+          "preview": "พระอาทิตย์ขึ้นที่东侧。   请注意，这里的方位（东侧）在英文中是“east”，但在中文里通常使用“东侧”来表示，这取决于上下文和具体表达方式。"
+        },
+        {
+          "id": "tr_02",
+          "category": "translation",
+          "difficulty": "easy",
+          "final_score": 8.33,
+          "keyword_score": 0.667,
+          "thai_ratio": 0.9,
+          "passed": true,
+          "preview": "AI กำลังเปลี่ยนแปลงโลก ให้เป็นรูปแบบใหม่"
+        },
+        {
+          "id": "tr_03",
+          "category": "translation",
+          "difficulty": "medium",
+          "final_score": 4.82,
+          "keyword_score": 0.0,
+          "thai_ratio": 0.282,
+          "passed": false,
+          "preview": "โมเดลหุ่นจำ培講需要大量的训练數據才能在複雜的任务中实现高的准确性。"
+        },
+        {
+          "id": "tr_04",
+          "category": "translation",
+          "difficulty": "hard",
+          "final_score": 6.0,
+          "keyword_score": 0.2,
+          "thai_ratio": 0.79,
+          "passed": false,
+          "preview": "การประมวลผลด้วย quantum computing การใช้ phenomenons แบบ quantum อย่างเช่น ซูเปร"
+        },
+        {
+          "id": "sum_01",
+          "category": "summarization",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.929,
+          "passed": true,
+          "preview": "ประเทศไทยอยู่ในภูมิภาคเอเชียตะวันออกเฉียงใต้, มีประชากรกว่า 70 ล้านคน ด้วยกรุงเท"
+        },
+        {
+          "id": "sum_02",
+          "category": "summarization",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.825,
+          "passed": true,
+          "preview": "- การพัฒนา AI ในปัจจุบันมีแรงขับเคลื่อนจากการเพิ่มขึ้นของข้อมูล - การพัฒนาของปัจ"
+        },
+        {
+          "id": "cls_01",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.925,
+          "passed": true,
+          "preview": "ข้อความนี้จัดอยู่ในหมวดหมู่ 'บวก' เพราะมีรายละเอียดทั้งอาหารที่อร่อย บริการดี แล"
+        },
+        {
+          "id": "cls_02",
+          "category": "classification",
+          "difficulty": "easy",
+          "final_score": 6.67,
+          "keyword_score": 0.333,
+          "thai_ratio": 0.97,
+          "passed": true,
+          "preview": "ข้อความนี้เกี่ยวข้องกับเทคโนโลยี."
+        },
+        {
+          "id": "cls_03",
+          "category": "classification",
+          "difficulty": "medium",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.947,
+          "passed": true,
+          "preview": "จากคำวิจารณ์เรื่องนี้ ผู้ใช้รีวิวเป็นผู้ที่พอใจกับบริการมากกว่า มีบางส่วนที่ไม่ค"
+        },
+        {
+          "id": "code_01",
+          "category": "code_thai",
+          "difficulty": "easy",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.68,
+          "passed": true,
+          "preview": "เรามาทำความเข้าใจกันครับ ก่อนจะอธิบายโค้ด  เราสร้างฟังก์ชัน (`def`) ชื่อว่า `gre"
+        },
+        {
+          "id": "code_02",
+          "category": "code_thai",
+          "difficulty": "medium",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.744,
+          "passed": true,
+          "preview": "สคริปต์ Python ข้างล่างคือฟังก์ชั่น `binary_search` ที่ใช้ในการค้นหาตัวแปร `targ"
+        },
+        {
+          "id": "code_03",
+          "category": "code_thai",
+          "difficulty": "hard",
+          "final_score": 9.0,
+          "keyword_score": 0.8,
+          "thai_ratio": 0.437,
+          "passed": true,
+          "preview": "ขออภัยครับ แต่รูปแบบ Singleton ที่คุณได้นำเสนออาจไม่เป็นไปตามมาตรฐานการใช้งานจริ"
+        },
+        {
+          "id": "cre_01",
+          "category": "creative",
+          "difficulty": "easy",
+          "final_score": 10.0,
+          "keyword_score": 1.0,
+          "thai_ratio": 0.878,
+          "passed": true,
+          "preview": "ดอกบานสะท้อนแสง银湖上，   บัวบุ้งลุ่มฟ้าประกายสู่ท้องฟ้าสีคราม，   เรือนเรือนเรียบคลอ"
+        },
+        {
+          "id": "cre_02",
+          "category": "creative",
+          "difficulty": "medium",
+          "final_score": 8.75,
+          "keyword_score": 0.75,
+          "thai_ratio": 0.971,
+          "passed": true,
+          "preview": "หุ่นยนต์ที่เรียนรู้สามารถเข้าใจได้ว่าความรู้สึก มิตรภาพตั้งแต่เข้าใจความสำนึกของ"
+        },
+        {
+          "id": "cre_03",
+          "category": "creative",
+          "difficulty": "hard",
+          "final_score": 7.5,
+          "keyword_score": 0.5,
+          "thai_ratio": 0.88,
+          "passed": true,
+          "preview": "\"ตัดสินใจอย่างฉลาดผ่าน AI ที่ชัดเจนในแต่ละขั้นตอน\""
+        }
+      ]
+    }
+  ]
+}

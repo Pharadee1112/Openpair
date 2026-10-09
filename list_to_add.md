@@ -13,7 +13,7 @@
 - [ ] ทบทวนเคสข่าว/สแลงทุก 6–12 เดือน (ข้อมูลเก่าเร็ว) — รอบถัดไปประมาณ มี.ค.–ก.ย. 2570
 
 **ติดอยู่ / พักไว้:**
-- [ ] Ollama กับของจริง — ต้องติดตั้ง Ollama เองก่อน (user ไม่ให้ติดตั้งอัตโนมัติ)
+- [x] ~~Ollama กับของจริง~~ — ทำแล้ว 2026-10-09: user ติดตั้ง Ollama 0.40.1 เอง, pull `qwen2.5:3b` (เครื่องนี้ VRAM 4 GB), ตั้ง `OLLAMA_MODEL=qwen2.5:3b` ใน `.env` — ปิด cloud key ทั้งหมดแล้ว `client.call()` ตกไปที่ `Ollama (qwen2.5:3b)` จริง ตอบไทย/โค้ดได้ (~4–8 วินาที/คำตอบ) — benchmark ชุด core 20/20 avg **8.10** (thai_score 8; qa 7.4 / translation 6.8 อ่อนสุด) ผลที่ `benchmark_results_ollama_core.json` รันด้วย `run_benchmark.py --models ollama:qwen2.5:3b` (เพิ่ม prefix `ollama:` แล้ว) — ยังไม่ใส่เข้า registry
 - [ ] `gemini-3.1-pro-preview` — ต้องเปิด billing (เสียเงิน) user พักไว้ 2026-10-02 และถอดออกจาก registry แล้ว
 - [ ] Fine-tuning — รอ GPU มหาวิทยาลัย ห้ามรันบนเครื่องนี้ แผนอยู่ที่ `finetune/README.md`
 
@@ -77,7 +77,7 @@
 
 ## ยังไม่ได้ทำ (blocked หรือ user บอกให้ข้ามไปก่อน — 2026-07-28, ยังเป็นจริง ณ 2026-10-02)
 
-- [ ] **Ollama fallback กับของจริง** — เครื่องนี้ไม่มี Ollama ติดตั้งเลย (`ollama` command not found ทั้ง bash/PowerShell) เทสตอนนี้ผ่านแค่ mock (`tests/test_ollama_fallback.py` ใช้ `FakeOllama` fixture) ยังไม่เคยพิสูจน์กับ server จริง — user เลือก "ข้ามไปก่อน" (ไม่ให้ติดตั้ง Ollama อัตโนมัติ) ถ้าจะทำต่อ ต้องติดตั้ง Ollama เองก่อน (`ollama pull llama3.2` แล้วรัน `ollama serve`) แล้วค่อยรัน integration test จริง
+- [x] **Ollama fallback กับของจริง** — ทำแล้ว 2026-10-09 (ดูสถานะปัจจุบัน) — เดิม: เครื่องนี้ไม่มี Ollama ติดตั้งเลย (`ollama` command not found ทั้ง bash/PowerShell) เทสตอนนี้ผ่านแค่ mock (`tests/test_ollama_fallback.py` ใช้ `FakeOllama` fixture) ยังไม่เคยพิสูจน์กับ server จริง — user เลือก "ข้ามไปก่อน" (ไม่ให้ติดตั้ง Ollama อัตโนมัติ) ถ้าจะทำต่อ ต้องติดตั้ง Ollama เองก่อน (`ollama pull llama3.2` แล้วรัน `ollama serve`) แล้วค่อยรัน integration test จริง
 - [ ] **`gemini-3.1-pro-preview` ยังไม่ได้วัดจริง** — ลองรันแล้วค้าง ~50 นาทีไม่จบ (rate limit ของ preview model) ยกเลิกไปแล้ว ตาม user บอกให้รันใหม่วันถัดไป — รันใหม่ 2026-09-28 แล้ว: free tier `limit: 0` ต้องเปิด billing ก่อน — **2026-10-02: user ไม่เปิด billing (เสียเงิน) พักไว้ก่อน**
 
 ---
@@ -269,7 +269,7 @@ caller.py make_call()
 - [x] Unit test: call_openrouter() mock response — `tests/test_client.py::TestOpenRouter` (2026-10-02)
 - [x] Unit test: call_ollama() mock response — `tests/conftest.py` (`fake_ollama` fixture, patches `openai.OpenAI` + `is_ollama_available`) + `tests/test_ollama_fallback.py` (2026-07-20)
 - [x] Unit test: fallback เมื่อ Ollama ไม่ available — same file, `TestClientFallsBackToOllama` (no-keys case + all-cloud-rate-limited case + "doesn't use Ollama when a cloud provider succeeds" case)
-- [ ] Integration test (optional): Ollama รันจริง → ได้ response จริง
+- [x] Integration test (optional): Ollama รันจริง → ได้ response จริง — ทดสอบมือ 2026-10-09 (ยังไม่มี test อัตโนมัติ)
 - [ ] Benchmark: เปรียบ open-source (OpenRouter) vs closed-source cost/quality
 
 ### Priority

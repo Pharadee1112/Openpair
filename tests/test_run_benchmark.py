@@ -19,6 +19,14 @@ class TestParseModelSpec:
             "provider":   "openrouter",
         }
 
+    def test_ollama_prefix_is_stripped_and_keeps_tag(self):
+        m = parse_model_spec("ollama:qwen2.5:3b")
+        assert m == {
+            "model_id":   "qwen2.5:3b",
+            "model_name": "qwen2.5:3b",
+            "provider":   "ollama",
+        }
+
     def test_org_slash_model_without_prefix_stays_groq(self):
         assert parse_model_spec("openai/gpt-oss-120b")["provider"] == "groq"
 

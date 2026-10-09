@@ -36,6 +36,7 @@ SOURCES = [
     ("openai/gpt-oss-20b",                     "benchmark_results_groq_full.json",        "Groq"),
     ("openai/gpt-oss-120b",                    "benchmark_results_groq_full.json",        "Groq"),
     ("nvidia/nemotron-3-super-120b-a12b:free", "benchmark_results_openrouter_core.json",  "OpenRouter (ไม่อยู่ใน registry)"),
+    ("qwen2.5:3b",                             "benchmark_results_ollama_core.json",      "Ollama local (ไม่อยู่ใน registry)"),
 ]
 
 
