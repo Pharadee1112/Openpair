@@ -16,6 +16,8 @@
 - [x] 17 ต.ค. — Related work (FrugalGPT, RouteLLM, AutoMix, Typhoon/ThaiExam, SEA-HELM, Thai dialect, LLM-judge, hallucination) อยู่ใน `paper/DRAFT.md` §2 — ชื่อผู้แต่งบางเรื่องยังเป็น `[TODO]`
 - [ ] 17–20 ต.ค. — draft v0.1 อังกฤษ `paper/DRAFT.md` + ไทย `paper/DRAFT_TH.md` (เนื้อหาตรงกัน แก้ต้องแก้ทั้งคู่) — ค้าง: ผลตรวจจากคน (`[HUMAN]`), Conclusion, ~~Thai routing table~~ (17 ต.ค. user เลือกให้ไทยทุกระดับไป flash-lite — แก้ `registry.rs` + paper §3 แล้ว)
 - [ ] 21–22 ต.ค. — ตรวจทาน + ส่ง
+- [ ] **หลังส่ง paper** — แปล code comment / docstring ในโค้ดหลักเป็นอังกฤษ (`runner.py`, `run_benchmark.py`, `dataset.py`, `scorer.py`, `reporter.py`, `checkpoint.py`, `check_dataset.py`, `compare_results.py`, `classifier.rs`, tests) — ห้ามแปล prompt/keyword ที่เป็นข้อมูล
+- [ ] **ก่อนอัปโหลด Hugging Face** — เลือก license ของ dataset (`hf_dataset/README.md` ตอนนี้ `unknown`; เคสข่าวยกเนื้อข่าวจริง)
 
 ---
 
