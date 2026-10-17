@@ -5,7 +5,21 @@
 
 ---
 
-## สถานะปัจจุบัน (2026-10-02) — เริ่มอ่านตรงนี้
+## แผนใหม่ (2026-10-13) — ส่งงาน + พร้อมเขียน paper ภายใน 22 ต.ค. 2569 — เริ่มอ่านตรงนี้
+
+ติดต่อมหาวิทยาลัยไม่ได้แล้ว → ไม่มี GPU มหาวิทยาลัย, fine-tuning ย้ายไปเป็น Future Work ใน paper
+**ประเด็นหลักของ paper:** ใช้ benchmark ภาษาไทย 600 เคสศึกษาพฤติกรรม model — model พลาดตรงไหน, benchmark/วิธีวัดของเรามีข้อจำกัดอะไร, คนที่จะทำต่อควรไปทางไหน
+
+- [x] 13 ต.ค. — `scripts/analyze_behavior.py` → `paper/ANALYSIS.md` (bootstrap CI, paired diff, แยกหมวด/ประเภทเนื้อหา/ความยาก, เสียคะแนนตรงไหน) + `paper/figures/` 3 กราฟ (png+pdf) — ไม่เรียก API — ต้องมี `pip install -e ".[paper]"`
+- [x] 13 ต.ค. — runner/checkpoint เก็บคำตอบเต็ม + token + latency แล้ว (ผลเก่าเก็บแค่ 80 ตัวอักษรแรก)
+- [ ] **(user)** ตรวจ `paper/slang_review.csv` — 17 ต.ค. ขยายเป็น 154 แถว (สแลง 112 + สำนวน 18 + ระดับภาษา 15 + ประชด 6 + ภาษาถิ่น 3) — เฉลย 93 แถวเดิม user ยืนยันว่าถูก (Y) แล้ว — ที่เหลือ: เฉลย 61 แถวใหม่ + ช่อง model ถูกไหม (อย่างน้อย `qa_*`)
+- [x] 17 ต.ค. — Related work (FrugalGPT, RouteLLM, AutoMix, Typhoon/ThaiExam, SEA-HELM, Thai dialect, LLM-judge, hallucination) อยู่ใน `paper/DRAFT.md` §2 — ชื่อผู้แต่งบางเรื่องยังเป็น `[TODO]`
+- [ ] 17–20 ต.ค. — draft v0.1 (อังกฤษ) อยู่ที่ `paper/DRAFT.md` แล้ว — ค้าง: ผลตรวจจากคน (`[HUMAN]`), Conclusion, ตัดสินเรื่อง Thai routing table (§3 — ข้อมูลไม่สนับสนุนให้ส่ง prompt ยากไป gpt-oss)
+- [ ] 21–22 ต.ค. — ตรวจทาน + ส่ง
+
+---
+
+## สถานะปัจจุบัน (2026-10-02)
 
 **ทำได้ต่อ (ไม่ต้องเสียเงิน):**
 - [x] ~~OpenRouter: ทดสอบกับของจริง~~ — ทำแล้ว 2026-10-02: `nvidia/nemotron-3-super-120b-a12b:free` ชุด core 20/20 avg 8.93 (`benchmark_results_openrouter_core.json`, ไม่ได้ commit) — gemma/qwen ฟรีโดน 429 upstream — **user ตัดสินใจไม่เอาเข้า registry**

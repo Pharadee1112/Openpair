@@ -45,6 +45,36 @@ class TestCaseCheckpoint:
         assert loaded.test_case_id == case.id
         assert loaded.passed == score.passed
 
+    def test_full_response_and_usage_survive_reload(self, tmp_path):
+        path = tmp_path / "ckpt.jsonl"
+        case = _case()
+        long_answer = "กรุงเทพมหานคร " * 20  # ยาวกว่า preview 80 ตัวอักษร
+        score = score_response(long_answer, case)
+        score.input_tokens, score.output_tokens, score.latency_ms = 12, 34, 567.8
+
+        CaseCheckpoint(path).append(model_id="m1", model_name="Model 1", provider="google", case=case, score=score)
+        loaded = CaseCheckpoint(path).get("m1", case)
+
+        assert loaded.response == long_answer.strip()
+        assert len(loaded.response) > len(loaded.response_preview)
+        assert (loaded.input_tokens, loaded.output_tokens, loaded.latency_ms) == (12, 34, 567.8)
+
+    def test_old_entry_without_response_still_loads(self, tmp_path):
+        # checkpoint ที่เขียนก่อนเพิ่ม field response/token ต้องยังโหลดได้
+        path = tmp_path / "ckpt.jsonl"
+        case = _case()
+        CaseCheckpoint(path).append(model_id="m1", model_name="Model 1", provider="google",
+                                    case=case, score=score_response("กรุงเทพมหานคร", case))
+        entry = json.loads(path.read_text(encoding="utf-8"))
+        for k in ("response", "input_tokens", "output_tokens", "latency_ms"):
+            entry.pop(k)
+        path.write_text(json.dumps(entry, ensure_ascii=False) + "\n", encoding="utf-8")
+
+        loaded = CaseCheckpoint(path).get("m1", case)
+        assert loaded is not None
+        assert loaded.response == ""
+        assert loaded.input_tokens is None
+
     def test_prompt_changed_returns_none(self, tmp_path):
         path = tmp_path / "ckpt.jsonl"
         case = _case(prompt="เมืองหลวงของไทยคืออะไร?")

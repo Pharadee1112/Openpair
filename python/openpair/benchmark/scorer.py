@@ -12,6 +12,8 @@ final_score (0–10) = weighted average ของทั้ง 3
 
 from __future__ import annotations
 from dataclasses import dataclass
+from typing import Optional
+
 from .dataset import ThaiTestCase
 
 
@@ -25,7 +27,13 @@ class ResponseScore:
     length_ok:      bool    # response length >= case.min_length
     final_score:    float   # 0.0–10.0
     passed:         bool    # ผ่านเกณฑ์ขั้นต่ำไหม
-    response_preview: str   # 60 chars แรกของ response
+    response_preview: str   # 80 chars แรกของ response
+    # คำตอบเต็ม + token/latency — เก็บไว้ให้คะแนนใหม่หรือให้คนตรวจย้อนหลังได้โดยไม่ต้องรันใหม่
+    # (ผลที่รันก่อน 2026-10-13 ไม่มี field พวกนี้ → ได้ค่า default)
+    response:       str = ""
+    input_tokens:   Optional[int] = None
+    output_tokens:  Optional[int] = None
+    latency_ms:     Optional[float] = None
 
 
 def _thai_ratio(text: str) -> float:
@@ -84,6 +92,7 @@ def score_response(response: str, case: ThaiTestCase) -> ResponseScore:
         final_score     = round(final, 2),
         passed          = passed,
         response_preview= response[:80].replace("\n", " "),
+        response        = response,
     )
 
 

@@ -186,6 +186,9 @@ def run_model_benchmark(
                 )
 
             score = score_response(text, case)
+            score.input_tokens  = in_tok
+            score.output_tokens = out_tok
+            score.latency_ms    = round(latency_ms, 1)
             scores.append(score)
 
             if checkpoint is not None:
@@ -345,7 +348,12 @@ def _save_results(
                         "keyword_score": s.keyword_score,
                         "thai_ratio":    s.thai_ratio,
                         "passed":        s.passed,
+                        "length_ok":     s.length_ok,
                         "preview":       s.response_preview,
+                        "response":      s.response,
+                        "input_tokens":  s.input_tokens,
+                        "output_tokens": s.output_tokens,
+                        "latency_ms":    s.latency_ms,
                     }
                     for s in r.scores
                 ],

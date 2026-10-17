@@ -85,6 +85,10 @@ class CaseCheckpoint:
             final_score      = entry["final_score"],
             passed           = entry["passed"],
             response_preview = entry["preview"],
+            response         = entry.get("response", ""),
+            input_tokens     = entry.get("input_tokens"),
+            output_tokens    = entry.get("output_tokens"),
+            latency_ms       = entry.get("latency_ms"),
         )
 
     def append(
@@ -110,6 +114,10 @@ class CaseCheckpoint:
             "final_score":   score.final_score,
             "passed":        score.passed,
             "preview":       score.response_preview,
+            "response":      score.response,
+            "input_tokens":  score.input_tokens,
+            "output_tokens": score.output_tokens,
+            "latency_ms":    score.latency_ms,
             "ts":            datetime.now().isoformat(),
         }
 
