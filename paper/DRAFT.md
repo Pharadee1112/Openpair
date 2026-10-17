@@ -44,7 +44,7 @@ Cost-aware LLM routers send each prompt to the cheapest model that can handle it
 
 ### 4.2 Models and runs
 - `gemini-3.1-flash-lite` (Google AI Studio free tier, run 2026-10-01), `openai/gpt-oss-120b` and `openai/gpt-oss-20b` (Groq free tier, run 2026-10-02; open-weight MoE models, OpenAI 2025).
-- One run per model, provider default temperature, `max_tokens` 2048. gpt-oss-20b returned empty responses on 2 cases after retries; we analyse the 598 cases all models completed.
+- One full run per model, plus a second run of the 154 human-review cases on 2026-10-17 (Section 5.6); provider default temperature, `max_tokens` 2048. gpt-oss-20b returned empty responses on 2 cases after retries; we analyse the 598 cases all models completed.
 - Excluded: `gemini-3.6-flash` (free quota too small for 600 cases; core-20 only, 5.74), `gemini-3.1-pro-preview` (free-tier quota is 0). Local `qwen2.5:3b` via Ollama scored 8.10 on core-20 only and is reported as a fallback, not compared.
 
 ### 4.3 Scoring
@@ -91,6 +91,18 @@ By category, gpt-oss is close to Gemini on classification (91% each vs 100%) but
 
 **Caveat.** Gemini's answers are more often undecidable (66 vs 30–33) because they tend to open with a preamble ("choose a style that suits you…") that fills the 80-character preview; its 100% is measured on its more direct answers only.
 
+### 5.6 Run-to-run stability
+
+The 154 human-review cases were run a second time on 2026-10-17 with identical prompts and settings (`python scripts/analyze_stability.py` → `paper/STABILITY.md`). Because models sample a new answer each run, this second run contains *new* answers: the human Y/N verdicts in Section 5.5 apply to the first run only and are not transferred.
+
+| Model | n | Mean run 1 | Mean run 2 | Same score | Pass/fail flipped |
+|---|---:|---:|---:|---:|---:|
+| Gemini 3.1 Flash-Lite | 154 | 9.10 | 9.13 | 114 (74%) | 3 (2%) |
+| gpt-oss-120b | 154 | 7.98 | 8.09 | 102 (66%) | 20 (13%) |
+| gpt-oss-20b | 151 | 7.76 | 7.76 | 104 (69%) | 18 (12%) |
+
+Model means move by at most 0.11, so the ranking in Sections 5.1–5.3 is stable. Individual cases are not: for both gpt-oss models roughly one case in eight changes between pass and fail from one run to the next, against 2% for Gemini. This is a second weakness of gpt-oss beyond being wrong more often — it is also less consistent — and it matters for routing: a single run's per-case score cannot be used to make per-prompt decisions.
+
 ## 6. Model Weaknesses (qualitative)
 
 Examples are quoted from the stored 80-character previews — the same text the human reviewer judged (Section 5.5).
@@ -100,15 +112,15 @@ Examples are quoted from the stored 80-character previews — the same text the 
 3. **Missing sarcasm.** `cls_14`, `cls_23`, `cls_26`: gpt-oss labels sarcastic complaints as positive, taking praise words literally.
 4. **Code tasks answered in English.** Thai ratio < 50% on code_thai: 19 (Gemini), 70 (120b), 79 (20b) of 99 — gpt-oss writes explanations around the code in English even when asked in Thai. The scorer barely penalises this (Thai credit saturates at 30%).
 5. **Format drift.** gpt-oss often returns markdown tables for short QA/idiom answers (`qa_69`, `sum_96`); harmless to keyword scoring, relevant for chat UIs.
-6. **Empty responses.** gpt-oss-20b returned empty output on 2/600 cases consistently.
+6. **Empty responses.** gpt-oss-20b returned empty output on 2/600 cases in the full run and on 3/154 in the second run, even after retries. The cause is the reasoning budget: these calls end with `output_tokens` = 2048, the `max_tokens` limit, and no visible text — the model spends the whole budget on hidden reasoning before answering. It is also intermittent: re-probing the three cases later, one (`qa_38`) was empty again at 2048 tokens and the other two answered.
 
 ## 7. Limitations of Our Method
 
 1. **Keyword scoring.** Synonyms get no credit (`cls_50`: "พลังงาน" vs key "เทคโนโลยี", fixed after the run); answers listing several options collect more keywords — a verbosity bias like the one Zheng et al. found in LLM judges.
 2. **Ceiling.** 193 cases (32%) are perfect for every model; 227 (38%) give identical scores to all three. A third of the benchmark does not separate these models. Classification is the most saturated (88 of 100 perfect for all).
 3. **Difficulty labels are not valid.** Spearman ρ between author-assigned difficulty and score: −0.026, −0.058, −0.100. "Hard" was our guess, not a property the models experience.
-4. **Truncated logs.** The analysed runs stored only the first 80 characters of each response, so human review sometimes cannot judge correctness and rescoring is impossible without rerunning. Fixed in the runner on 2026-10-13 (full text, tokens, latency).
-5. **One run per model**, provider-default sampling: no estimate of run-to-run variance.
+4. **Truncated logs.** The analysed runs stored only the first 80 characters of each response, so human review sometimes cannot judge correctness and rescoring is impossible without rerunning. Fixed in the runner on 2026-10-13 (full text, tokens, latency); full responses now exist for the 154-case second run (`benchmark_results_*_review.json`), but they are new answers, not the full text of the reviewed ones.
+5. **Run-to-run variance measured on 154 cases only.** The full 598-case suite was run once per model with provider-default sampling; a second run exists only for the 154 human-review cases (Section 5.6), so per-case stability on the remaining cases is unknown.
 6. **Small and uneven subgroups** (dialect 3, sarcasm 6, idioms 18) and only three models, all reachable on free tiers.
 7. **Single annotator** for human verification; no inter-annotator agreement. Answer keys for 61 of the 154 reviewed cases were accepted without case-by-case checking. Review was blind to model name, but answer style may still reveal it; and 129 of 462 answers (28%) were undecidable from the 80-character previews, unevenly across models (Section 5.5).
 8. **Shelf life.** Slang and news cases age within months; results describe models as of October 2026.
