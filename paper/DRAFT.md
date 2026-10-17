@@ -1,7 +1,7 @@
 # Where Free-Tier LLMs Break on Thai: A 600-Case Behavioural Study for Cost-Aware Routing
 
 > DRAFT v0.1 — 2026-10-17. Thai version: `paper/DRAFT_TH.md` — keep both in sync. Numbers come from `paper/ANALYSIS.md` (regenerate with `python scripts/analyze_behavior.py`).
-> `[TODO]` = needs data or a decision. `[HUMAN]` = waits for the review in `paper/slang_review.csv`.
+> `[TODO]` = needs data or a decision. Human-review numbers come from `paper/HUMAN_REVIEW.md` (`python scripts/analyze_human_review.py`).
 
 ## Abstract
 
@@ -48,7 +48,7 @@ Cost-aware LLM routers send each prompt to the cheapest model that can handle it
 
 ### 4.3 Scoring
 - `final = 5 × keyword_fraction + min(10 × thai_ratio, 3) + 2 × length_ok` (0–10). A case passes if keyword fraction ≥ threshold, Thai ratio ≥ minimum and length is sufficient.
-- No LLM judge. Human verification of slang/idiom/register/sarcasm cases: `[HUMAN]` 154 cases reviewed by a native Thai speaker; answer keys checked and confirmed for the original 93 slang cases, and accepted for the remaining 61 on the strength of that check (not individually verified — see Limitations); per-model correctness `[HUMAN]` is judged blind — one answer per line, model names and machine scores hidden, answer order shuffled per question (`scripts/review_simple.py`).
+- No LLM judge. Human verification of slang/idiom/register/sarcasm cases: a native Thai speaker reviewed all 154 such cases (462 answers); answer keys checked and confirmed for the original 93 slang cases, and accepted for the remaining 61 on the strength of that check (not individually verified — see Limitations); each answer was marked correct (Y), wrong (N) or undecidable (?) blind — one answer per line, model names and machine scores hidden, answer order shuffled per question (`scripts/review_simple.py`).
 - Statistics: bootstrap 95% CIs (5 000 resamples, seed 20261013); paired differences on the same cases; Spearman ρ for difficulty.
 
 ## 5. Results
@@ -74,12 +74,28 @@ Slang is the hardest content for all models (Gemini 8.88, 120b 7.68, 20b 7.38), 
 ### 5.4 Where points are lost
 Almost all lost points are keywords: Gemini loses 0.60 per case, 120b 1.20, 20b 1.28; the Thai-ratio and length components cost ≤ 0.01. So the scorer effectively measures content, not language.
 
+### 5.5 Human verification (462 answers, blind)
+
+Answers judged from the stored 80-character previews; `?` (cut off before the meaning) is excluded from rates.
+
+| Model | Correct | Wrong | Undecidable | Correct rate |
+|---|---:|---:|---:|---:|
+| Gemini 3.1 Flash-Lite | 88 | 0 | 66 | 100% (88/88) |
+| gpt-oss-120b | 92 | 29 | 33 | 76% (92/121) |
+| gpt-oss-20b | 75 | 49 | 30 | 60% (75/124) |
+
+By category, gpt-oss is close to Gemini on classification (91% each vs 100%) but far behind on slang QA (67% / 50%), translation (76% / 45%) and creative writing with slang (36% / 23%). Unlike the keyword scores, **human judgement separates the two gpt-oss sizes** (76% vs 60%).
+
+**Keyword scorer vs human.** On the 333 decidable answers the scorer's pass/fail agrees with the human 84% of the time. In 31 cases it passed an answer the human marked wrong — up to a full 10.0 for literal translations of idioms (`tr_21` "Actions speak louder than words", `tr_24` "call it a day") and 9.0 for southern-dialect dialogue written in Isan (`cre_92`). Wrong answers still average 6.33 / 10 against 8.96 for correct ones, so the scorer ranks models in the right order but overstates how good the weaker ones are.
+
+**Caveat.** Gemini's answers are more often undecidable (66 vs 30–33) because they tend to open with a preamble ("choose a style that suits you…") that fills the 80-character preview; its 100% is measured on its more direct answers only.
+
 ## 6. Model Weaknesses (qualitative)
 
 Examples from `ANALYSIS.md` §7; final versions must quote full responses `[TODO rerun selected cases with full-response logging]`.
 
-1. **Confident wrong slang definitions (gpt-oss).** e.g. `qa_50` "ทัวร์ลง" (online pile-on) explained by 120b as "taking action on something"; `qa_65` "CF" in live-selling (confirm an order) explained by 20b as "Cash Flow"; `qa_48` "ชิป" glossed by 20b as English "cheap". The answers are fluent, structured, and in Thai — nothing in their form signals the error. `[HUMAN]` rate of wrong definitions per model from the review sheet.
-2. **Invented words in slang translation (gpt-oss).** e.g. `tr_71`. `[HUMAN]` count.
+1. **Confident wrong slang definitions (gpt-oss).** e.g. `qa_50` "ทัวร์ลง" (online pile-on) explained by 120b as "taking action on something"; `qa_65` "CF" in live-selling (confirm an order) explained by 20b as "Cash Flow"; `qa_48` "ชิป" glossed by 20b as English "cheap". The answers are fluent, structured, and in Thai — nothing in their form signals the error. On the 39 slang/idiom QA cases the human marked 8 of 24 decidable 120b answers and 11 of 22 decidable 20b answers wrong; none of Gemini's 28.
+2. **Invented or literal slang in translation (gpt-oss).** Human-marked wrong translations: 10 of 41 (120b) and 24 of 44 (20b). Typical failures are literal renderings (`tr_61` "slaps" → "ตบ", `tr_69` "flexing" → "แสดง"), non-words (`tr_77` "กรีกออกไป", `tr_80` "แซงซี่"), and wrong false friends (`tr_68` "MC", which means *emcee* in Thai).
 3. **Missing sarcasm.** `cls_14`, `cls_23`, `cls_26`: gpt-oss labels sarcastic complaints as positive, taking praise words literally.
 4. **Code tasks answered in English.** Thai ratio < 50% on code_thai: 19 (Gemini), 70 (120b), 79 (20b) of 99 — gpt-oss writes explanations around the code in English even when asked in Thai. The scorer barely penalises this (Thai credit saturates at 30%).
 5. **Format drift.** gpt-oss often returns markdown tables for short QA/idiom answers (`qa_69`, `sum_96`); harmless to keyword scoring, relevant for chat UIs.
@@ -93,7 +109,7 @@ Examples from `ANALYSIS.md` §7; final versions must quote full responses `[TODO
 4. **Truncated logs.** The analysed runs stored only the first 80 characters of each response, so human review sometimes cannot judge correctness and rescoring is impossible without rerunning. Fixed in the runner on 2026-10-13 (full text, tokens, latency).
 5. **One run per model**, provider-default sampling: no estimate of run-to-run variance.
 6. **Small and uneven subgroups** (dialect 3, sarcasm 6, idioms 18) and only three models, all reachable on free tiers.
-7. **Single annotator** for human verification; no inter-annotator agreement. Answer keys for 61 of the 154 reviewed cases were accepted without case-by-case checking.
+7. **Single annotator** for human verification; no inter-annotator agreement. Answer keys for 61 of the 154 reviewed cases were accepted without case-by-case checking. Review was blind to model name, but answer style may still reveal it; and 129 of 462 answers (28%) were undecidable from the 80-character previews, unevenly across models (Section 5.5).
 8. **Shelf life.** Slang and news cases age within months; results describe models as of October 2026.
 
 ## 8. Future Work (how to extend this)

@@ -77,6 +77,14 @@ def infer_provider(model_id: str) -> str:
     return "google"
 
 
+def parse_case_ids(spec: str) -> set[str]:
+    """'qa_52,qa_53' หรือ '@path' (id บรรทัดละตัว, บรรทัดว่างข้าม)"""
+    if spec.startswith("@"):
+        text = Path(spec[1:]).read_text(encoding="utf-8")
+        return {line.strip() for line in text.splitlines() if line.strip()}
+    return {s.strip() for s in spec.split(",") if s.strip()}
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="OpenPair — Thai Language Benchmark")
     parser.add_argument(
@@ -90,6 +98,10 @@ def parse_args():
     parser.add_argument(
         "--suite", choices=SUITES, default="core",
         help="ชุดข้อสอบ: core = 20 เคสเดิม (default) / full = 600 เคส (100 ต่อหมวด รวมข่าวปัจจุบัน + สแลง)",
+    )
+    parser.add_argument(
+        "--cases", type=str, default=None,
+        help="รันเฉพาะเคสที่ระบุ: id คั่นด้วย comma (qa_52,qa_53) หรือ @ไฟล์ที่มี id บรรทัดละตัว",
     )
     parser.add_argument(
         "--output", type=str, default="benchmark_results.json",
@@ -131,6 +143,15 @@ def main():
     else:
         cases = get_suite(args.suite)
         print(f"📋 รัน benchmark ทั้งหมด [{args.suite}] ({len(cases)} cases × {len(models)} models)")
+
+    if args.cases:
+        wanted = parse_case_ids(args.cases)
+        missing = wanted - {c.id for c in cases}
+        if missing:
+            print(f"❌ ไม่พบเคส: {', '.join(sorted(missing))}")
+            sys.exit(1)
+        cases = [c for c in cases if c.id in wanted]
+        print(f"🎯 รันเฉพาะ {len(cases)} เคสที่ระบุ")
 
     # ── รัน benchmark ─────────────────────────────────────────────
     api_keys = ApiKeys()
