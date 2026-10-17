@@ -29,7 +29,7 @@
 **ติดอยู่ / พักไว้:**
 - [x] ~~Ollama กับของจริง~~ — ทำแล้ว 2026-10-09: user ติดตั้ง Ollama 0.40.1 เอง, pull `qwen2.5:3b` (เครื่องนี้ VRAM 4 GB), ตั้ง `OLLAMA_MODEL=qwen2.5:3b` ใน `.env` — ปิด cloud key ทั้งหมดแล้ว `client.call()` ตกไปที่ `Ollama (qwen2.5:3b)` จริง ตอบไทย/โค้ดได้ (~4–8 วินาที/คำตอบ) — benchmark ชุด core 20/20 avg **8.10** (thai_score 8; qa 7.4 / translation 6.8 อ่อนสุด) ผลที่ `benchmark_results_ollama_core.json` รันด้วย `run_benchmark.py --models ollama:qwen2.5:3b` (เพิ่ม prefix `ollama:` แล้ว) — ยังไม่ใส่เข้า registry
 - [ ] `gemini-3.1-pro-preview` — ต้องเปิด billing (เสียเงิน) user พักไว้ 2026-10-02 และถอดออกจาก registry แล้ว
-- [ ] Fine-tuning — รอ GPU มหาวิทยาลัย ห้ามรันบนเครื่องนี้ แผนอยู่ที่ `finetune/README.md`
+- [ ] Fine-tuning — **นอกขอบเขตของ paper โดยตั้งใจ** (2026-10-17: paper วัดว่า model พลาดตรงไหน ไม่ใช่แก้) เป็นงานต่อยอด ห้ามรันบนเครื่องนี้ แผนอยู่ที่ `finetune/README.md`
 
 **ตัดสินใจแล้ว (2026-10-02):** registry มีแค่ Gemini + Groq (free tier) — ถอด OpenAI/Anthropic/`gemini-3.1-pro-preview` ออกแล้ว (`d731fa3`), OpenRouter ใช้แค่ benchmark, tier Expert ถอยไปใช้ model ของ Top — เป้าหมายโปรเจกต์คือทดสอบว่า model ไหนเหมาะกับ task แบบไหน (routing) ไม่ใช่รองรับทุก provider
 

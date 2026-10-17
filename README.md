@@ -190,4 +190,4 @@ Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แ�
 
 ## Roadmap
 
-ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (YAML-based model config, fine-tuning)
+ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (YAML-based model config) — fine-tuning อยู่นอกขอบเขตของงานปัจจุบันโดยตั้งใจ (งานนี้วัดว่า model พลาดตรงไหน ไม่ใช่แก้ให้เก่งขึ้น) แผนสำหรับงานต่อยอดอยู่ที่ `finetune/README.md`

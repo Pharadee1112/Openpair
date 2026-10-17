@@ -1,21 +1,22 @@
 # OpenPair — แผน Fine-tuning ภาษาไทย
 
-> สถานะ: **เตรียมการ ยังไม่เทรน** (ตัดสินใจ 2026-09-29) — รอใช้ GPU ฟรีของมหาวิทยาลัย
+> สถานะ: **นอกขอบเขตของ paper ปัจจุบันโดยตั้งใจ** (2026-10-17) — paper วัดว่า model พลาดตรงไหน ไม่ใช่แก้ให้เก่งขึ้น ไฟล์นี้เก็บไว้เป็นแผนสำหรับงานต่อยอด
 > **ห้ามรัน fine-tuning บนเครื่อง dev** (RAM/GPU ไม่พอ) — เครื่องนี้ใช้แค่เตรียมข้อมูล + รัน benchmark ผ่าน API
 
 ลำดับงาน:
 
 1. Baseline benchmark (600 เคส) — `run_benchmark.py --suite full` → `benchmark_results_*_full.json`
-2. ข้อมูล GPU มหาวิทยาลัย — ถามตาม [checklist ด้านล่าง](#2-คำถามที่ต้องถามมหาวิทยาลัย)
+2. เลือกแหล่ง GPU (Colab / Kaggle / cluster ของสถาบัน) — เช็กตาม [checklist ด้านล่าง](#2-เช็กลิสต์ก่อนเลือก-gpu)
 3. เลือก base model — ตาม [ตาราง VRAM](#3-เลือก-base-model)
 4. Training dataset — [`data/train_seed.jsonl`](data/train_seed.jsonl) + ตรวจด้วย `python finetune/check_dataset.py`
 5. Script เทรน (LoRA/QLoRA) — ทดสอบบน Colab ก่อน *(ยังไม่ทำ)*
 6. วัดผลหลังเทรน — serve ผ่าน Ollama/vLLM แล้วรัน benchmark ชุดเดิม เทียบกับ baseline *(ยังไม่ทำ)*
 
--
-## 2. คำถามที่ต้องถามมหาวิทยาลัย
+---
 
-ส่งคำถามเหล่านี้ให้ฝ่ายไอที/ผู้ดูแล cluster — คำตอบข้อ 1 ใช้เลือก base model ในข้อ 3
+## 2. เช็กลิสต์ก่อนเลือก GPU
+
+ใช้เช็กกับแหล่ง GPU ใดก็ได้ — Colab / Kaggle (ดูจากหน้าเอกสาร) หรือ cluster ของสถาบัน (ถามผู้ดูแลระบบ) — คำตอบข้อ 1 ใช้เลือก base model ในข้อ 3
 
 | # | คำถาม | ทำไมต้องรู้ |
 |---|---|---|
