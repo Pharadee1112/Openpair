@@ -1,0 +1,200 @@
+# OpenPair
+
+[English](README.md) | **ภาษาไทย**
+
+AI router ที่เลือก model ที่ถูกที่สุดซึ่งทำงานนั้นได้จริงให้อัตโนมัติ (ตอนนี้ใช้ Gemini + Groq แบบ free tier) พร้อม fallback อัตโนมัติเมื่อ provider โดน rate limit รวมถึง fallback ไป Ollama ในเครื่อง
+
+## ปัญหาที่แก้
+
+เวลาใช้ LLM หลาย provider พร้อมกัน คนส่วนใหญ่จะ hardcode เลือก model เดียวไว้ตายตัว — ทำให้จ่ายแพงเกินไปสำหรับ prompt ง่ายๆ หรือได้คุณภาพไม่พอสำหรับ prompt ที่ซับซ้อน แถมพอ provider ไหน rate-limit ก็ request พังทันที
+
+OpenPair แก้ปัญหานี้ด้วย:
+- **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง top-tier model ทุกครั้ง — ตั้งแต่ 2026-10-02 registry มีแค่ model ที่ใช้ฟรีได้จริงของ **Gemini + Groq** (OpenAI/Anthropic/OpenRouter ถอดออกจาก registry แล้ว แต่โค้ด caller ยังอยู่)
+- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — ทุก model ใน registry วัดจริงแล้ว: `gemini-3.1-flash-lite`, `openai/gpt-oss-20b`, `openai/gpt-oss-120b` บนชุด full 600 เคส และ `gemini-3.6-flash` บนชุด core 20 เคส)
+- **Fallback อัตโนมัติ**: ถ้า provider หลักโดน rate limit (429) หรือ overloaded (503) จะลองยิง provider ถัดไปในเชนให้อัตโนมัติ ไม่ต้องเขียน retry logic เอง
+- **Ollama เป็นด่านสุดท้าย**: ถ้า cloud provider ทั้งหมดโดน rate limit พร้อมกัน หรือไม่มี API key เลย แต่มี Ollama รันอยู่ในเครื่อง จะ fallback ไปใช้ local model โดยอัตโนมัติ
+
+## Architecture
+
+```
+src/                      ← Rust core: complexity scoring, model registry, routing decision
+  classifier.rs           ← ให้คะแนนความซับซ้อน 1–10 + ตรวจภาษาไทย
+  registry.rs             ← รายชื่อ model ทุกตัว, tier, ราคา, thai_score
+  router.rs                ← ตัดสินใจว่า tier ไหน + model ไหนเหมาะกับ prompt นี้
+  main.rs                  ← demo binary (routing เฉยๆ ไม่เรียก API จริง)
+
+python/openpair/           ← Python wrapper รอบ Rust core (ผูกกันผ่าน PyO3 + maturin)
+  client.py                ← OpenPair class — .route() (ดูผลไม่เรียก API) / .call() (เรียกจริง + auto-fallback)
+  caller.py                ← ยิง API จริงไปแต่ละ provider (openai / anthropic / google / groq / ollama)
+  config.py                ← จัดการ API keys จาก .env / env vars
+  errors.py                ← ตรวจว่า error ไหน retry ได้ (429/503) ไหน raise ทันที
+  benchmark/                ← ระบบวัดคุณภาพภาษาไทยของแต่ละ model (6 หมวด — ชุด core 20 เคส / ชุด full 600 เคส)
+    data/*.json              ← ชุดข้อสอบขยาย หมวดละ 1 ไฟล์ (รวมกับ core = 100 เคสต่อหมวด)
+    checkpoint.py            ← resume support — เซฟผลทีละเคสลง .jsonl กัน progress หายตอน quota หมด/process โดน kill
+```
+
+Routing decision (tier + model + ราคา) คำนวณฝั่ง Rust เพื่อความเร็ว ส่วนการเรียก API จริง, retry, fallback ทำฝั่ง Python
+
+## ติดตั้ง
+
+ต้องมีทั้ง Rust toolchain และ Python 3.9+
+
+```bash
+git clone https://github.com/Pharadee1112/Openpair.git
+cd Openpair
+
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # macOS/Linux
+
+pip install maturin
+maturin develop --release     # build Rust core → python/openpair/_core*.pyd/.so
+pip install -e ".[dev]"
+```
+
+> **สำคัญ**: ทุกครั้งที่แก้โค้ดใน `src/*.rs` ต้องรัน `maturin develop --release` ใหม่เสมอ — แค่ `cargo build` ไม่พอ เพราะ Python import ตัว `.pyd`/`.so` ที่ build แยกกันคนละ target
+
+## Configuration
+
+```bash
+cp .env.example .env
+```
+
+แล้วใส่ key อย่างน้อย 1 ตัว:
+
+```
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AI...
+GROQ_API_KEY=gsk_...          # optional, ฟรี + เร็วมาก
+OLLAMA_BASE_URL=http://localhost:11434   # optional, default นี้อยู่แล้ว
+OLLAMA_MODEL=llama3.1                    # optional, ต้อง `ollama pull` model นี้ไว้ก่อน
+```
+
+ไม่จำเป็นต้องมีครบทุก provider — มี key ตัวเดียวก็ใช้งานได้ ยิ่งมีหลาย provider ยิ่ง fallback ได้ดีขึ้น
+
+## วิธีใช้ (Python)
+
+```python
+from openpair import OpenPair
+
+client = OpenPair()  # อ่าน key จาก .env อัตโนมัติ
+
+# เรียก API จริง — router เลือก model ให้เอง + auto-fallback ถ้าโดน rate limit
+result = client.call("อธิบาย black hole ให้เข้าใจง่ายๆ")
+print(result.response_text)
+print(result.model_name, result.provider, f"${result.estimated_cost:.5f}")
+
+# ดู routing decision อย่างเดียว ไม่เรียก API จริง ไม่เสียตังค์
+decision = client.route("Write a Python class for a binary tree")
+print(decision.model_name, decision.tier, decision.complexity_score)
+
+# บังคับ provider เฉพาะเจาะจง
+result = client.call("Hello!", preferred_provider="groq")
+
+# กำหนด fallback order เอง (ปกติไม่ต้องทำ — มี default chain อยู่แล้ว)
+result = client.call("Hello!", fallback_providers=["google", "groq"])
+```
+
+**Default fallback chain** (ใช้เมื่อไม่ได้ระบุ `fallback_providers` เอง):
+`[provider ที่ router เลือก] → groq → google → ollama (ถ้า ping เจอ server จริง)` — provider ที่ไม่มี model ใน registry (เช่น openai) จะถูกข้ามแม้มี key
+
+## วิธีใช้ (CLI)
+
+```bash
+openpair "อธิบาย recursion ให้เด็ก ป.6 ฟัง" --route-only
+```
+```
+Model:    Gemini 3.1 Flash Lite (gemini-3.1-flash-lite)
+Provider: google
+Tier:     small
+Score:    2/10
+Reason:   Low complexity — using a fast, cost-efficient model [Thai]. Score: 2/10 → Gemini 3.1 Flash Lite (Thai routing priority).
+```
+
+`--route-only` แสดงแค่ผลการตัดสินใจ **ไม่เรียก API ไม่ต้องมี key** — ใช้ดูว่า router คิดยังไง
+
+```bash
+openpair "อธิบาย recursion"                      # เรียกจริง + auto-fallback
+openpair "Hello!" --provider groq                 # บังคับ provider
+openpair "สรุปให้หน่อย" --system "ตอบสั้นๆ"        # ใส่ system prompt
+openpair "Hello!" --max-tokens 512                # จำกัดความยาว (default 2048)
+```
+
+คำตอบออก stdout ส่วนข้อมูล model/ราคา/latency ออก stderr — เพราะฉะนั้น
+`openpair "..." > answer.txt` จะได้แต่คำตอบล้วนๆ ในไฟล์
+
+## Rust demo binary (routing preview เท่านั้น)
+
+```bash
+cargo run --bin openpair-demo -- "your prompt here"
+```
+
+แสดงแค่ผล routing decision (score, tier, model, ราคาประมาณ) **ไม่เรียก API จริง** — ใช้ดูว่า router ตัดสินใจยังไงแบบเร็วๆ โดยไม่ต้องมี API key
+
+## Benchmark คุณภาพภาษาไทย
+
+```bash
+python run_benchmark.py                                    # รันทุก model default (Gemini)
+python run_benchmark.py --models gemini-3.6-flash           # เจาะจง model
+python run_benchmark.py --category qa                       # เจาะจงหมวด
+python run_benchmark.py --detail                            # แสดงผลละเอียดทุก test case
+python run_benchmark.py --suite full                        # ชุดเต็ม 600 เคส (100 ต่อหมวด)
+python run_benchmark.py --suite full --cases qa_52,qa_53   # รันเฉพาะเคสที่ระบุ (หรือ @ไฟล์ ที่มี id บรรทัดละตัว)
+```
+
+### ชุดข้อสอบ: `core` กับ `full`
+
+- **`core`** (default) — 20 เคสเดิม ใช้เปรียบเทียบกับผลที่วัดไว้แล้ว และประหยัด quota
+- **`full`** — 600 เคส (qa / translation / summarization / classification / code_thai / creative หมวดละ 100) ชุดขยายอยู่ใน `python/openpair/benchmark/data/*.json` เนื้อหาเน้นของปัจจุบัน:
+  - **ข่าวปัจจุบัน (ก.ย. 2569)** — น้ำท่วม, ภูริพลเหรียญทองเอเชียนเกมส์, ส่งออก, ADB, วีซ่า 30 วัน, ราคาดีเซล ฯลฯ **ใส่เนื้อข่าวไว้ในโจทย์** (วัดการอ่าน/สรุป/แปลภาษาไทย ไม่ได้วัดว่า model รู้ข่าวล่าสุดไหม ซึ่งจะขึ้นกับ training cutoff)
+  - **ภาษาวัยรุ่น/สแลง 2025–2026** — ตัวมัม, มองบน, ป้ายยา, ทัวร์ลง, ฮ้อป, situationship, rizz, no cap ฯลฯ (ถามความหมาย, แปลสแลงอังกฤษ→ไทย, แปลงภาษาทางการ↔ภาษาวัยรุ่น, วิเคราะห์ sentiment ที่มีประชด)
+  - **สำนวนไทย / ภาษาถิ่น** — สำนวนดั้งเดิมที่ยังใช้กัน + อีสาน/เหนือ/ใต้ในงานเขียน
+  - **โค้ดบริบทไทย** — เลขบัตรประชาชน, พ.ศ.↔ค.ศ., บาทเป็นคำอ่าน, พร้อมเพย์ QR, เบอร์มือถือไทย
+- ⚠️ `full` = 600 request ต่อ model — Gemini free tier (≈20 req/วัน/model) ต้องใช้หลายวัน (resume ช่วยได้) Groq เร็วกว่ามาก
+- ⚠️ ข้อมูลข่าว/สแลงจะเก่าลงเรื่อยๆ ควรทบทวนทุก 6–12 เดือน และคะแนนจาก `full` เทียบตรงๆ กับ `core` ไม่ได้ (ชุดข้อสอบต่างกัน)
+
+ผลจะถูก suggest กลับมาเป็น `thai_score` ให้ไปอัปเดตใน `src/registry.rs` เอง (ยังไม่ auto-patch)
+
+### Resume — รันต่อได้เองถ้าโดน quota หมดกลางคัน
+
+ทุกครั้งที่รัน, ผลแต่ละ test case จะถูกเซฟทันทีลง checkpoint file (`<output ตัดนามสกุล>.checkpoint.jsonl`) คีย์ด้วย `(model_id, case_id)`:
+
+- **ครั้งถัดไปที่รันคำสั่งเดิมซ้ำ** เคสที่เคยผ่านแล้วจะถูก**ข้ามอัตโนมัติ** ยิง API เฉพาะเคสที่ยังไม่เสร็จ — เพิ่ม test case ใหม่เข้า dataset แล้วรันซ้ำก็ไม่เสีย quota/เวลากับเคสเก่า
+- ถ้า Google API ตอบว่าโดน **daily quota** หมด (ไม่ใช่ rate limit ชั่วคราว) ระบบจะหยุดรันทันทีแทนที่จะวน retry เปล่าๆ — ผลที่ทำได้ก่อนหน้าถูกเซฟไว้แล้ว รันคำสั่งเดิมซ้ำได้พอ quota reset (ปกติเที่ยงคืน Pacific Time)
+- ต้องการรันใหม่ทั้งหมดจริงๆ (ไม่ resume): เพิ่ม `--fresh`
+- กำหนด path checkpoint เอง: `--checkpoint path/to/file.jsonl`
+
+```bash
+python run_benchmark.py --fresh                             # ไม่สนใจ checkpoint เดิม รันใหม่หมด
+python run_benchmark.py --checkpoint my_ckpt.jsonl           # ใช้ checkpoint file ที่กำหนดเอง
+```
+
+## Testing
+
+```bash
+cargo test                    # Rust — 26 tests
+pytest -m "not live"          # Python — 126 tests (mocked, ไม่ต้องมี API key)
+pytest tests/test_live.py -m live   # 3 tests ที่เรียก API จริง (ต้องมี key จริง, ใช้ quota free tier)
+```
+
+Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แต่ละ test จะ `pytest.skip()` เองถ้าไม่มี key ของ provider นั้นใน `.env`
+
+> **หมายเหตุ**: พิมพ์ `pytest` เฉยๆ (ไม่ใส่ `-m`) จะรันทั้ง 129 ตัว รวม live tests 3 ตัว (`test_live_google` / `test_live_groq` / `test_live_thai_routing`) ที่ **ยิง API จริง** — ใช้ free tier จึงไม่เสียเงิน แต่กิน quota รายวัน ถ้าไม่อยากใช้ quota ให้ใส่ `-m "not live"`
+
+## สถานะปัจจุบัน / ข้อจำกัดที่รู้อยู่แล้ว
+
+- **CLI พร้อมใช้แล้ว** — `openpair "..."` เป็นคำสั่ง shell จริง (`pyproject.toml` มี `[project.scripts]` → `openpair = "openpair.cli:main"`) ดูวิธีใช้ในหัวข้อ "วิธีใช้ (CLI)" ด้านบน
+- **OpenRouter** มี caller แล้ว (`run_benchmark.py --models openrouter:<org/model>`) แต่ไม่อยู่ใน registry/routing — ใช้แค่ benchmark
+- **Ollama fallback** ทดสอบกับ Ollama server จริงแล้ว (2026-10-09, `qwen2.5:3b`) — test อัตโนมัติยังเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py`
+- **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) เพิ่มแล้ว — รัน benchmark ค้างกลางคันแล้วรันคำสั่งเดิมซ้ำได้โดยไม่เสีย quota กับเคสที่เสร็จแล้ว ดูหัวข้อ "Resume" ด้านบน
+- **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` ได้ 429 `limit: 0` คือ **free tier ไม่มี quota ให้ model นี้เลย** จึงถอดออกจาก registry แล้ว (2026-10-02) — tier Expert ไม่มี model ของตัวเอง router จะใช้ model ของ Top แทน — ส่วน model ที่ quota รายวันหมดจริง (limit > 0) รอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำได้ resume system จะข้ามเคสที่เสร็จแล้วให้เอง
+- **สถานะ Thai benchmark ปัจจุบัน** (2026-10-02): วัดจริงครบทุก model ใน registry — `gemini-3.1-flash-lite` 9, `openai/gpt-oss-20b` 9, `openai/gpt-oss-120b` 9 (ชุด full 600 เคส), `gemini-3.6-flash` 6 (ชุด core) — Thai routing (2026-10-17): **ทุกระดับ → flash-lite** เพราะชุด full 598 เคส flash-lite ชนะ gpt-oss ทุกระดับความยาก (9.40 vs 8.79/8.71) — ถ้า Gemini โดน rate limit จะ fallback ไป Groq ตามปกติ
+
+## งานวิจัย (paper)
+
+ผลการศึกษาพฤติกรรม model บน benchmark ภาษาไทย 600 เคสอยู่ในโฟลเดอร์ `paper/` — ฉบับร่าง [`DRAFT_TH.md`](paper/DRAFT_TH.md) (ไทย) / [`DRAFT.md`](paper/DRAFT.md) (อังกฤษ) และผลวิเคราะห์ที่รันซ้ำได้: `ANALYSIS.md`, `HUMAN_REVIEW.md`, `STABILITY.md` ดู dataset card ที่ [`hf_dataset/README.md`](hf_dataset/README.md)
+
+## Roadmap
+
+ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (YAML-based model config) — fine-tuning อยู่นอกขอบเขตของงานปัจจุบันโดยตั้งใจ (งานนี้วัดว่า model พลาดตรงไหน ไม่ใช่แก้ให้เก่งขึ้น) แผนสำหรับงานต่อยอดอยู่ที่ `finetune/README.md`

@@ -1,15 +1,17 @@
 """
-review_simple.py — แบบฟอร์มตรวจโดยคนแบบง่าย (1 บรรทัด = 1 คำตอบเต็ม)
+review_simple.py — simple human-review sheet (one line = one full answer)
 =====================================================================
-  python scripts/review_simple.py make    สร้าง paper/review_simple.csv
-  python scripts/review_simple.py merge   รวมผลตรวจ → paper/human_review.csv (ใช้วิเคราะห์ใน paper)
+  python scripts/review_simple.py make    write paper/review_simple.csv
+  python scripts/review_simple.py merge   collect verdicts → paper/human_review.csv
 
-คำตอบมาจากการรันซ้ำเฉพาะ 154 เคสใน paper/slang_review.csv (2026-10-17) ซึ่งเก็บคำตอบเต็ม:
+Answers come from the 2026-10-17 rerun of the 154 cases in paper/slang_review.csv, which stores full text:
   benchmark_results_gemini_review.json, benchmark_results_groq_review.json
-(ผลชุด full เดิมเก็บแค่ 80 ตัวอักษรแรก ตรวจความหมายไม่ได้)
+(the original full-suite run kept only 80 characters). These are NEW answers, so the paper's
+verdicts in review_verdicts_old.tsv do not carry over to them.
 
-ตรวจแบบ blind: ไม่บอกชื่อ model / คะแนนจากเครื่อง และสลับลำดับคำตอบในแต่ละข้อ (seed คงที่)
-คอลัมน์ "รหัส" ใช้จับคู่กลับ — ผู้ตรวจไม่ต้องแก้
+Blind review: model names and machine scores are hidden and answer order is shuffled per question (fixed seed).
+The code column maps answers back to models — reviewers must not edit it.
+Column headers are Thai on purpose: the sheet is filled in by native Thai reviewers.
 """
 
 from __future__ import annotations
@@ -21,16 +23,16 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-KEYS = ROOT / "paper" / "slang_review.csv"      # รายการเคส + เฉลยที่ยืนยันแล้ว
-SIMPLE = ROOT / "paper" / "review_simple.csv"   # ผู้ตรวจกรอกไฟล์นี้
-OUT = ROOT / "paper" / "human_review.csv"       # ผลรวม: เคส × model × คำตัดสิน × คะแนนเครื่อง
+KEYS = ROOT / "paper" / "slang_review.csv"      # case list + confirmed answer keys
+SIMPLE = ROOT / "paper" / "review_simple.csv"   # the sheet reviewers fill in
+OUT = ROOT / "paper" / "human_review.csv"       # merged: case × model × verdict × machine score
 
 MODELS = [
     ("gemini-3.1-flash-lite", "benchmark_results_gemini_review.json", "Gemini 3.1 Flash-Lite"),
     ("openai/gpt-oss-120b",   "benchmark_results_groq_review.json",   "gpt-oss-120b"),
     ("openai/gpt-oss-20b",    "benchmark_results_groq_review.json",   "gpt-oss-20b"),
 ]
-CATEGORY_ORDER = ["qa", "translation", "classification", "creative"]  # qa ก่อน — สำคัญที่สุด
+CATEGORY_ORDER = ["qa", "translation", "classification", "creative"]  # qa first — the most important
 VERDICT = "ถูกไหม (Y/N/?)"
 NOTE = "หมายเหตุ"
 CODE = "รหัส (ห้ามแก้)"
@@ -50,7 +52,7 @@ def write_csv(path: Path, rows: list[dict]) -> None:
 
 
 def load_answers() -> dict[str, dict[str, dict]]:
-    """model_id -> case_id -> score row (มี response เต็ม)"""
+    """model_id -> case_id -> score row (with full response)"""
     out: dict[str, dict[str, dict]] = {}
     for model_id, fname, _ in MODELS:
         data = json.loads((ROOT / fname).read_text(encoding="utf-8"))
@@ -61,7 +63,7 @@ def load_answers() -> dict[str, dict[str, dict]]:
 
 def make() -> None:
     if SIMPLE.exists() and any(r[VERDICT].strip() for r in read_csv(SIMPLE)):
-        sys.exit(f"{SIMPLE} มีผลตรวจอยู่แล้ว — merge ก่อน หรือลบไฟล์เองถ้าต้องการสร้างใหม่")
+        sys.exit(f"{SIMPLE} already has verdicts — merge first, or delete it yourself to start over")
     cases = sorted(read_csv(KEYS), key=lambda x: CATEGORY_ORDER.index(x["category"]))
     answers = load_answers()
     rng = random.Random(SEED)
@@ -87,9 +89,9 @@ def make() -> None:
                 CODE: f"{c['case_id']}|{idx}",
             })
     write_csv(SIMPLE, out)
-    print(f"wrote {SIMPLE} ({n} ข้อ, {len(out)} คำตอบ)")
+    print(f"wrote {SIMPLE} ({n} questions, {len(out)} answers)")
     if missing:
-        print(f"ไม่มีคำตอบ {len(missing)} รายการ (ไม่ได้ใส่ในฟอร์ม): {', '.join(missing)}")
+        print(f"{len(missing)} answers missing (left out of the sheet): {', '.join(missing)}")
 
 
 def merge() -> None:
@@ -111,7 +113,7 @@ def merge() -> None:
     rows.sort(key=lambda r: (CATEGORY_ORDER.index(r["category"]), r["case_id"], r["model"]))
     write_csv(OUT, rows)
     done = sum(1 for r in rows if r["human"])
-    print(f"wrote {OUT} ({done}/{len(rows)} คำตอบตรวจแล้ว)")
+    print(f"wrote {OUT} ({done}/{len(rows)} answers reviewed)")
 
 
 if __name__ == "__main__":

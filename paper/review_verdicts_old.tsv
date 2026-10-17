@@ -1,463 +1,463 @@
-code	verdict	note
-qa_36|2	Y
-qa_36|0	Y
-qa_36|1	Y
-qa_37|2	N
-qa_37|0	Y
-qa_37|1	N
-qa_38|1	Y
-qa_38|0	Y
-qa_38|2	Y
-qa_39|0	Y
-qa_39|2	Y
-qa_39|1	Y
-qa_40|1	N
-qa_40|0	Y
-qa_40|2	N
-qa_41|0	Y
-qa_41|2	N
-qa_41|1	?	คำตอบถูกตัดก่อนถึงความหมาย
-qa_42|1	?	คำตอบถูกตัดก่อนถึงความหมาย
-qa_42|0	Y
-qa_42|2	N	ตีความเป็น เก๋/คูล ผิด
-qa_43|1	N	ตีความเป็น ถูกวิพากษ์วิจารณ์
-qa_43|2	?	คำตอบถูกตัดก่อนถึงความหมาย
-qa_43|0	Y
-qa_44|2	Y
-qa_44|1	Y	ไม่ได้บอกว่ามาจากภาษาอีสาน
-qa_44|0	Y
-qa_45|0	Y
-qa_45|2	?	ที่มาคำผิด (shot) ความหมายถูกตัด
-qa_45|1	?	ที่มาคำผิด (short-feel) ความหมายถูกตัด
-qa_46|1	Y
-qa_46|0	Y
-qa_46|2	?	ประโยคสับสน ความหมายถูกตัด
-qa_47|1	N	ที่มาคำผิด (ดอม/ด่าม)
-qa_47|0	Y
-qa_47|2	N	ตีความเป็น ขี้...
-qa_48|2	N	ตีความเป็น cheap
-qa_48|0	Y
-qa_48|1	?	ที่มาคำผิด (chip) ความหมายถูกตัด
-qa_49|1	N	ตีความเป็น ติดใจ/หยุดไม่ได้
-qa_49|2	?	ที่มาคำผิด (ป้ายโฆษณายา) ความหมายถูกตัด
-qa_49|0	Y
-qa_50|0	Y
-qa_50|2	N	ดูเหมือนแปลตามตัวอักษร (ไปท่องเที่ยว)
-qa_50|1	N	ตีความเป็น ลงมือทำ
-qa_52|0	?	อ้างที่มาจากชื่อ Hops ควรเช็กฉบับเต็ม
-qa_52|2	?	ใกล้เคียง (ตื่นเต้น) แต่ถูกตัด
-qa_52|1	N	ตีความเป็น hope
-qa_53|0	?	คำตอบถูกตัดก่อนถึงความหมาย
-qa_53|2	N	ตีความตามตัวอักษรว่าหาคลินิกจริง
-qa_53|1	?	คำตอบถูกตัดก่อนถึงความหมาย
-qa_54|1	Y
-qa_54|2	Y
-qa_54|0	Y
-qa_55|0	Y
-qa_55|2	?	ทับศัพท์ผิด ความหมายถูกตัด
-qa_55|1	Y
-qa_56|0	Y
-qa_56|2	Y
-qa_56|1	Y
-qa_57|0	Y
-qa_57|2	Y
-qa_57|1	Y
-qa_58|0	Y
-qa_58|2	?	คำอธิบายวนซ้ำ ความหมายถูกตัด
-qa_58|1	Y
-qa_59|1	Y
-qa_59|2	Y
-qa_59|0	Y
-qa_60|1	Y
-qa_60|0	Y
-qa_60|2	Y
-qa_61|0	Y
-qa_61|1	Y
-qa_61|2	Y
-qa_62|0	Y
-qa_62|2	N	อ้างว่าเป็นคำอีสาน-อังกฤษ ผิด
-qa_62|1	Y
-qa_63|2	?	ทับศัพท์ผิด (โดมสกรีน) ความหมายถูกตัด
-qa_63|1	Y
-qa_63|0	Y
-qa_64|0	Y
-qa_64|1	Y
-qa_64|2	Y
-qa_65|2	N
-qa_65|0	Y
-qa_65|1	N
-qa_66|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_66|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_66|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_67|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_67|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_67|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_68|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_68|2	N	อธิบายการใช้เป็นการชมเชย ผิด
-qa_68|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_69|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_69|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_69|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_70|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_70|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_70|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_71|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_71|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_71|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_72|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_72|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_72|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_73|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_73|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_73|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_74|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_74|0	Y
-qa_74|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_75|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_75|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-qa_75|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย
-tr_100|0	Y
-tr_100|1	Y
-tr_100|2	Y	ยังแข็งไปนิด
-tr_21|1	N	แปลตรงตัว ไม่เป็นธรรมชาติ
-tr_21|2	N	แปลตรงตัว ไม่เป็นธรรมชาติ
-tr_21|0	?	ถูกตัดก่อนถึงคำแปล
-tr_22|2	N	ความหมายเพี้ยน
-tr_22|1	Y
-tr_22|0	?	ถูกตัดก่อนถึงคำแปล
-tr_23|1	N	แปล rocket science ตรงตัว
-tr_23|2	Y
-tr_23|0	?	ถูกตัดก่อนถึงคำแปล
-tr_24|2	N	ใช้ เมื่อเช้า (อดีต) ผิด
-tr_24|0	?	ถูกตัดก่อนถึงคำแปล
-tr_24|1	N	แปล call it a day ตรงตัว
-tr_61|1	Y	คำหลัก เม่ ไม่มีจริง แต่ตัวเลือกสำรองใช้ได้
-tr_61|0	?	ถูกตัดก่อนถึงคำแปล
-tr_61|2	N	แปล slaps ตรงตัว
-tr_62|2	Y
-tr_62|1	Y
-tr_62|0	?	ถูกตัดก่อนถึงคำแปล
-tr_63|0	Y
-tr_63|1	N	ตายซะแล้วดิ ไม่เป็นธรรมชาติ
-tr_63|2	Y
-tr_64|1	Y
-tr_64|0	?	บอกว่า ghosted = เท ไม่ตรงนัก ประโยคถูกตัด
-tr_64|2	Y	ทับศัพท์ ghost ได้ แต่ประโยคสำรองแปลก
-tr_65|1	N	แปลตรงตัว ไม่เป็นธรรมชาติ
-tr_65|2	N	แปลตรงตัว + เบสเทีย
-tr_65|0	?	ถูกตัดก่อนถึงคำแปล
-tr_66|0	?	ถูกตัดก่อนถึงคำแปล
-tr_66|1	N	ทับศัพท์ mookata เป็น มูคาต้า
-tr_66|2	N	ไม่โก้/มุกาต้า ผิด
-tr_67|1	Y
-tr_67|0	?	ถูกตัดก่อนถึงคำแปล
-tr_67|2	N	ปนอีสาน (บ่) ไม่เป็นธรรมชาติ
-tr_68|1	Y
-tr_68|2	N	MC ในภาษาไทยแปลว่าพิธีกร
-tr_68|0	?	ถูกตัดก่อนถึงคำแปล
-tr_69|1	Y
-tr_69|2	N	แปล flexing ตรงตัว
-tr_69|0	Y
-tr_70|1	Y
-tr_70|2	Y
-tr_70|0	?	ถูกตัดก่อนถึงคำแปล
-tr_71|0	?	ถูกตัดก่อนถึงคำแปล
-tr_71|1	Y
-tr_71|2	N	อิ่มเลย ไม่สื่อ so done
-tr_72|0	Y
-tr_72|2	Y
-tr_72|1	N	ประโยคไม่เป็นธรรมชาติ
-tr_73|2	N	ไม่มีความหมาย
-tr_73|1	Y
-tr_73|0	?	ถูกตัดก่อนถึงคำแปล
-tr_74|0	?	ถูกตัดก่อนถึงคำแปล
-tr_74|2	N	ทิ้ง rizz/ick ไม่แปล
-tr_74|1	Y	ความหมายถูกแต่ไม่ค่อยเป็นภาษาวัยรุ่น
-tr_75|2	N	พอใช้จัง ไม่เป็นธรรมชาติ
-tr_75|0	?	ถูกตัดก่อนถึงคำแปล
-tr_75|1	Y
-tr_76|0	?	ถูกตัดก่อนถึงคำแปล
-tr_76|2	N	ไม่แปล situationship
-tr_76|1	N	ทับศัพท์เพี้ยน
-tr_77|0	?	ถูกตัดก่อนถึงคำแปล
-tr_77|2	N	กรีกออกไป ไม่มีความหมาย
-tr_77|1	Y
-tr_78|0	Y
-tr_78|1	Y
-tr_78|2	Y
-tr_79|1	Y
-tr_79|0	?	ถูกตัดก่อนถึงคำแปล
-tr_79|2	N	3 a.m. แปลเป็น 3 โมงเช้า ผิด
-tr_80|2	N	ความหมายเพี้ยน
-tr_80|1	N	แซงซี่ ไม่มีความหมาย
-tr_80|0	?	ถูกตัดก่อนถึงคำแปล
-tr_81|1	Y
-tr_81|0	?	ถูกตัดก่อนถึงคำแปล
-tr_81|2	Y
-tr_82|1	?	ถูกตัดก่อนถึงเนื้อหา
-tr_82|2	Y
-tr_82|0	?	ถูกตัดก่อนถึงคำแปล
-tr_83|1	Y
-tr_83|0	?	ถูกตัดก่อนถึงคำแปล
-tr_83|2	Y	คำว่า ล่ม ยังกึ่งทางการ
-tr_84|0	?	ถูกตัดก่อนถึงคำแปล
-tr_84|2	N	เปลี่ยนความหมายเป็น น่าสนใจอย่างยิ่ง
-tr_84|1	Y
-tr_85|1	?	ประโยคดูเพี้ยน ควรเช็กฉบับเต็ม
-tr_85|2	N	ความหมายเปลี่ยน (ไม่แสดงความสนใจ)
-tr_85|0	?	ถูกตัดก่อนถึงคำแปล
-tr_86|2	N	ตีความ ขิง ผิด (ดึงดูด/จับคู่แข่ง)
-tr_86|1	?	ถูกตัดก่อนถึงเนื้อหา
-tr_86|0	?	ถูกตัดก่อนถึงคำแปล
-tr_87|2	Y
-tr_87|1	Y
-tr_87|0	?	ถูกตัดก่อนถึงคำแปล
-tr_88|0	?	ถูกตัดก่อนถึงคำแปล
-tr_88|1	N	ไวยากรณ์ผิด + มีอักษรจีน
-tr_88|2	Y
-tr_89|2	Y
-tr_89|0	?	ถูกตัดก่อนถึงคำแปล
-tr_89|1	Y
-tr_90|1	Y
-tr_90|2	N	ใช้ ทำงานทับเวลา ผิด และยังทับศัพท์เบิร์นเอาท์
-tr_90|0	?	ถูกตัดก่อนถึงคำแปล
-tr_91|0	Y
-tr_91|2	Y
-tr_91|1	Y
-tr_92|2	N	ไม่มีความหมาย
-tr_92|0	Y
-tr_92|1	Y
-tr_93|1	Y
-tr_93|0	Y
-tr_93|2	Y	พิมพ์ผิด (ฮ่วม)
-tr_94|2	Y	มีโน้ตภาษาอังกฤษติดมา
-tr_94|0	?	ถูกตัดก่อนถึงคำแปล
-tr_94|1	Y
-tr_95|0	Y
-tr_95|2	Y
-tr_95|1	Y	ภาษาแปลกนิดหน่อย
-tr_96|0	?	ถูกตัดก่อนถึงคำแปล
-tr_96|2	Y	มีคำพิมพ์ผิด
-tr_96|1	Y
-tr_97|0	Y
-tr_97|1	Y
-tr_97|2	Y	คืนก่อน ไม่ตรงกับเมื่อคืนนัก
-tr_98|0	Y
-tr_98|2	N	ใช้ ปัง กับฝน ผิดความหมาย
-tr_98|1	Y
-tr_99|0	Y
-tr_99|2	N	ปนอีสานและคำตอบไม่จบ
-tr_99|1	Y
-cls_04|2	Y
-cls_04|0	Y
-cls_04|1	Y
-cls_05|0	Y	ป้ายถูก แต่เหตุผลบอกว่าชมรสชาติ ผิด
-cls_05|1	Y
-cls_05|2	Y
-cls_06|0	Y
-cls_06|1	Y
-cls_06|2	Y	เหตุผลตีความ เท ไม่ตรง
-cls_07|1	Y
-cls_07|0	Y
-cls_07|2	Y
-cls_08|0	Y
-cls_08|2	Y
-cls_08|1	Y
-cls_09|1	Y
-cls_09|0	Y
-cls_09|2	Y
-cls_10|2	Y
-cls_10|1	Y
-cls_10|0	Y
-cls_100|0	Y
-cls_100|2	Y
-cls_100|1	Y
-cls_11|0	Y
-cls_11|2	Y
-cls_11|1	Y
-cls_12|0	Y
-cls_12|2	Y
-cls_12|1	Y
-cls_13|0	Y
-cls_13|1	Y
-cls_13|2	Y
-cls_14|0	Y
-cls_14|1	N	จับประชดไม่ได้
-cls_14|2	N	จับประชดไม่ได้
-cls_15|2	Y
-cls_15|0	Y
-cls_15|1	Y
-cls_16|1	Y
-cls_16|2	Y
-cls_16|0	Y
-cls_17|2	Y
-cls_17|0	Y
-cls_17|1	Y
-cls_18|2	N	ตอบ ลบ แต่เฉลย กลาง
-cls_18|1	Y
-cls_18|0	Y
-cls_19|0	Y
-cls_19|2	Y
-cls_19|1	Y
-cls_20|2	Y
-cls_20|1	Y
-cls_20|0	Y
-cls_21|2	Y
-cls_21|0	Y
-cls_21|1	Y
-cls_22|0	Y
-cls_22|2	Y
-cls_22|1	Y
-cls_23|0	Y
-cls_23|1	N	ตอบ บวก แต่เฉลย กลาง
-cls_23|2	Y
-cls_24|0	Y
-cls_24|2	Y
-cls_24|1	Y
-cls_25|0	Y
-cls_25|1	N	ตอบ บวก แต่เฉลย กลาง
-cls_25|2	Y
-cls_26|0	Y
-cls_26|2	N	จับประชดไม่ได้
-cls_26|1	Y
-cls_27|2	Y
-cls_27|1	Y
-cls_27|0	Y
-cls_28|1	Y
-cls_28|2	Y
-cls_28|0	Y
-cls_29|2	Y
-cls_29|0	Y
-cls_29|1	Y
-cls_30|0	Y
-cls_30|1	Y
-cls_30|2	Y
-cls_31|1	Y
-cls_31|0	Y
-cls_31|2	Y
-cls_32|2	Y
-cls_32|1	Y
-cls_32|0	Y
-cls_33|0	Y
-cls_33|1	Y
-cls_33|2	Y
-cls_86|2	Y
-cls_86|1	Y
-cls_86|0	Y
-cls_87|0	Y
-cls_87|2	Y
-cls_87|1	Y
-cls_88|1	Y
-cls_88|0	Y
-cls_88|2	Y
-cls_89|0	Y
-cls_89|2	Y
-cls_89|1	Y
-cls_90|0	Y
-cls_90|1	Y
-cls_90|2	Y
-cls_91|0	Y
-cls_91|2	N	ตอบ ภาษาทางการ แต่เฉลย ภาษาพูดสุภาพ
-cls_91|1	N	ตอบ ภาษาทางการ แต่เฉลย ภาษาพูดสุภาพ
-cls_92|1	Y
-cls_92|0	Y
-cls_92|2	Y
-cls_93|0	Y
-cls_93|2	Y
-cls_93|1	Y
-cls_94|0	Y
-cls_94|1	Y
-cls_94|2	Y
-cls_95|0	Y
-cls_95|2	Y
-cls_95|1	Y
-cls_96|1	Y
-cls_96|2	Y
-cls_96|0	Y
-cls_97|2	Y
-cls_97|0	Y
-cls_97|1	Y
-cls_98|2	Y
-cls_98|0	Y
-cls_98|1	Y
-cls_99|2	Y
-cls_99|0	Y
-cls_99|1	Y
-cre_04|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_04|2	N	บ้าไปคาเฟ่ ไม่เป็นธรรมชาติ
-cre_04|1	?	ภาษาแปลกเล็กน้อย ควรเช็กฉบับเต็ม
-cre_05|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_05|1	N	สแลงไม่มีจริง (ออเค้/พร้อมจี้)
-cre_05|2	N	ไม่มีความหมาย
-cre_06|1	N	ไม่มีความหมาย
-cre_06|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_06|2	N	ประโยคสับสน
-cre_07|1	N	ภาษาไม่เป็นธรรมชาติ
-cre_07|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_07|2	?	ภาษาแปลก ควรเช็กฉบับเต็ม
-cre_08|2	?	ยังไม่เห็นสแลง ควรเช็กฉบับเต็ม
-cre_08|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_08|0	Y
-cre_09|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_09|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_09|2	?	ภาษาค่อนข้างทางการ ควรเช็กฉบับเต็ม
-cre_10|2	?	ยังไม่เห็นสแลง ควรเช็กฉบับเต็ม
-cre_10|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_10|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_11|1	N	ใบหายใจ ไม่มีความหมาย
-cre_11|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_11|2	N	ประโยคสับสน
-cre_12|1	Y
-cre_12|2	N	พูดถึงก๋วยเตี๋ยว ออกนอกเรื่อง
-cre_12|0	Y
-cre_13|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_13|2	?	ถูกตัดก่อนถึงเนื้อหา
-cre_13|1	Y
-cre_14|2	?	ถูกตัดก่อนถึงเนื้อหา
-cre_14|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_14|1	?	ภาษาแปลก ควรเช็กฉบับเต็ม
-cre_15|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_15|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_15|2	N	นิยามผิด (ความสัมพันธ์แบบซ่อนตัว)
-cre_16|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_16|1	N	ภาษาไม่เป็นธรรมชาติ
-cre_16|2	N	ประโยคสับสน
-cre_17|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_17|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_17|2	?	ภาษาแปลก ควรเช็กฉบับเต็ม
-cre_18|2	?	ถูกตัดก่อนถึงเนื้อหา
-cre_18|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_18|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_86|0	?	ถูกตัดก่อนถึงการใช้สำนวน
-cre_86|2	?	ถูกตัดก่อนถึงการใช้สำนวน
-cre_86|1	?	ถูกตัดก่อนถึงการใช้สำนวน
-cre_87|2	Y
-cre_87|1	Y
-cre_87|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_88|0	?	ถูกตัดก่อนถึงการใช้สำนวน
-cre_88|1	?	ถูกตัดก่อนถึงการใช้สำนวน
-cre_88|2	?	ถูกตัดก่อนถึงการใช้สำนวน
-cre_89|2	Y
-cre_89|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_89|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_90|1	?	ยังไม่เห็นภาษาอีสาน
-cre_90|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_90|2	Y
-cre_91|0	Y
-cre_91|1	Y
-cre_91|2	N	ประโยคสับสน
-cre_92|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_92|2	N	ใช้คำอีสานแทนคำใต้ และใช้ หรอย ผิด
-cre_92|1	N	ใช้ หรอย ผิดความหมาย ปนอีสาน
-cre_94|1	?	ยังไม่เห็นสแลง
-cre_94|2	N	ประโยคสับสน
-cre_94|0	?	ยังไม่เห็นสแลง
-cre_95|1	N	เข้าใจว่าเป็นคำบนบรรจุภัณฑ์ ผิด และเรียกคุณย่า
-cre_95|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_95|2	?	ถูกตัดก่อนถึงเนื้อหา
-cre_97|2	?	ถูกตัดก่อนถึงเนื้อหา
-cre_97|1	?	ถูกตัดก่อนถึงเนื้อหา
-cre_97|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_98|2	?	พิมพ์ผิด (ไม้ม) ควรเช็กฉบับเต็ม
-cre_98|0	?	ถูกตัดก่อนถึงเนื้อหา
-cre_98|1	?	ถูกตัดก่อนถึงเนื้อหา
+code	verdict	note	note_en
+qa_36|2	Y		
+qa_36|0	Y		
+qa_36|1	Y		
+qa_37|2	N		
+qa_37|0	Y		
+qa_37|1	N		
+qa_38|1	Y		
+qa_38|0	Y		
+qa_38|2	Y		
+qa_39|0	Y		
+qa_39|2	Y		
+qa_39|1	Y		
+qa_40|1	N		
+qa_40|0	Y		
+qa_40|2	N		
+qa_41|0	Y		
+qa_41|2	N		
+qa_41|1	?	คำตอบถูกตัดก่อนถึงความหมาย	cut off before the meaning
+qa_42|1	?	คำตอบถูกตัดก่อนถึงความหมาย	cut off before the meaning
+qa_42|0	Y		
+qa_42|2	N	ตีความเป็น เก๋/คูล ผิด	read as 'stylish / cool', wrong
+qa_43|1	N	ตีความเป็น ถูกวิพากษ์วิจารณ์	read as 'being criticised'
+qa_43|2	?	คำตอบถูกตัดก่อนถึงความหมาย	cut off before the meaning
+qa_43|0	Y		
+qa_44|2	Y		
+qa_44|1	Y	ไม่ได้บอกว่ามาจากภาษาอีสาน	does not say it comes from Isan
+qa_44|0	Y		
+qa_45|0	Y		
+qa_45|2	?	ที่มาคำผิด (shot) ความหมายถูกตัด	wrong etymology ('shot'); meaning cut off
+qa_45|1	?	ที่มาคำผิด (short-feel) ความหมายถูกตัด	wrong etymology ('short-feel'); meaning cut off
+qa_46|1	Y		
+qa_46|0	Y		
+qa_46|2	?	ประโยคสับสน ความหมายถูกตัด	confused sentence; meaning cut off
+qa_47|1	N	ที่มาคำผิด (ดอม/ด่าม)	wrong etymology ('ดอม' / 'ด่าม')
+qa_47|0	Y		
+qa_47|2	N	ตีความเป็น ขี้...	read as 'ขี้...' (prone to ...)
+qa_48|2	N	ตีความเป็น cheap	read as 'cheap'
+qa_48|0	Y		
+qa_48|1	?	ที่มาคำผิด (chip) ความหมายถูกตัด	wrong etymology ('chip'); meaning cut off
+qa_49|1	N	ตีความเป็น ติดใจ/หยุดไม่ได้	read as 'hooked / can't stop'
+qa_49|2	?	ที่มาคำผิด (ป้ายโฆษณายา) ความหมายถูกตัด	wrong etymology ('drug advert sign'); meaning cut off
+qa_49|0	Y		
+qa_50|0	Y		
+qa_50|2	N	ดูเหมือนแปลตามตัวอักษร (ไปท่องเที่ยว)	seems literal ('going on a tour')
+qa_50|1	N	ตีความเป็น ลงมือทำ	read as 'taking action'
+qa_52|0	?	อ้างที่มาจากชื่อ Hops ควรเช็กฉบับเต็ม	claims it comes from 'Hops'; needs the full answer
+qa_52|2	?	ใกล้เคียง (ตื่นเต้น) แต่ถูกตัด	close ('excited') but cut off
+qa_52|1	N	ตีความเป็น hope	read as 'hope'
+qa_53|0	?	คำตอบถูกตัดก่อนถึงความหมาย	cut off before the meaning
+qa_53|2	N	ตีความตามตัวอักษรว่าหาคลินิกจริง	read literally as looking for a real clinic
+qa_53|1	?	คำตอบถูกตัดก่อนถึงความหมาย	cut off before the meaning
+qa_54|1	Y		
+qa_54|2	Y		
+qa_54|0	Y		
+qa_55|0	Y		
+qa_55|2	?	ทับศัพท์ผิด ความหมายถูกตัด	wrong transliteration; meaning cut off
+qa_55|1	Y		
+qa_56|0	Y		
+qa_56|2	Y		
+qa_56|1	Y		
+qa_57|0	Y		
+qa_57|2	Y		
+qa_57|1	Y		
+qa_58|0	Y		
+qa_58|2	?	คำอธิบายวนซ้ำ ความหมายถูกตัด	circular explanation; meaning cut off
+qa_58|1	Y		
+qa_59|1	Y		
+qa_59|2	Y		
+qa_59|0	Y		
+qa_60|1	Y		
+qa_60|0	Y		
+qa_60|2	Y		
+qa_61|0	Y		
+qa_61|1	Y		
+qa_61|2	Y		
+qa_62|0	Y		
+qa_62|2	N	อ้างว่าเป็นคำอีสาน-อังกฤษ ผิด	claims it is an Isan-English word, wrong
+qa_62|1	Y		
+qa_63|2	?	ทับศัพท์ผิด (โดมสกรีน) ความหมายถูกตัด	wrong transliteration ('โดมสกรีน'); meaning cut off
+qa_63|1	Y		
+qa_63|0	Y		
+qa_64|0	Y		
+qa_64|1	Y		
+qa_64|2	Y		
+qa_65|2	N		
+qa_65|0	Y		
+qa_65|1	N		
+qa_66|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_66|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_66|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_67|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_67|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_67|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_68|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_68|2	N	อธิบายการใช้เป็นการชมเชย ผิด	explains the usage as praise, wrong
+qa_68|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_69|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_69|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_69|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_70|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_70|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_70|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_71|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_71|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_71|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_72|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_72|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_72|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_73|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_73|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_73|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_74|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_74|0	Y		
+qa_74|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_75|2	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_75|0	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+qa_75|1	?	สำนวน: ถูกตัดก่อนถึงความหมาย	idiom: cut off before the meaning
+tr_100|0	Y		
+tr_100|1	Y		
+tr_100|2	Y	ยังแข็งไปนิด	still a bit stiff
+tr_21|1	N	แปลตรงตัว ไม่เป็นธรรมชาติ	literal translation, unnatural
+tr_21|2	N	แปลตรงตัว ไม่เป็นธรรมชาติ	literal translation, unnatural
+tr_21|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_22|2	N	ความหมายเพี้ยน	meaning distorted
+tr_22|1	Y		
+tr_22|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_23|1	N	แปล rocket science ตรงตัว	translated 'rocket science' literally
+tr_23|2	Y		
+tr_23|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_24|2	N	ใช้ เมื่อเช้า (อดีต) ผิด	uses 'เมื่อเช้า' (this morning, past), wrong
+tr_24|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_24|1	N	แปล call it a day ตรงตัว	translated 'call it a day' literally
+tr_61|1	Y	คำหลัก เม่ ไม่มีจริง แต่ตัวเลือกสำรองใช้ได้	main word 'เม่' does not exist, but the alternative is fine
+tr_61|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_61|2	N	แปล slaps ตรงตัว	translated 'slaps' literally
+tr_62|2	Y		
+tr_62|1	Y		
+tr_62|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_63|0	Y		
+tr_63|1	N	ตายซะแล้วดิ ไม่เป็นธรรมชาติ	'ตายซะแล้วดิ' is unnatural
+tr_63|2	Y		
+tr_64|1	Y		
+tr_64|0	?	บอกว่า ghosted = เท ไม่ตรงนัก ประโยคถูกตัด	says ghosted = 'เท' (stood up), not quite; sentence cut off
+tr_64|2	Y	ทับศัพท์ ghost ได้ แต่ประโยคสำรองแปลก	transliterating 'ghost' is fine, but the alternative sentence is odd
+tr_65|1	N	แปลตรงตัว ไม่เป็นธรรมชาติ	literal translation, unnatural
+tr_65|2	N	แปลตรงตัว + เบสเทีย	literal translation + 'เบสเทีย'
+tr_65|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_66|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_66|1	N	ทับศัพท์ mookata เป็น มูคาต้า	transliterated 'mookata' as 'มูคาต้า' instead of หมูกระทะ
+tr_66|2	N	ไม่โก้/มุกาต้า ผิด	'ไม่โก้' / 'มุกาต้า' wrong
+tr_67|1	Y		
+tr_67|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_67|2	N	ปนอีสาน (บ่) ไม่เป็นธรรมชาติ	mixes in Isan ('บ่'), unnatural
+tr_68|1	Y		
+tr_68|2	N	MC ในภาษาไทยแปลว่าพิธีกร	'MC' means emcee in Thai, wrong sense
+tr_68|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_69|1	Y		
+tr_69|2	N	แปล flexing ตรงตัว	translated 'flexing' literally
+tr_69|0	Y		
+tr_70|1	Y		
+tr_70|2	Y		
+tr_70|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_71|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_71|1	Y		
+tr_71|2	N	อิ่มเลย ไม่สื่อ so done	'อิ่มเลย' does not convey 'so done'
+tr_72|0	Y		
+tr_72|2	Y		
+tr_72|1	N	ประโยคไม่เป็นธรรมชาติ	unnatural sentence
+tr_73|2	N	ไม่มีความหมาย	meaningless
+tr_73|1	Y		
+tr_73|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_74|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_74|2	N	ทิ้ง rizz/ick ไม่แปล	left 'rizz' / 'ick' untranslated
+tr_74|1	Y	ความหมายถูกแต่ไม่ค่อยเป็นภาษาวัยรุ่น	meaning correct but not really teen register
+tr_75|2	N	พอใช้จัง ไม่เป็นธรรมชาติ	'พอใช้จัง' is unnatural
+tr_75|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_75|1	Y		
+tr_76|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_76|2	N	ไม่แปล situationship	left 'situationship' untranslated
+tr_76|1	N	ทับศัพท์เพี้ยน	garbled transliteration
+tr_77|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_77|2	N	กรีกออกไป ไม่มีความหมาย	'กรีกออกไป' is meaningless
+tr_77|1	Y		
+tr_78|0	Y		
+tr_78|1	Y		
+tr_78|2	Y		
+tr_79|1	Y		
+tr_79|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_79|2	N	3 a.m. แปลเป็น 3 โมงเช้า ผิด	rendered 3 a.m. as 9 a.m. (3 โมงเช้า), wrong
+tr_80|2	N	ความหมายเพี้ยน	meaning distorted
+tr_80|1	N	แซงซี่ ไม่มีความหมาย	'แซงซี่' is meaningless
+tr_80|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_81|1	Y		
+tr_81|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_81|2	Y		
+tr_82|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+tr_82|2	Y		
+tr_82|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_83|1	Y		
+tr_83|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_83|2	Y	คำว่า ล่ม ยังกึ่งทางการ	'ล่ม' is still semi-formal
+tr_84|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_84|2	N	เปลี่ยนความหมายเป็น น่าสนใจอย่างยิ่ง	meaning changed to 'very interesting'
+tr_84|1	Y		
+tr_85|1	?	ประโยคดูเพี้ยน ควรเช็กฉบับเต็ม	sentence looks off; needs the full answer
+tr_85|2	N	ความหมายเปลี่ยน (ไม่แสดงความสนใจ)	meaning changed (to 'showed no interest')
+tr_85|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_86|2	N	ตีความ ขิง ผิด (ดึงดูด/จับคู่แข่ง)	misread 'ขิง' (as attract / match the competitor)
+tr_86|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+tr_86|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_87|2	Y		
+tr_87|1	Y		
+tr_87|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_88|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_88|1	N	ไวยากรณ์ผิด + มีอักษรจีน	ungrammatical + contains a Chinese character
+tr_88|2	Y		
+tr_89|2	Y		
+tr_89|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_89|1	Y		
+tr_90|1	Y		
+tr_90|2	N	ใช้ ทำงานทับเวลา ผิด และยังทับศัพท์เบิร์นเอาท์	uses 'ทำงานทับเวลา' wrongly and keeps 'burnout' transliterated
+tr_90|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_91|0	Y		
+tr_91|2	Y		
+tr_91|1	Y		
+tr_92|2	N	ไม่มีความหมาย	meaningless
+tr_92|0	Y		
+tr_92|1	Y		
+tr_93|1	Y		
+tr_93|0	Y		
+tr_93|2	Y	พิมพ์ผิด (ฮ่วม)	typo ('ฮ่วม')
+tr_94|2	Y	มีโน้ตภาษาอังกฤษติดมา	an English note is attached
+tr_94|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_94|1	Y		
+tr_95|0	Y		
+tr_95|2	Y		
+tr_95|1	Y	ภาษาแปลกนิดหน่อย	slightly odd language
+tr_96|0	?	ถูกตัดก่อนถึงคำแปล	cut off before the translation
+tr_96|2	Y	มีคำพิมพ์ผิด	contains a typo
+tr_96|1	Y		
+tr_97|0	Y		
+tr_97|1	Y		
+tr_97|2	Y	คืนก่อน ไม่ตรงกับเมื่อคืนนัก	'คืนก่อน' does not quite mean 'last night'
+tr_98|0	Y		
+tr_98|2	N	ใช้ ปัง กับฝน ผิดความหมาย	uses 'ปัง' (awesome) for rain, wrong sense
+tr_98|1	Y		
+tr_99|0	Y		
+tr_99|2	N	ปนอีสานและคำตอบไม่จบ	mixes in Isan and the answer is unfinished
+tr_99|1	Y		
+cls_04|2	Y		
+cls_04|0	Y		
+cls_04|1	Y		
+cls_05|0	Y	ป้ายถูก แต่เหตุผลบอกว่าชมรสชาติ ผิด	label correct, but the reason says the taste was praised (wrong)
+cls_05|1	Y		
+cls_05|2	Y		
+cls_06|0	Y		
+cls_06|1	Y		
+cls_06|2	Y	เหตุผลตีความ เท ไม่ตรง	reason misreads 'เท'
+cls_07|1	Y		
+cls_07|0	Y		
+cls_07|2	Y		
+cls_08|0	Y		
+cls_08|2	Y		
+cls_08|1	Y		
+cls_09|1	Y		
+cls_09|0	Y		
+cls_09|2	Y		
+cls_10|2	Y		
+cls_10|1	Y		
+cls_10|0	Y		
+cls_100|0	Y		
+cls_100|2	Y		
+cls_100|1	Y		
+cls_11|0	Y		
+cls_11|2	Y		
+cls_11|1	Y		
+cls_12|0	Y		
+cls_12|2	Y		
+cls_12|1	Y		
+cls_13|0	Y		
+cls_13|1	Y		
+cls_13|2	Y		
+cls_14|0	Y		
+cls_14|1	N	จับประชดไม่ได้	missed the sarcasm
+cls_14|2	N	จับประชดไม่ได้	missed the sarcasm
+cls_15|2	Y		
+cls_15|0	Y		
+cls_15|1	Y		
+cls_16|1	Y		
+cls_16|2	Y		
+cls_16|0	Y		
+cls_17|2	Y		
+cls_17|0	Y		
+cls_17|1	Y		
+cls_18|2	N	ตอบ ลบ แต่เฉลย กลาง	answered negative; key is neutral
+cls_18|1	Y		
+cls_18|0	Y		
+cls_19|0	Y		
+cls_19|2	Y		
+cls_19|1	Y		
+cls_20|2	Y		
+cls_20|1	Y		
+cls_20|0	Y		
+cls_21|2	Y		
+cls_21|0	Y		
+cls_21|1	Y		
+cls_22|0	Y		
+cls_22|2	Y		
+cls_22|1	Y		
+cls_23|0	Y		
+cls_23|1	N	ตอบ บวก แต่เฉลย กลาง	answered positive; key is neutral
+cls_23|2	Y		
+cls_24|0	Y		
+cls_24|2	Y		
+cls_24|1	Y		
+cls_25|0	Y		
+cls_25|1	N	ตอบ บวก แต่เฉลย กลาง	answered positive; key is neutral
+cls_25|2	Y		
+cls_26|0	Y		
+cls_26|2	N	จับประชดไม่ได้	missed the sarcasm
+cls_26|1	Y		
+cls_27|2	Y		
+cls_27|1	Y		
+cls_27|0	Y		
+cls_28|1	Y		
+cls_28|2	Y		
+cls_28|0	Y		
+cls_29|2	Y		
+cls_29|0	Y		
+cls_29|1	Y		
+cls_30|0	Y		
+cls_30|1	Y		
+cls_30|2	Y		
+cls_31|1	Y		
+cls_31|0	Y		
+cls_31|2	Y		
+cls_32|2	Y		
+cls_32|1	Y		
+cls_32|0	Y		
+cls_33|0	Y		
+cls_33|1	Y		
+cls_33|2	Y		
+cls_86|2	Y		
+cls_86|1	Y		
+cls_86|0	Y		
+cls_87|0	Y		
+cls_87|2	Y		
+cls_87|1	Y		
+cls_88|1	Y		
+cls_88|0	Y		
+cls_88|2	Y		
+cls_89|0	Y		
+cls_89|2	Y		
+cls_89|1	Y		
+cls_90|0	Y		
+cls_90|1	Y		
+cls_90|2	Y		
+cls_91|0	Y		
+cls_91|2	N	ตอบ ภาษาทางการ แต่เฉลย ภาษาพูดสุภาพ	answered formal; key is polite spoken
+cls_91|1	N	ตอบ ภาษาทางการ แต่เฉลย ภาษาพูดสุภาพ	answered formal; key is polite spoken
+cls_92|1	Y		
+cls_92|0	Y		
+cls_92|2	Y		
+cls_93|0	Y		
+cls_93|2	Y		
+cls_93|1	Y		
+cls_94|0	Y		
+cls_94|1	Y		
+cls_94|2	Y		
+cls_95|0	Y		
+cls_95|2	Y		
+cls_95|1	Y		
+cls_96|1	Y		
+cls_96|2	Y		
+cls_96|0	Y		
+cls_97|2	Y		
+cls_97|0	Y		
+cls_97|1	Y		
+cls_98|2	Y		
+cls_98|0	Y		
+cls_98|1	Y		
+cls_99|2	Y		
+cls_99|0	Y		
+cls_99|1	Y		
+cre_04|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_04|2	N	บ้าไปคาเฟ่ ไม่เป็นธรรมชาติ	'บ้าไปคาเฟ่' is unnatural
+cre_04|1	?	ภาษาแปลกเล็กน้อย ควรเช็กฉบับเต็ม	slightly odd language; needs the full answer
+cre_05|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_05|1	N	สแลงไม่มีจริง (ออเค้/พร้อมจี้)	non-existent slang ('ออเค้' / 'พร้อมจี้')
+cre_05|2	N	ไม่มีความหมาย	meaningless
+cre_06|1	N	ไม่มีความหมาย	meaningless
+cre_06|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_06|2	N	ประโยคสับสน	confused sentence
+cre_07|1	N	ภาษาไม่เป็นธรรมชาติ	unnatural language
+cre_07|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_07|2	?	ภาษาแปลก ควรเช็กฉบับเต็ม	odd language; needs the full answer
+cre_08|2	?	ยังไม่เห็นสแลง ควรเช็กฉบับเต็ม	no slang visible yet; needs the full answer
+cre_08|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_08|0	Y		
+cre_09|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_09|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_09|2	?	ภาษาค่อนข้างทางการ ควรเช็กฉบับเต็ม	fairly formal language; needs the full answer
+cre_10|2	?	ยังไม่เห็นสแลง ควรเช็กฉบับเต็ม	no slang visible yet; needs the full answer
+cre_10|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_10|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_11|1	N	ใบหายใจ ไม่มีความหมาย	'ใบหายใจ' is meaningless
+cre_11|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_11|2	N	ประโยคสับสน	confused sentence
+cre_12|1	Y		
+cre_12|2	N	พูดถึงก๋วยเตี๋ยว ออกนอกเรื่อง	talks about noodles, off topic
+cre_12|0	Y		
+cre_13|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_13|2	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_13|1	Y		
+cre_14|2	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_14|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_14|1	?	ภาษาแปลก ควรเช็กฉบับเต็ม	odd language; needs the full answer
+cre_15|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_15|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_15|2	N	นิยามผิด (ความสัมพันธ์แบบซ่อนตัว)	wrong definition ('hidden relationship')
+cre_16|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_16|1	N	ภาษาไม่เป็นธรรมชาติ	unnatural language
+cre_16|2	N	ประโยคสับสน	confused sentence
+cre_17|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_17|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_17|2	?	ภาษาแปลก ควรเช็กฉบับเต็ม	odd language; needs the full answer
+cre_18|2	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_18|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_18|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_86|0	?	ถูกตัดก่อนถึงการใช้สำนวน	cut off before the idiom is used
+cre_86|2	?	ถูกตัดก่อนถึงการใช้สำนวน	cut off before the idiom is used
+cre_86|1	?	ถูกตัดก่อนถึงการใช้สำนวน	cut off before the idiom is used
+cre_87|2	Y		
+cre_87|1	Y		
+cre_87|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_88|0	?	ถูกตัดก่อนถึงการใช้สำนวน	cut off before the idiom is used
+cre_88|1	?	ถูกตัดก่อนถึงการใช้สำนวน	cut off before the idiom is used
+cre_88|2	?	ถูกตัดก่อนถึงการใช้สำนวน	cut off before the idiom is used
+cre_89|2	Y		
+cre_89|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_89|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_90|1	?	ยังไม่เห็นภาษาอีสาน	no Isan visible yet
+cre_90|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_90|2	Y		
+cre_91|0	Y		
+cre_91|1	Y		
+cre_91|2	N	ประโยคสับสน	confused sentence
+cre_92|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_92|2	N	ใช้คำอีสานแทนคำใต้ และใช้ หรอย ผิด	uses Isan instead of Southern words, and misuses 'หรอย'
+cre_92|1	N	ใช้ หรอย ผิดความหมาย ปนอีสาน	uses 'หรอย' (tasty) in the wrong sense; mixes in Isan
+cre_94|1	?	ยังไม่เห็นสแลง	no slang visible yet
+cre_94|2	N	ประโยคสับสน	confused sentence
+cre_94|0	?	ยังไม่เห็นสแลง	no slang visible yet
+cre_95|1	N	เข้าใจว่าเป็นคำบนบรรจุภัณฑ์ ผิด และเรียกคุณย่า	thinks they are words on packaging (wrong), and addresses the paternal grandmother (ย่า) instead of the maternal one (ยาย)
+cre_95|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_95|2	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_97|2	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_97|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_97|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_98|2	?	พิมพ์ผิด (ไม้ม) ควรเช็กฉบับเต็ม	typo ('ไม้ม'); needs the full answer
+cre_98|0	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content
+cre_98|1	?	ถูกตัดก่อนถึงเนื้อหา	cut off before the content

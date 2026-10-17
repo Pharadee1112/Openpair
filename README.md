@@ -1,41 +1,43 @@
 # OpenPair
 
-Intelligent AI router — automatically picks the cheapest model that can actually handle a given prompt, across OpenAI, Anthropic, Google, and Groq, with automatic fallback (including a local Ollama fallback) when a provider is rate-limited.
+**English** | [ภาษาไทย](README_TH.md)
 
-## ปัญหาที่แก้
+Intelligent AI router — automatically picks the cheapest model that can actually handle a given prompt (currently free-tier Gemini + Groq), with automatic fallback when a provider is rate-limited, including a local Ollama fallback.
 
-เวลาใช้ LLM หลาย provider พร้อมกัน คนส่วนใหญ่จะ hardcode เลือก model เดียวไว้ตายตัว — ทำให้จ่ายแพงเกินไปสำหรับ prompt ง่ายๆ หรือได้คุณภาพไม่พอสำหรับ prompt ที่ซับซ้อน แถมพอ provider ไหน rate-limit ก็ request พังทันที
+## The problem
 
-OpenPair แก้ปัญหานี้ด้วย:
-- **ประเมินความซับซ้อนของ prompt** (1–10) แล้วเลือก model ที่ถูกที่สุดในระดับที่พอไหว แทนที่จะยิง top-tier model ทุกครั้ง — ตั้งแต่ 2026-10-02 registry มีแค่ model ที่ใช้ฟรีได้จริงของ **Gemini + Groq** (OpenAI/Anthropic/OpenRouter ถอดออกจาก registry แล้ว แต่โค้ด caller ยังอยู่)
-- **ตรวจจับภาษาไทย** และเลือก model ที่รองรับภาษาไทยได้ดี (มี Thai-quality benchmark ในโปรเจกต์ — ทุก model ใน registry วัดจริงแล้ว: `gemini-3.1-flash-lite`, `openai/gpt-oss-20b`, `openai/gpt-oss-120b` บนชุด full 600 เคส และ `gemini-3.6-flash` บนชุด core 20 เคส)
-- **Fallback อัตโนมัติ**: ถ้า provider หลักโดน rate limit (429) หรือ overloaded (503) จะลองยิง provider ถัดไปในเชนให้อัตโนมัติ ไม่ต้องเขียน retry logic เอง
-- **Ollama เป็นด่านสุดท้าย**: ถ้า cloud provider ทั้งหมดโดน rate limit พร้อมกัน หรือไม่มี API key เลย แต่มี Ollama รันอยู่ในเครื่อง จะ fallback ไปใช้ local model โดยอัตโนมัติ
+When people use several LLM providers, most hard-code a single model. They overpay on easy prompts or get too little quality on hard ones, and when a provider rate-limits, requests simply fail.
+
+OpenPair addresses this by:
+- **Scoring prompt complexity** (1–10) and choosing the cheapest model at a sufficient tier, instead of sending every prompt to a top-tier model. Since 2026-10-02 the registry contains only models that are genuinely free to use from **Gemini + Groq** (OpenAI/Anthropic/OpenRouter were removed from the registry; their caller code remains).
+- **Detecting Thai** and routing it to the model that handles Thai best, based on the Thai benchmark in this repo. Every registry model has been measured: `gemini-3.1-flash-lite`, `openai/gpt-oss-20b`, `openai/gpt-oss-120b` on the 600-case full suite, and `gemini-3.6-flash` on the 20-case core suite.
+- **Automatic fallback**: if the primary provider returns 429 (rate limit) or 503 (overloaded), the next provider in the chain is tried — no retry logic to write yourself.
+- **Ollama as the last resort**: if every cloud provider is rate-limited at once, or no API key is set, but Ollama is running locally, OpenPair falls back to the local model.
 
 ## Architecture
 
 ```
 src/                      ← Rust core: complexity scoring, model registry, routing decision
-  classifier.rs           ← ให้คะแนนความซับซ้อน 1–10 + ตรวจภาษาไทย
-  registry.rs             ← รายชื่อ model ทุกตัว, tier, ราคา, thai_score
-  router.rs                ← ตัดสินใจว่า tier ไหน + model ไหนเหมาะกับ prompt นี้
-  main.rs                  ← demo binary (routing เฉยๆ ไม่เรียก API จริง)
+  classifier.rs           ← complexity score 1–10 + Thai detection
+  registry.rs             ← every model, its tier, price, thai_score
+  router.rs               ← decides which tier + model fits this prompt
+  main.rs                 ← demo binary (routing only, no real API calls)
 
-python/openpair/           ← Python wrapper รอบ Rust core (ผูกกันผ่าน PyO3 + maturin)
-  client.py                ← OpenPair class — .route() (ดูผลไม่เรียก API) / .call() (เรียกจริง + auto-fallback)
-  caller.py                ← ยิง API จริงไปแต่ละ provider (openai / anthropic / google / groq / ollama)
-  config.py                ← จัดการ API keys จาก .env / env vars
-  errors.py                ← ตรวจว่า error ไหน retry ได้ (429/503) ไหน raise ทันที
-  benchmark/                ← ระบบวัดคุณภาพภาษาไทยของแต่ละ model (6 หมวด — ชุด core 20 เคส / ชุด full 600 เคส)
-    data/*.json              ← ชุดข้อสอบขยาย หมวดละ 1 ไฟล์ (รวมกับ core = 100 เคสต่อหมวด)
-    checkpoint.py            ← resume support — เซฟผลทีละเคสลง .jsonl กัน progress หายตอน quota หมด/process โดน kill
+python/openpair/          ← Python wrapper around the Rust core (PyO3 + maturin)
+  client.py               ← OpenPair class — .route() (decision only) / .call() (real call + auto-fallback)
+  caller.py               ← real API calls per provider (openai / anthropic / google / groq / ollama)
+  config.py               ← API keys from .env / env vars
+  errors.py               ← which errors are retryable (429/503) and which raise immediately
+  benchmark/              ← Thai quality benchmark (6 categories — core 20 cases / full 600 cases)
+    data/*.json           ← extended cases, one file per category (with core = 100 per category)
+    checkpoint.py         ← resume support — saves each case to .jsonl so progress survives quota exhaustion or a killed process
 ```
 
-Routing decision (tier + model + ราคา) คำนวณฝั่ง Rust เพื่อความเร็ว ส่วนการเรียก API จริง, retry, fallback ทำฝั่ง Python
+The routing decision (tier + model + price) is computed in Rust for speed; real API calls, retries and fallback live in Python.
 
-## ติดตั้ง
+## Install
 
-ต้องมีทั้ง Rust toolchain และ Python 3.9+
+Requires a Rust toolchain and Python 3.9+.
 
 ```bash
 git clone https://github.com/Pharadee1112/Openpair.git
@@ -50,7 +52,7 @@ maturin develop --release     # build Rust core → python/openpair/_core*.pyd/.
 pip install -e ".[dev]"
 ```
 
-> **สำคัญ**: ทุกครั้งที่แก้โค้ดใน `src/*.rs` ต้องรัน `maturin develop --release` ใหม่เสมอ — แค่ `cargo build` ไม่พอ เพราะ Python import ตัว `.pyd`/`.so` ที่ build แยกกันคนละ target
+> **Important**: after every change to `src/*.rs`, run `maturin develop --release` again — `cargo build` alone is not enough, because Python imports the `.pyd`/`.so` built for a separate target.
 
 ## Configuration
 
@@ -58,46 +60,46 @@ pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-แล้วใส่ key อย่างน้อย 1 ตัว:
+Then set at least one key:
 
 ```
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
 GOOGLE_API_KEY=AI...
-GROQ_API_KEY=gsk_...          # optional, ฟรี + เร็วมาก
-OLLAMA_BASE_URL=http://localhost:11434   # optional, default นี้อยู่แล้ว
-OLLAMA_MODEL=llama3.1                    # optional, ต้อง `ollama pull` model นี้ไว้ก่อน
+GROQ_API_KEY=gsk_...          # optional, free and very fast
+OLLAMA_BASE_URL=http://localhost:11434   # optional, this is the default
+OLLAMA_MODEL=llama3.1                    # optional, `ollama pull` this model first
 ```
 
-ไม่จำเป็นต้องมีครบทุก provider — มี key ตัวเดียวก็ใช้งานได้ ยิ่งมีหลาย provider ยิ่ง fallback ได้ดีขึ้น
+You do not need every provider — one key is enough. More providers mean better fallback.
 
-## วิธีใช้ (Python)
+## Usage (Python)
 
 ```python
 from openpair import OpenPair
 
-client = OpenPair()  # อ่าน key จาก .env อัตโนมัติ
+client = OpenPair()  # reads keys from .env
 
-# เรียก API จริง — router เลือก model ให้เอง + auto-fallback ถ้าโดน rate limit
+# Real API call — the router picks the model, with auto-fallback on rate limits
 result = client.call("อธิบาย black hole ให้เข้าใจง่ายๆ")
 print(result.response_text)
 print(result.model_name, result.provider, f"${result.estimated_cost:.5f}")
 
-# ดู routing decision อย่างเดียว ไม่เรียก API จริง ไม่เสียตังค์
+# Routing decision only — no API call, no cost
 decision = client.route("Write a Python class for a binary tree")
 print(decision.model_name, decision.tier, decision.complexity_score)
 
-# บังคับ provider เฉพาะเจาะจง
+# Force a specific provider
 result = client.call("Hello!", preferred_provider="groq")
 
-# กำหนด fallback order เอง (ปกติไม่ต้องทำ — มี default chain อยู่แล้ว)
+# Custom fallback order (usually unnecessary — there is a default chain)
 result = client.call("Hello!", fallback_providers=["google", "groq"])
 ```
 
-**Default fallback chain** (ใช้เมื่อไม่ได้ระบุ `fallback_providers` เอง):
-`[provider ที่ router เลือก] → groq → google → ollama (ถ้า ping เจอ server จริง)` — provider ที่ไม่มี model ใน registry (เช่น openai) จะถูกข้ามแม้มี key
+**Default fallback chain** (when `fallback_providers` is not given):
+`[provider chosen by the router] → groq → google → ollama (only if a real server answers the ping)` — providers with no model in the registry (e.g. openai) are skipped even if a key is set.
 
-## วิธีใช้ (CLI)
+## Usage (CLI)
 
 ```bash
 openpair "อธิบาย recursion ให้เด็ก ป.6 ฟัง" --route-only
@@ -110,84 +112,89 @@ Score:    2/10
 Reason:   Low complexity — using a fast, cost-efficient model [Thai]. Score: 2/10 → Gemini 3.1 Flash Lite (Thai routing priority).
 ```
 
-`--route-only` แสดงแค่ผลการตัดสินใจ **ไม่เรียก API ไม่ต้องมี key** — ใช้ดูว่า router คิดยังไง
+`--route-only` prints only the decision — **no API call, no key needed** — useful to see how the router thinks.
 
 ```bash
-openpair "อธิบาย recursion"                      # เรียกจริง + auto-fallback
-openpair "Hello!" --provider groq                 # บังคับ provider
-openpair "สรุปให้หน่อย" --system "ตอบสั้นๆ"        # ใส่ system prompt
-openpair "Hello!" --max-tokens 512                # จำกัดความยาว (default 2048)
+openpair "อธิบาย recursion"                      # real call + auto-fallback
+openpair "Hello!" --provider groq                 # force a provider
+openpair "สรุปให้หน่อย" --system "ตอบสั้นๆ"        # system prompt
+openpair "Hello!" --max-tokens 512                # length limit (default 2048)
 ```
 
-คำตอบออก stdout ส่วนข้อมูล model/ราคา/latency ออก stderr — เพราะฉะนั้น
-`openpair "..." > answer.txt` จะได้แต่คำตอบล้วนๆ ในไฟล์
+The answer goes to stdout and model/price/latency info to stderr, so
+`openpair "..." > answer.txt` writes only the answer to the file.
 
-## Rust demo binary (routing preview เท่านั้น)
+## Rust demo binary (routing preview only)
 
 ```bash
 cargo run --bin openpair-demo -- "your prompt here"
 ```
 
-แสดงแค่ผล routing decision (score, tier, model, ราคาประมาณ) **ไม่เรียก API จริง** — ใช้ดูว่า router ตัดสินใจยังไงแบบเร็วๆ โดยไม่ต้องมี API key
+Shows only the routing decision (score, tier, model, estimated price) — **no real API call**, no key needed.
 
-## Benchmark คุณภาพภาษาไทย
+## Thai quality benchmark
 
 ```bash
-python run_benchmark.py                                    # รันทุก model default (Gemini)
-python run_benchmark.py --models gemini-3.6-flash           # เจาะจง model
-python run_benchmark.py --category qa                       # เจาะจงหมวด
-python run_benchmark.py --detail                            # แสดงผลละเอียดทุก test case
-python run_benchmark.py --suite full                        # ชุดเต็ม 600 เคส (100 ต่อหมวด)
+python run_benchmark.py                                    # default models (Gemini)
+python run_benchmark.py --models gemini-3.6-flash          # specific model
+python run_benchmark.py --category qa                      # one category
+python run_benchmark.py --detail                           # per-case detail
+python run_benchmark.py --suite full                       # full 600-case suite (100 per category)
+python run_benchmark.py --suite full --cases qa_52,qa_53   # only these cases (or @file with one id per line)
 ```
 
-### ชุดข้อสอบ: `core` กับ `full`
+### Suites: `core` and `full`
 
-- **`core`** (default) — 20 เคสเดิม ใช้เปรียบเทียบกับผลที่วัดไว้แล้ว และประหยัด quota
-- **`full`** — 600 เคส (qa / translation / summarization / classification / code_thai / creative หมวดละ 100) ชุดขยายอยู่ใน `python/openpair/benchmark/data/*.json` เนื้อหาเน้นของปัจจุบัน:
-  - **ข่าวปัจจุบัน (ก.ย. 2569)** — น้ำท่วม, ภูริพลเหรียญทองเอเชียนเกมส์, ส่งออก, ADB, วีซ่า 30 วัน, ราคาดีเซล ฯลฯ **ใส่เนื้อข่าวไว้ในโจทย์** (วัดการอ่าน/สรุป/แปลภาษาไทย ไม่ได้วัดว่า model รู้ข่าวล่าสุดไหม ซึ่งจะขึ้นกับ training cutoff)
-  - **ภาษาวัยรุ่น/สแลง 2025–2026** — ตัวมัม, มองบน, ป้ายยา, ทัวร์ลง, ฮ้อป, situationship, rizz, no cap ฯลฯ (ถามความหมาย, แปลสแลงอังกฤษ→ไทย, แปลงภาษาทางการ↔ภาษาวัยรุ่น, วิเคราะห์ sentiment ที่มีประชด)
-  - **สำนวนไทย / ภาษาถิ่น** — สำนวนดั้งเดิมที่ยังใช้กัน + อีสาน/เหนือ/ใต้ในงานเขียน
-  - **โค้ดบริบทไทย** — เลขบัตรประชาชน, พ.ศ.↔ค.ศ., บาทเป็นคำอ่าน, พร้อมเพย์ QR, เบอร์มือถือไทย
-- ⚠️ `full` = 600 request ต่อ model — Gemini free tier (≈20 req/วัน/model) ต้องใช้หลายวัน (resume ช่วยได้) Groq เร็วกว่ามาก
-- ⚠️ ข้อมูลข่าว/สแลงจะเก่าลงเรื่อยๆ ควรทบทวนทุก 6–12 เดือน และคะแนนจาก `full` เทียบตรงๆ กับ `core` ไม่ได้ (ชุดข้อสอบต่างกัน)
+- **`core`** (default) — the original 20 cases, kept comparable with earlier results and cheap on quota.
+- **`full`** — 600 cases (qa / translation / summarization / classification / code_thai / creative, 100 each). The extension lives in `python/openpair/benchmark/data/*.json` and focuses on current content:
+  - **Current news (Sep 2026)** — floods, Asian Games gold, exports, ADB, 30-day visa, diesel prices, etc. **The article text is in the prompt** (this measures Thai reading/summarising/translation, not whether the model knows recent news, which depends on its training cutoff).
+  - **Teen/social-media slang 2025–2026** — ตัวมัม, มองบน, ป้ายยา, ทัวร์ลง, ฮ้อป, situationship, rizz, no cap, etc. (meaning questions, English→Thai slang translation, formal↔teen register rewriting, sentiment with sarcasm).
+  - **Thai idioms / regional dialects** — traditional idioms still in use, plus Isan/Northern/Southern in writing.
+  - **Code in a Thai context** — national ID checksum, Buddhist↔Common Era years, baht amounts in words, PromptPay QR, Thai mobile numbers.
+- ⚠️ `full` = 600 requests per model — Gemini free-tier quotas can take several days (resume helps); Groq is much faster.
+- ⚠️ News and slang cases age; review them every 6–12 months. Scores from `full` are not directly comparable with `core` (different cases).
 
-ผลจะถูก suggest กลับมาเป็น `thai_score` ให้ไปอัปเดตใน `src/registry.rs` เอง (ยังไม่ auto-patch)
+Results suggest a `thai_score`, which you update in `src/registry.rs` by hand (no auto-patch yet).
 
-### Resume — รันต่อได้เองถ้าโดน quota หมดกลางคัน
+### Resume — continue after running out of quota
 
-ทุกครั้งที่รัน, ผลแต่ละ test case จะถูกเซฟทันทีลง checkpoint file (`<output ตัดนามสกุล>.checkpoint.jsonl`) คีย์ด้วย `(model_id, case_id)`:
+Every case result is saved immediately to a checkpoint file (`<output without extension>.checkpoint.jsonl`), keyed by `(model_id, case_id)`:
 
-- **ครั้งถัดไปที่รันคำสั่งเดิมซ้ำ** เคสที่เคยผ่านแล้วจะถูก**ข้ามอัตโนมัติ** ยิง API เฉพาะเคสที่ยังไม่เสร็จ — เพิ่ม test case ใหม่เข้า dataset แล้วรันซ้ำก็ไม่เสีย quota/เวลากับเคสเก่า
-- ถ้า Google API ตอบว่าโดน **daily quota** หมด (ไม่ใช่ rate limit ชั่วคราว) ระบบจะหยุดรันทันทีแทนที่จะวน retry เปล่าๆ — ผลที่ทำได้ก่อนหน้าถูกเซฟไว้แล้ว รันคำสั่งเดิมซ้ำได้พอ quota reset (ปกติเที่ยงคืน Pacific Time)
-- ต้องการรันใหม่ทั้งหมดจริงๆ (ไม่ resume): เพิ่ม `--fresh`
-- กำหนด path checkpoint เอง: `--checkpoint path/to/file.jsonl`
+- **Running the same command again** skips finished cases automatically and calls the API only for the rest — adding new cases and rerunning costs nothing for the old ones.
+- If the Google API reports the **daily quota** is exhausted (not a temporary rate limit), the run stops immediately instead of retrying in vain; finished results are already saved. Rerun after the quota resets (usually midnight Pacific Time).
+- To start over without resuming: add `--fresh`.
+- Custom checkpoint path: `--checkpoint path/to/file.jsonl`.
 
 ```bash
-python run_benchmark.py --fresh                             # ไม่สนใจ checkpoint เดิม รันใหม่หมด
-python run_benchmark.py --checkpoint my_ckpt.jsonl           # ใช้ checkpoint file ที่กำหนดเอง
+python run_benchmark.py --fresh                             # ignore the old checkpoint
+python run_benchmark.py --checkpoint my_ckpt.jsonl          # custom checkpoint file
 ```
 
 ## Testing
 
 ```bash
-cargo test                    # Rust — 16 tests
-pytest -m "not live"          # Python — 92 tests (mocked, ไม่ต้องมี API key)
-pytest tests/test_live.py -m live   # 5 tests ที่เรียก API จริง (ต้องมี key จริง, เสียเงินจริง)
+cargo test                    # Rust — 26 tests
+pytest -m "not live"          # Python — 126 tests (mocked, no API key needed)
+pytest tests/test_live.py -m live   # 3 tests that call real APIs (real keys; uses free-tier quota)
 ```
 
-Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แต่ละ test จะ `pytest.skip()` เองถ้าไม่มี key ของ provider นั้นใน `.env`
+Live tests are in `tests/test_live.py` (`@pytest.mark.live`); each calls `pytest.skip()` itself when its provider's key is missing from `.env`.
 
-> **หมายเหตุ**: พิมพ์ `pytest` เฉยๆ (ไม่ใส่ `-m`) จะรันทั้ง 124 ตัว รวม live tests 3 ตัว (`test_live_google` / `test_live_groq` / `test_live_thai_routing`) ที่ **ยิง API จริง** — ใช้ free tier จึงไม่เสียเงิน แต่กิน quota รายวัน ผลล่าสุด (2026-10-02, มี `GOOGLE_API_KEY` + `GROQ_API_KEY`) คือ `124 passed` ถ้าไม่อยากใช้ quota ให้ใส่ `-m "not live"` (121 ตัว)
+> **Note**: plain `pytest` (no `-m`) runs all 129 tests, including the 3 live tests (`test_live_google` / `test_live_groq` / `test_live_thai_routing`) that **call real APIs** — free tier, so no cost, but they use daily quota. Add `-m "not live"` to avoid that.
 
-## สถานะปัจจุบัน / ข้อจำกัดที่รู้อยู่แล้ว
+## Current status / known limitations
 
-- **CLI พร้อมใช้แล้ว** — `openpair "..."` เป็นคำสั่ง shell จริง (`pyproject.toml` มี `[project.scripts]` → `openpair = "openpair.cli:main"`) ดูวิธีใช้ในหัวข้อ "วิธีใช้ (CLI)" ด้านบน
-- **OpenRouter** มี caller แล้ว (`run_benchmark.py --models openrouter:<org/model>`) แต่ไม่อยู่ใน registry/routing — ใช้แค่ benchmark
-- **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
-- **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) เพิ่มแล้ว — รัน benchmark ค้างกลางคันแล้วรันคำสั่งเดิมซ้ำได้โดยไม่เสีย quota กับเคสที่เสร็จแล้ว ดูหัวข้อ "Resume" ด้านบน
-- **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` ได้ 429 `limit: 0` คือ **free tier ไม่มี quota ให้ model นี้เลย** จึงถอดออกจาก registry แล้ว (2026-10-02) — tier Expert ไม่มี model ของตัวเอง router จะใช้ model ของ Top แทน — ส่วน model ที่ quota รายวันหมดจริง (limit > 0) รอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำได้ resume system จะข้ามเคสที่เสร็จแล้วให้เอง
-- **สถานะ Thai benchmark ปัจจุบัน** (2026-10-02): วัดจริงครบทุก model ใน registry — `gemini-3.1-flash-lite` 9, `openai/gpt-oss-20b` 9, `openai/gpt-oss-120b` 9 (ชุด full 600 เคส), `gemini-3.6-flash` 6 (ชุด core) — Thai routing (2026-10-17): **ทุกระดับ → flash-lite** เพราะชุด full 598 เคส flash-lite ชนะ gpt-oss ทุกระดับความยาก (9.40 vs 8.79/8.71) — ถ้า Gemini โดน rate limit จะ fallback ไป Groq ตามปกติ
+- **CLI is ready** — `openpair "..."` is a real shell command (`[project.scripts]` in `pyproject.toml` → `openpair = "openpair.cli:main"`); see "Usage (CLI)" above.
+- **OpenRouter** has a caller (`run_benchmark.py --models openrouter:<org/model>`) but is not in the registry/routing — benchmark use only.
+- **Ollama fallback** has been tested against a real Ollama server (2026-10-09, `qwen2.5:3b`); the automated tests still use the `FakeOllama` mock in `tests/conftest.py`.
+- **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) — an interrupted run can be rerun with the same command without spending quota on finished cases; see "Resume" above.
+- **Gemini free-tier quotas are per model** (not per project). For example, `gemini-3.1-flash-lite` and `gemini-3.6-flash` had quota left on the test date, but `gemini-3.1-pro-preview` returned 429 `limit: 0` — **the free tier has no quota for that model at all** — so it was removed from the registry (2026-10-02). The Expert tier has no model of its own; the router uses the Top-tier model. Models whose daily quota is genuinely used up (limit > 0) can be rerun after the reset; the resume system skips finished cases.
+- **Thai benchmark status** (2026-10-02): every registry model measured — `gemini-3.1-flash-lite` 9, `openai/gpt-oss-20b` 9, `openai/gpt-oss-120b` 9 (full 600-case suite), `gemini-3.6-flash` 6 (core suite). Thai routing (2026-10-17): **every complexity level → flash-lite**, because on the 598-case full suite flash-lite beats gpt-oss at every difficulty (9.40 vs 8.79/8.71); if Gemini is rate-limited, the request falls back to Groq as usual.
+
+## Research paper
+
+The behavioural study of models on the 600-case Thai benchmark lives in `paper/` — drafts [`DRAFT.md`](paper/DRAFT.md) (English) / [`DRAFT_TH.md`](paper/DRAFT_TH.md) (Thai) and reproducible analyses: `ANALYSIS.md`, `HUMAN_REVIEW.md`, `STABILITY.md`. The dataset card is at [`hf_dataset/README.md`](hf_dataset/README.md).
 
 ## Roadmap
 
-ดู `list_to_add.md` สำหรับแผนที่ยังไม่ได้ทำ (YAML-based model config) — fine-tuning อยู่นอกขอบเขตของงานปัจจุบันโดยตั้งใจ (งานนี้วัดว่า model พลาดตรงไหน ไม่ใช่แก้ให้เก่งขึ้น) แผนสำหรับงานต่อยอดอยู่ที่ `finetune/README.md`
+See `list_to_add.md` for planned work (YAML-based model config). Fine-tuning is deliberately outside the scope of the current work (this work measures where models fail, not how to improve them); a plan for follow-up work is in `finetune/README.md`.
