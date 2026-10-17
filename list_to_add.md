@@ -12,7 +12,7 @@
 
 - [x] 13 ต.ค. — `scripts/analyze_behavior.py` → `paper/ANALYSIS.md` (bootstrap CI, paired diff, แยกหมวด/ประเภทเนื้อหา/ความยาก, เสียคะแนนตรงไหน) + `paper/figures/` 3 กราฟ (png+pdf) — ไม่เรียก API — ต้องมี `pip install -e ".[paper]"`
 - [x] 13 ต.ค. — runner/checkpoint เก็บคำตอบเต็ม + token + latency แล้ว (ผลเก่าเก็บแค่ 80 ตัวอักษรแรก)
-- [ ] **(user)** ตรวจ `paper/slang_review.csv` — 17 ต.ค. ขยายเป็น 154 แถว (สแลง 112 + สำนวน 18 + ระดับภาษา 15 + ประชด 6 + ภาษาถิ่น 3) — เฉลยครบ 154 แถวเป็น Y แล้ว (93 ตรวจจริง, 61 user ให้ใส่ Y ตามชุดแรก) — ที่เหลือ: ช่อง model ถูกไหม (อย่างน้อย `qa_*` 39 แถว)
+- [ ] **(user)** ตรวจ `paper/slang_review.csv` — 17 ต.ค. ขยายเป็น 154 แถว (สแลง 112 + สำนวน 18 + ระดับภาษา 15 + ประชด 6 + ภาษาถิ่น 3) — เฉลยครบ 154 แถวเป็น Y แล้ว (93 ตรวจจริง, 61 user ให้ใส่ Y ตามชุดแรก) — ที่เหลือ: ช่อง model ถูกไหม — **user กรอกใน `paper/review_simple.csv`** (blind, 462 บรรทัด, qa 117 บรรทัดแรก) แล้วรัน `python scripts/review_simple.py merge`
 - [x] 17 ต.ค. — Related work (FrugalGPT, RouteLLM, AutoMix, Typhoon/ThaiExam, SEA-HELM, Thai dialect, LLM-judge, hallucination) อยู่ใน `paper/DRAFT.md` §2 — ชื่อผู้แต่งบางเรื่องยังเป็น `[TODO]`
 - [ ] 17–20 ต.ค. — draft v0.1 อังกฤษ `paper/DRAFT.md` + ไทย `paper/DRAFT_TH.md` (เนื้อหาตรงกัน แก้ต้องแก้ทั้งคู่) — ค้าง: ผลตรวจจากคน (`[HUMAN]`), Conclusion, ~~Thai routing table~~ (17 ต.ค. user เลือกให้ไทยทุกระดับไป flash-lite — แก้ `registry.rs` + paper §3 แล้ว)
 - [ ] 21–22 ต.ค. — ตรวจทาน + ส่ง

@@ -48,7 +48,7 @@ Cost-aware LLM routers send each prompt to the cheapest model that can handle it
 
 ### 4.3 Scoring
 - `final = 5 × keyword_fraction + min(10 × thai_ratio, 3) + 2 × length_ok` (0–10). A case passes if keyword fraction ≥ threshold, Thai ratio ≥ minimum and length is sufficient.
-- No LLM judge. Human verification of slang/idiom/register/sarcasm cases: `[HUMAN]` 154 cases reviewed by a native Thai speaker; answer keys checked and confirmed for the original 93 slang cases, and accepted for the remaining 61 on the strength of that check (not individually verified — see Limitations); per-model correctness `[HUMAN]`.
+- No LLM judge. Human verification of slang/idiom/register/sarcasm cases: `[HUMAN]` 154 cases reviewed by a native Thai speaker; answer keys checked and confirmed for the original 93 slang cases, and accepted for the remaining 61 on the strength of that check (not individually verified — see Limitations); per-model correctness `[HUMAN]` is judged blind — one answer per line, model names and machine scores hidden, answer order shuffled per question (`scripts/review_simple.py`).
 - Statistics: bootstrap 95% CIs (5 000 resamples, seed 20261013); paired differences on the same cases; Spearman ρ for difficulty.
 
 ## 5. Results
