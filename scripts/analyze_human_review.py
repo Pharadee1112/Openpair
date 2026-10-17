@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 VERDICTS = ROOT / "paper" / "review_verdicts_old.tsv"
 OUT = ROOT / "paper" / "HUMAN_REVIEW.md"
 
-# ลำดับต้องตรงกับเลขหลัง | ในรหัสของ review_simple.csv
+# ลำดับต้องตรงกับเลขหลัง | ในคอลัมน์ code ของ review_verdicts_old.tsv
 MODELS = [
     ("gemini-3.1-flash-lite", "benchmark_results_gemini_full.json", "Gemini 3.1 Flash-Lite"),
     ("openai/gpt-oss-120b",   "benchmark_results_groq_full.json",   "gpt-oss-120b"),
