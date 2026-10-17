@@ -48,7 +48,7 @@ Cost-aware LLM routers send each prompt to the cheapest model that can handle it
 
 ### 4.3 Scoring
 - `final = 5 × keyword_fraction + min(10 × thai_ratio, 3) + 2 × length_ok` (0–10). A case passes if keyword fraction ≥ threshold, Thai ratio ≥ minimum and length is sufficient.
-- No LLM judge. Human verification of slang/idiom/register/sarcasm cases: `[HUMAN]` 154 cases reviewed by a native Thai speaker; answer keys confirmed correct for the original 93 slang cases; per-model correctness `[HUMAN]`.
+- No LLM judge. Human verification of slang/idiom/register/sarcasm cases: `[HUMAN]` 154 cases reviewed by a native Thai speaker; answer keys checked and confirmed for the original 93 slang cases, and accepted for the remaining 61 on the strength of that check (not individually verified — see Limitations); per-model correctness `[HUMAN]`.
 - Statistics: bootstrap 95% CIs (5 000 resamples, seed 20261013); paired differences on the same cases; Spearman ρ for difficulty.
 
 ## 5. Results
@@ -93,7 +93,7 @@ Examples from `ANALYSIS.md` §7; final versions must quote full responses `[TODO
 4. **Truncated logs.** The analysed runs stored only the first 80 characters of each response, so human review sometimes cannot judge correctness and rescoring is impossible without rerunning. Fixed in the runner on 2026-10-13 (full text, tokens, latency).
 5. **One run per model**, provider-default sampling: no estimate of run-to-run variance.
 6. **Small and uneven subgroups** (dialect 3, sarcasm 6, idioms 18) and only three models, all reachable on free tiers.
-7. **Single annotator** for human verification; no inter-annotator agreement.
+7. **Single annotator** for human verification; no inter-annotator agreement. Answer keys for 61 of the 154 reviewed cases were accepted without case-by-case checking.
 8. **Shelf life.** Slang and news cases age within months; results describe models as of October 2026.
 
 ## 8. Future Work (how to extend this)
