@@ -1,7 +1,7 @@
 # Where Free-Tier LLMs Break on Thai: A 600-Case Behavioural Study for Cost-Aware Routing
 
 > DRAFT v0.1 — 2026-10-17. Thai version: `paper/DRAFT_TH.md` — keep both in sync. Numbers come from `paper/ANALYSIS.md` (regenerate with `python scripts/analyze_behavior.py`).
-> `[TODO]` = needs data or a decision. Human-review numbers come from `paper/HUMAN_REVIEW.md` (`python scripts/analyze_human_review.py`).
+> Human-review numbers come from `paper/HUMAN_REVIEW.md` (`python scripts/analyze_human_review.py`).
 
 ## Abstract
 
@@ -92,8 +92,8 @@ By category, gpt-oss is close to Gemini on classification (91% each vs 100%) but
 
 ## 6. Model Weaknesses (qualitative)
 
-Examples from `ANALYSIS.md` §7; final versions must quote full responses `[TODO rerun selected cases with full-response logging]`.
-
+Examples are quoted from the stored 80-character previews — the same text the human reviewer judged (Section 5.5).
+  
 1. **Confident wrong slang definitions (gpt-oss).** e.g. `qa_50` "ทัวร์ลง" (online pile-on) explained by 120b as "taking action on something"; `qa_65` "CF" in live-selling (confirm an order) explained by 20b as "Cash Flow"; `qa_48` "ชิป" glossed by 20b as English "cheap". The answers are fluent, structured, and in Thai — nothing in their form signals the error. On the 39 slang/idiom QA cases the human marked 8 of 24 decidable 120b answers and 11 of 22 decidable 20b answers wrong; none of Gemini's 28.
 2. **Invented or literal slang in translation (gpt-oss).** Human-marked wrong translations: 10 of 41 (120b) and 24 of 44 (20b). Typical failures are literal renderings (`tr_61` "slaps" → "ตบ", `tr_69` "flexing" → "แสดง"), non-words (`tr_77` "กรีกออกไป", `tr_80` "แซงซี่"), and wrong false friends (`tr_68` "MC", which means *emcee* in Thai).
 3. **Missing sarcasm.** `cls_14`, `cls_23`, `cls_26`: gpt-oss labels sarcastic complaints as positive, taking praise words literally.
