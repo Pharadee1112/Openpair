@@ -1,6 +1,6 @@
 # Where Free-Tier LLMs Break on Thai: A 600-Case Behavioural Study for Cost-Aware Routing
 
-> DRAFT v0.1 — 2026-10-17. Numbers come from `paper/ANALYSIS.md` (regenerate with `python scripts/analyze_behavior.py`).
+> DRAFT v0.1 — 2026-10-17. Thai version: `paper/DRAFT_TH.md` — keep both in sync. Numbers come from `paper/ANALYSIS.md` (regenerate with `python scripts/analyze_behavior.py`).
 > `[TODO]` = needs data or a decision. `[HUMAN]` = waits for the review in `paper/slang_review.csv`.
 
 ## Abstract
@@ -24,9 +24,9 @@ Cost-aware LLM routers send each prompt to the cheapest model that can handle it
 
 **Thai and Southeast Asian evaluation.** Typhoon (SCB 10X, 2023) introduced ThaiExam, built from Thai national and professional exams (ONET, IC, later TGAT, TPAT-1, A-Level), now hosted as a HELM leaderboard. Typhoon 2 (2024) and the Thai LLM Leaderboard (SCB 10X, VISTEC, SEACrowd) add a Thai MT-Bench judged by an LLM. SEA-HELM (2025) evaluates Thai among five SEA languages across NLP classics, LLM-specific skills, linguistics, culture and safety. [TODO author list] (2025) assess Thai dialect performance with automatic benchmarks and human evaluation. These benchmarks focus on exam knowledge or general instruction following; ours targets the content that changes fastest and that routers are least likely to have seen — slang, social-media register and news from the evaluation month — and is designed to be cheap enough to rerun on free tiers.
 
-**Automatic evaluation and its biases.** Zheng et al. (2023) show that strong LLM judges agree with humans about as often as humans agree with each other, but document position and verbosity bias. We deliberately avoided an LLM judge (cost, and the judge would itself be one of the models under study) and used keyword matching instead; Section 6 shows our scorer has its own verbosity bias.
+**Automatic evaluation and its biases.** Zheng et al. (2023) show that strong LLM judges agree with humans about as often as humans agree with each other, but document position and verbosity bias. We deliberately avoided an LLM judge (cost, and the judge would itself be one of the models under study) and used keyword matching instead; Section 7 shows our scorer has its own verbosity bias.
 
-**Hallucination.** Huang et al. (2023) separate factuality hallucination (conflict with world facts) from faithfulness hallucination (conflict with the input). The confident wrong slang definitions in Section 5 are factuality hallucinations about culture-specific knowledge.
+**Hallucination.** Huang et al. (2023) separate factuality hallucination (conflict with world facts) from faithfulness hallucination (conflict with the input). The confident wrong slang definitions in Section 6 are factuality hallucinations about culture-specific knowledge.
 
 ## 3. System: OpenPair
 
