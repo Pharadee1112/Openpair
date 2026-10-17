@@ -65,9 +65,12 @@ pub struct ModelMeta {
 /// Thai routing priority — preferred model IDs for each complexity bucket.
 /// Updated after running `openpair benchmark --lang th`.
 pub const THAI_ROUTING_PRIORITY: ThaiRoutingPriority = ThaiRoutingPriority {
-    simple_thai:  "gemini-3.1-flash-lite",  // cheap + acceptable Thai
-    medium_thai:  "openai/gpt-oss-20b",     // measured thai_score 9, cheaper than gemini-3.6-flash (6)
-    complex_thai: "openai/gpt-oss-120b",    // measured thai_score 9, top tier
+    // All buckets → flash-lite: on the 598-case full suite it beats both gpt-oss models at every
+    // difficulty (9.40 vs 8.79 / 8.71, paired CIs exclude 0) and 120b ≈ 20b (paper/ANALYSIS.md, 2026-10-17).
+    // If Gemini is rate-limited, client.call() falls back to Groq as usual.
+    simple_thai:  "gemini-3.1-flash-lite",
+    medium_thai:  "gemini-3.1-flash-lite",
+    complex_thai: "gemini-3.1-flash-lite",
 };
 
 pub struct ThaiRoutingPriority {

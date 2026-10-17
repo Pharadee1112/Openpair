@@ -186,7 +186,7 @@ Live tests อยู่ที่ `tests/test_live.py` (`@pytest.mark.live`) แ�
 - **Ollama fallback** implement แล้วแต่ยังไม่เคยทดสอบกับ Ollama server จริง (test ทั้งหมดเป็น mock ผ่าน `FakeOllama` fixture ใน `tests/conftest.py` — ไม่ใช่ server จริง) — ถ้าเจอบั๊กให้เริ่มเช็คตรงนี้ก่อน
 - **Benchmark resume/checkpoint** (`python/openpair/benchmark/checkpoint.py`) เพิ่มแล้ว — รัน benchmark ค้างกลางคันแล้วรันคำสั่งเดิมซ้ำได้โดยไม่เสีย quota กับเคสที่เสร็จแล้ว ดูหัวข้อ "Resume" ด้านบน
 - **Gemini free tier มี quota รายวันแยกตาม model** (ไม่ใช่รวมทั้ง project) — เช่น ณ วันที่ทดสอบ `gemini-3.1-flash-lite` กับ `gemini-3.6-flash` ยังมี quota เหลือ แต่ `gemini-3.1-pro-preview` ได้ 429 `limit: 0` คือ **free tier ไม่มี quota ให้ model นี้เลย** จึงถอดออกจาก registry แล้ว (2026-10-02) — tier Expert ไม่มี model ของตัวเอง router จะใช้ model ของ Top แทน — ส่วน model ที่ quota รายวันหมดจริง (limit > 0) รอ reset (ปกติเที่ยงคืน Pacific Time) แล้วรันซ้ำได้ resume system จะข้ามเคสที่เสร็จแล้วให้เอง
-- **สถานะ Thai benchmark ปัจจุบัน** (2026-10-02): วัดจริงครบทุก model ใน registry — `gemini-3.1-flash-lite` 9, `openai/gpt-oss-20b` 9, `openai/gpt-oss-120b` 9 (ชุด full 600 เคส), `gemini-3.6-flash` 6 (ชุด core) — Thai routing: ง่าย → flash-lite, กลาง → gpt-oss-20b, ยาก → gpt-oss-120b
+- **สถานะ Thai benchmark ปัจจุบัน** (2026-10-02): วัดจริงครบทุก model ใน registry — `gemini-3.1-flash-lite` 9, `openai/gpt-oss-20b` 9, `openai/gpt-oss-120b` 9 (ชุด full 600 เคส), `gemini-3.6-flash` 6 (ชุด core) — Thai routing (2026-10-17): **ทุกระดับ → flash-lite** เพราะชุด full 598 เคส flash-lite ชนะ gpt-oss ทุกระดับความยาก (9.40 vs 8.79/8.71) — ถ้า Gemini โดน rate limit จะ fallback ไป Groq ตามปกติ
 
 ## Roadmap
 

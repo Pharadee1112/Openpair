@@ -31,8 +31,8 @@ Cost-aware LLM routers send each prompt to the cheapest model that can handle it
 ## 3. System: OpenPair
 
 - Rust core (`classifier.rs`, `router.rs`, `registry.rs`) scores prompt complexity 1–10, detects Thai, and picks the cheapest model in the required tier; Python layer (`client.py`, `caller.py`) calls the provider and falls back on 429/503, ending at a local Ollama model.
-- Registry restricted to free-tier models (Gemini + Groq) since 2026-10-02. Thai routing: easy → `gemini-3.1-flash-lite`, medium → `gpt-oss-20b`, hard → `gpt-oss-120b`.
-- `[TODO]` Revisit this table in light of Section 4: Gemini Flash-Lite beats both gpt-oss models on Thai at every difficulty, so routing harder Thai prompts *away* from it is not supported by our data. Either change the routing or justify it (e.g. reasoning-heavy prompts outside this benchmark).
+- Registry restricted to free-tier models (Gemini + Groq) since 2026-10-02.
+- Thai routing table, set from the results in Section 5: before this study, Thai prompts went to `gemini-3.1-flash-lite` (simple), `gpt-oss-20b` (medium) and `gpt-oss-120b` (complex), on the assumption that larger models handle harder Thai better. Section 5 shows Gemini Flash-Lite beats both gpt-oss models at every difficulty level and that 120b is no better than 20b, so OpenPair now routes **all Thai prompts to `gemini-3.1-flash-lite`**; Groq's gpt-oss models remain as the rate-limit fallback. This is the study's direct practical outcome: a size-based routing intuition was wrong for Thai.
 
 ## 4. Benchmark and Method
 

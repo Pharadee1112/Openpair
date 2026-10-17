@@ -140,6 +140,24 @@ mod tests {
     }
 
     #[test]
+    fn thai_prompts_route_to_gemini_at_every_complexity() {
+        let simple = route_prompt("สวัสดีครับ", None);
+        let complex = route_prompt(
+            "ออกแบบสถาปัตยกรรม microservices สำหรับระบบอีคอมเมิร์ซ วิเคราะห์ข้อดีข้อเสียของการสื่อสารแบบ              synchronous และ asynchronous อธิบาย circuit breaker และกลยุทธ์ database sharding อย่างละเอียด",
+            None,
+        );
+        assert!(complex.complexity_score > simple.complexity_score);
+        assert_eq!(simple.model_id, "gemini-3.1-flash-lite");
+        assert_eq!(complex.model_id, "gemini-3.1-flash-lite");
+    }
+
+    #[test]
+    fn thai_prompt_with_pinned_provider_ignores_thai_priority() {
+        let d = route_prompt("สวัสดีครับ", Some("groq"));
+        assert_eq!(d.provider, "groq");
+    }
+
+    #[test]
     fn decision_has_all_fields() {
         let d = route_prompt("Write a poem about the ocean.", None);
         assert!(!d.model_id.is_empty());

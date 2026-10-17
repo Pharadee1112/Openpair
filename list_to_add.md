@@ -14,7 +14,7 @@
 - [x] 13 ต.ค. — runner/checkpoint เก็บคำตอบเต็ม + token + latency แล้ว (ผลเก่าเก็บแค่ 80 ตัวอักษรแรก)
 - [ ] **(user)** ตรวจ `paper/slang_review.csv` — 17 ต.ค. ขยายเป็น 154 แถว (สแลง 112 + สำนวน 18 + ระดับภาษา 15 + ประชด 6 + ภาษาถิ่น 3) — เฉลย 93 แถวเดิม user ยืนยันว่าถูก (Y) แล้ว — ที่เหลือ: เฉลย 61 แถวใหม่ + ช่อง model ถูกไหม (อย่างน้อย `qa_*`)
 - [x] 17 ต.ค. — Related work (FrugalGPT, RouteLLM, AutoMix, Typhoon/ThaiExam, SEA-HELM, Thai dialect, LLM-judge, hallucination) อยู่ใน `paper/DRAFT.md` §2 — ชื่อผู้แต่งบางเรื่องยังเป็น `[TODO]`
-- [ ] 17–20 ต.ค. — draft v0.1 อังกฤษ `paper/DRAFT.md` + ไทย `paper/DRAFT_TH.md` (เนื้อหาตรงกัน แก้ต้องแก้ทั้งคู่) — ค้าง: ผลตรวจจากคน (`[HUMAN]`), Conclusion, ตัดสินเรื่อง Thai routing table (§3 — ข้อมูลไม่สนับสนุนให้ส่ง prompt ยากไป gpt-oss)
+- [ ] 17–20 ต.ค. — draft v0.1 อังกฤษ `paper/DRAFT.md` + ไทย `paper/DRAFT_TH.md` (เนื้อหาตรงกัน แก้ต้องแก้ทั้งคู่) — ค้าง: ผลตรวจจากคน (`[HUMAN]`), Conclusion, ~~Thai routing table~~ (17 ต.ค. user เลือกให้ไทยทุกระดับไป flash-lite — แก้ `registry.rs` + paper §3 แล้ว)
 - [ ] 21–22 ต.ค. — ตรวจทาน + ส่ง
 
 ---
@@ -33,7 +33,7 @@
 
 **ตัดสินใจแล้ว (2026-10-02):** registry มีแค่ Gemini + Groq (free tier) — ถอด OpenAI/Anthropic/`gemini-3.1-pro-preview` ออกแล้ว (`d731fa3`), OpenRouter ใช้แค่ benchmark, tier Expert ถอยไปใช้ model ของ Top — เป้าหมายโปรเจกต์คือทดสอบว่า model ไหนเหมาะกับ task แบบไหน (routing) ไม่ใช่รองรับทุก provider
 
-**registry.rs ตอนนี้ (ทุกตัววัดจริง):** Small `gemini-3.1-flash-lite` 9 / `openai/gpt-oss-20b` 9, Mid `gemini-3.6-flash` 6 (ชุด core), Top `openai/gpt-oss-120b` 9 — Thai routing: ง่าย flash-lite / กลาง gpt-oss-20b / ยาก gpt-oss-120b
+**registry.rs ตอนนี้ (ทุกตัววัดจริง):** Small `gemini-3.1-flash-lite` 9 / `openai/gpt-oss-20b` 9, Mid `gemini-3.6-flash` 6 (ชุด core), Top `openai/gpt-oss-120b` 9 — Thai routing (2026-10-17): ทุกระดับ → flash-lite (เดิม ง่าย flash-lite / กลาง gpt-oss-20b / ยาก gpt-oss-120b)
 
 ---
 

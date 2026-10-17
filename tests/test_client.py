@@ -164,8 +164,14 @@ class TestRouting:
         assert d.provider in ("google", "groq")
 
     def test_thai_prompts_route_to_measured_models(self):
+        # flash-lite ชนะ gpt-oss ทุกระดับความยากในชุด full → ภาษาไทยไป Gemini ทุกระดับ
         simple = self.client.route("สวัสดีครับ")
+        complex_ = self.client.route(
+            "ออกแบบสถาปัตยกรรม microservices สำหรับระบบอีคอมเมิร์ซ วิเคราะห์ข้อดีข้อเสียของการสื่อสารแบบ "
+            "synchronous และ asynchronous อธิบาย circuit breaker และกลยุทธ์ database sharding อย่างละเอียด"
+        )
         assert simple.model_id == "gemini-3.1-flash-lite"
+        assert complex_.model_id == "gemini-3.1-flash-lite"
 
     def test_thai_prompt_detected(self):
         d = self.client.route("สวัสดีครับ คุณเป็นอย่างไรบ้าง")
