@@ -95,7 +95,6 @@ The historical `ARCHITECTURE.md` and SRD document may describe future features a
 ### Known integration risks for the next developer
 
 - **Ollama configuration consistency:** `ApiKeys` stores a configurable Ollama base URL, but `call_ollama()` reads `OLLAMA_BASE_URL` directly from the environment. Unify these paths before supporting configurable runtimes.
-- **SDK dependency audit:** `caller.py` imports the `google.genai` API, while `pyproject.toml` declares `google-generativeai`; verify and align the actual required distribution in a clean environment.
 - **Cache and conversation scope:** The present exact-request LRU cache is keyed on one prompt/provider/system/max-tokens tuple. Do not reuse it for multi-turn or multiple local endpoints without including complete context, model identity, runtime, and privacy scope; disabling it in chat mode is a safe first step.
 - **Pinned local model:** The Rust registry does not contain Ollama model IDs. Passing `preferred_provider="ollama"` to today's `route()` is **not** equivalent to choosing an exact local model. The new adapter and policy layer must enforce selection independently of that static registry.
 - **Build verification:** The declared package version and a configured CI workflow are evidence of code structure, not proof that current GitHub Releases exist or that the latest CI run succeeded. Confirm before issuing a release.
