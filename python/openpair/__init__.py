@@ -20,7 +20,8 @@ Routing only (no API call):
 from .client import OpenPair
 from .config import ApiKeys
 from .caller import CallResult
+from .session import ChatSession
 
 __version__ = "0.1.0"
 __registry_snapshot__ = "2026-07-28"  # date the model prices/thai_score in src/registry.rs were last refreshed
-__all__ = ["OpenPair", "ApiKeys", "CallResult", "__registry_snapshot__"]
+__all__ = ["OpenPair", "ApiKeys", "CallResult", "ChatSession", "__registry_snapshot__"]

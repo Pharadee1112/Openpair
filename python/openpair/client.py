@@ -151,19 +151,80 @@ class OpenPair:
             self._cache.move_to_end(cache_key)
             return replace(self._cache[cache_key], from_cache=True)
 
-        decision = self._rust.route(prompt, provider)
+        def dispatch(candidate: str, model_id: str, api_key: str):
+            return make_call(
+                provider   = candidate,
+                model_id   = model_id,
+                prompt     = prompt,
+                api_key    = api_key,
+                system     = system,
+                max_tokens = max_tokens,
+            )
+
+        result, _failed = self._call_with_fallback(
+            route_prompt       = prompt,
+            preferred_provider = provider,
+            fallback_providers = fallback_providers,
+            dispatch           = dispatch,
+        )
+
+        if use_cache:
+            self._cache[cache_key] = result
+            self._cache.move_to_end(cache_key)
+            if len(self._cache) > self._cache_size:
+                self._cache.popitem(last=False)
+
+        return result
+
+    def available_providers(self) -> list[str]:
+        """Return providers that have API keys configured."""
+        return self._keys.available_providers()
+
+    def score(self, prompt: str) -> int:
+        """Return the complexity score (1–10) for a prompt."""
+        return self._rust.score_complexity(prompt)
+
+    def is_thai(self, text: str) -> bool:
+        """Return True if the text contains Thai characters."""
+        return self._rust.is_thai(text)
+
+    # ── Internal helpers ────────────────────────────────────────────────────
+
+    def _call_with_fallback(
+        self,
+        *,
+        route_prompt: str,
+        preferred_provider: Optional[str],
+        fallback_providers: Optional[list[str]],
+        dispatch,
+    ) -> tuple[CallResult, list[str]]:
+        """
+        Route `route_prompt`, then walk the fallback chain until one provider answers.
+        Shared by call() (single prompt) and ChatSession.send() (multi-turn).
+
+        `dispatch(provider, model_id, api_key)` makes the real API call and returns
+        (text, input_tokens, output_tokens, latency_ms); it decides what is sent
+        (a prompt or a message history). This method never touches the response cache.
+
+        Returns (result, failed) where `failed` lists the providers that raised a
+        retryable error before the one that answered, in the order they were tried.
+        Raises exactly as documented on call().
+        """
+        provider = preferred_provider or self._preferred_provider
+        decision = self._rust.route(route_prompt, provider)
 
         chain = self._build_fallback_chain(decision.provider, fallback_providers)
 
         last_error: Optional[Exception] = None
         attempted = False
+        failed: list[str] = []
 
         for i, candidate in enumerate(chain):
             api_key = self._keys.for_provider(candidate)
             if not api_key:
                 continue
 
-            candidate_decision = self._decision_for(candidate, prompt, decision)
+            candidate_decision = self._decision_for(candidate, route_prompt, decision)
             if candidate_decision.provider != candidate:
                 # The registry has no model for this provider — routing fell back to
                 # another provider's model, which this provider's API can't serve.
@@ -171,17 +232,15 @@ class OpenPair:
             attempted = True
 
             try:
-                text, in_tok, out_tok, latency_ms = make_call(
-                    provider   = candidate,
-                    model_id   = candidate_decision.model_id,
-                    prompt     = prompt,
-                    api_key    = api_key,  # type: ignore[arg-type]
-                    system     = system,
-                    max_tokens = max_tokens,
+                text, in_tok, out_tok, latency_ms = dispatch(
+                    candidate,
+                    candidate_decision.model_id,
+                    api_key,
                 )
             except Exception as e:
                 last_error = e
                 if is_retryable_error(e) and i < len(chain) - 1:
+                    failed.append(candidate)
                     continue
                 raise
 
@@ -198,14 +257,7 @@ class OpenPair:
                 output_tokens     = out_tok,
                 latency_ms        = latency_ms,
             )
-
-            if use_cache:
-                self._cache[cache_key] = result
-                self._cache.move_to_end(cache_key)
-                if len(self._cache) > self._cache_size:
-                    self._cache.popitem(last=False)
-
-            return result
+            return result, failed
 
         if not attempted:
             raise RuntimeError(
@@ -214,20 +266,6 @@ class OpenPair:
                 f"run Ollama locally, or pass api_keys={{...}} to OpenPair()."
             )
         raise last_error  # type: ignore[misc]
-
-    def available_providers(self) -> list[str]:
-        """Return providers that have API keys configured."""
-        return self._keys.available_providers()
-
-    def score(self, prompt: str) -> int:
-        """Return the complexity score (1–10) for a prompt."""
-        return self._rust.score_complexity(prompt)
-
-    def is_thai(self, text: str) -> bool:
-        """Return True if the text contains Thai characters."""
-        return self._rust.is_thai(text)
-
-    # ── Internal helpers ────────────────────────────────────────────────────
 
     def _build_fallback_chain(self, primary: str, explicit_fallbacks: Optional[list[str]]) -> list[str]:
         """
