@@ -544,7 +544,7 @@ A feature is **done** only when it has a reproducible test, documented behavior,
 - [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 - [GitHub release process](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
 
-**License note:** Avatar UI Core declares MIT licensing. The OpenPair root was not observed to contain a `LICENSE` file during this audit. Confirm the project's intended distribution license with maintainers before shipping adapted third-party code or a publicly redistributed package. Keep source attribution separate from authorship of the new Pair character.
+**License note:** The OpenPair code is MIT licensed (Copyright (c) 2026 Pharadee Wasuree); see `LICENSE`. The license for `hf_dataset/` and `paper/` is still to be decided. Avatar UI Core also declares MIT licensing; preserve its license and copyright notice for any reused material, and review the license of any other third-party code or assets before shipping them. Keep source attribution separate from authorship of the new Pair character.
 
 ---
 
