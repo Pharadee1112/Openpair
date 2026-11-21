@@ -3,6 +3,7 @@ name = "openpair"
 version = "0.1.0"
 edition = "2021"
 description = "Intelligent AI Routing Engine — Core"
+license = "MIT"
 
 [lib]
 name = "_core"
