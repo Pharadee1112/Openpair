@@ -53,6 +53,15 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
+    # `openpair chat ...` starts the interactive REPL. This must happen BEFORE
+    # argparse runs: the one-shot parser has a required positional `prompt` and
+    # would treat "chat" as a prompt. To send the literal one-shot prompt "chat",
+    # use `openpair -- chat`.
+    args_list = sys.argv[1:] if argv is None else list(argv)
+    if args_list and args_list[0] == "chat":
+        from .chat_cli import chat_main
+        return chat_main(args_list[1:])
+
     # Windows consoles often default to a legacy codepage (cp874, cp1252, ...)
     # that can't encode routing-reason characters like "→" or Thai text —
     # replace instead of crashing.
