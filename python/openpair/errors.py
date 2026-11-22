@@ -21,3 +21,12 @@ def is_retryable_error(error: Exception) -> bool:
         or "rate_limit_exceeded" in msg.lower()
         or "rate limit" in msg.lower()
     )
+
+
+class LocalModeError(RuntimeError):
+    """
+    Raised when local-only mode refuses or cannot complete a request: a non-Ollama
+    provider was requested, the Ollama URL is not a loopback address, Ollama is
+    unreachable, or the local model is missing. Never retried and never falls back
+    to a cloud provider.
+    """

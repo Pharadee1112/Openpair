@@ -18,7 +18,8 @@ from typing import Optional, TYPE_CHECKING
 
 from .config import ApiKeys
 from .caller import make_call, CallResult
-from .errors import is_retryable_error
+from .caller import is_loopback_url
+from .errors import LocalModeError, is_retryable_error
 
 if TYPE_CHECKING:
     pass
@@ -197,6 +198,7 @@ class OpenPair:
         preferred_provider: Optional[str],
         fallback_providers: Optional[list[str]],
         dispatch,
+        local_only: bool = False,
     ) -> tuple[CallResult, list[str]]:
         """
         Route `route_prompt`, then walk the fallback chain until one provider answers.
@@ -214,7 +216,7 @@ class OpenPair:
         failed: list[str] = []
 
         for candidate, cdec, api_key, can_fall_back in self._candidates(
-            route_prompt, preferred_provider, fallback_providers
+            route_prompt, preferred_provider, fallback_providers, local_only
         ):
             try:
                 text, in_tok, out_tok, latency_ms = dispatch(candidate, cdec.model_id, api_key)
@@ -236,6 +238,7 @@ class OpenPair:
         preferred_provider: Optional[str],
         fallback_providers: Optional[list[str]],
         open_stream,
+        local_only: bool = False,
     ):
         """
         Streaming twin of _call_with_fallback, as a generator: yields text chunks and
@@ -252,7 +255,7 @@ class OpenPair:
         failed: list[str] = []
 
         for candidate, cdec, api_key, can_fall_back in self._candidates(
-            route_prompt, preferred_provider, fallback_providers
+            route_prompt, preferred_provider, fallback_providers, local_only
         ):
             emitted = False
             inner = open_stream(candidate, cdec.model_id, api_key)
@@ -280,13 +283,31 @@ class OpenPair:
 
         raise last_error  # type: ignore[misc]
 
-    def _candidates(self, route_prompt, preferred_provider, fallback_providers):
+    def _candidates(self, route_prompt, preferred_provider, fallback_providers, local_only=False):
         """
         Route `route_prompt` and yield (provider, decision, api_key, can_fall_back)
         for each usable provider in the fallback chain, in order. `can_fall_back` is
         True when another provider follows in the chain. Raises RuntimeError if
         no provider is usable at all (no key / no model).
+
+        With `local_only` the chain is restricted to Ollama alone: cloud keys are never
+        looked at, there is no fallback, and the Ollama URL must be a loopback address.
+        The URL is read once (ApiKeys.ollama_base_url) and the same value is used for
+        the availability check here and (via local_ollama_url) for the call itself.
         """
+        if local_only:
+            url = self.local_ollama_url()
+            if not is_loopback_url(url):
+                raise LocalModeError(
+                    f"Local mode is on: refusing Ollama URL {url!r} because it is not a "
+                    f"loopback address (localhost, 127.0.0.1 or ::1)."
+                )
+            if not self._keys.is_ollama_available():
+                raise LocalModeError(f"Ollama was not reachable at {url}")
+            primary = self._rust.route(route_prompt, "ollama")
+            yield "ollama", self._decision_for("ollama", route_prompt, primary), "local", False
+            return
+
         provider = preferred_provider or self._preferred_provider
         decision = self._rust.route(route_prompt, provider)
 
@@ -312,6 +333,10 @@ class OpenPair:
                 f"Set GOOGLE_API_KEY or GROQ_API_KEY, "
                 f"run Ollama locally, or pass api_keys={{...}} to OpenPair()."
             )
+
+    def local_ollama_url(self) -> str:
+        """The Ollama base URL, read once from ApiKeys (env / .env / argument)."""
+        return self._keys.ollama_base_url
 
     @staticmethod
     def _build_result(candidate, cdec, text, in_tok, out_tok, latency_ms) -> CallResult:
