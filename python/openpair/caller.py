@@ -185,6 +185,29 @@ def call_anthropic(
 
 # ── Google ───────────────────────────────────────────────────────────────────
 
+def _google_request(api_key: str, system_text: Optional[str], turns: list[dict], max_tokens: int):
+    """Build (client, config, contents) for a Gemini call; shared by call_google and the streamer."""
+    from google import genai
+    from google.genai import types as genai_types
+
+    client = genai.Client(api_key=api_key)
+    config = genai_types.GenerateContentConfig(
+        max_output_tokens=max_tokens,
+        system_instruction=system_text,
+    )
+
+    # Gemini role names: "user" stays "user", "assistant" becomes "model".
+    gemini_role = {"user": "user", "assistant": "model"}
+    contents = [
+        genai_types.Content(
+            role=gemini_role[t["role"]],
+            parts=[genai_types.Part(text=t["content"])],
+        )
+        for t in turns
+    ]
+    return client, config, contents
+
+
 def call_google(
     model_id: str,
     prompt: Optional[str],
@@ -201,28 +224,12 @@ def call_google(
     Returns (response_text, input_tokens, output_tokens).
     """
     try:
-        from google import genai
-        from google.genai import types as genai_types
+        import google.genai  # noqa: F401
     except ImportError:
         raise ImportError("Install google-genai: pip install google-genai")
 
     system_text, turns = _normalize_messages(prompt, messages, system)
-    client = genai.Client(api_key=api_key)
-
-    config = genai_types.GenerateContentConfig(
-        max_output_tokens=max_tokens,
-        system_instruction=system_text,
-    )
-
-    # Gemini role names: "user" stays "user", "assistant" becomes "model".
-    gemini_role = {"user": "user", "assistant": "model"}
-    contents = [
-        genai_types.Content(
-            role=gemini_role[t["role"]],
-            parts=[genai_types.Part(text=t["content"])],
-        )
-        for t in turns
-    ]
+    client, config, contents = _google_request(api_key, system_text, turns, max_tokens)
 
     resp = client.models.generate_content(
         model=model_id,
@@ -391,6 +398,109 @@ def make_chat_call(
     latency_ms = (time.perf_counter() - t0) * 1000
 
     return text, in_tok, out_tok, latency_ms
+
+
+# ── Streaming ────────────────────────────────────────────────────────────────
+#
+# A streamer is a generator: it yields non-empty text chunks as they arrive and
+# RETURNS (input_tokens, output_tokens) when the stream ends (read it with
+# `yield from` or StopIteration.value). Token counts are 0 when the provider
+# did not report usage. make_chat_stream() adds the latency.
+
+def _stream_openai_compat(client, model_id, system_text, turns, max_tokens):
+    """Shared by Groq and Ollama (OpenAI-compatible streaming)."""
+    stream = client.chat.completions.create(
+        model=model_id,
+        messages=_openai_style_messages(system_text, turns),
+        max_tokens=max_tokens,
+        stream=True,
+        stream_options={"include_usage": True},
+    )
+    in_tok = out_tok = 0
+    try:
+        for chunk in stream:
+            usage = getattr(chunk, "usage", None)
+            if usage is None:  # Groq also reports usage under x_groq on the last chunk
+                usage = getattr(getattr(chunk, "x_groq", None), "usage", None)
+            if usage is not None:
+                in_tok  = getattr(usage, "prompt_tokens", 0) or 0
+                out_tok = getattr(usage, "completion_tokens", 0) or 0
+            # The final usage chunk has no choices; a delta's content can be None.
+            if not chunk.choices:
+                continue
+            text = chunk.choices[0].delta.content
+            if text:
+                yield text
+    finally:
+        close = getattr(stream, "close", None)
+        if close:
+            close()
+    return in_tok, out_tok
+
+
+def _stream_groq(model_id, api_key, system_text, turns, max_tokens):
+    import openai
+    client = openai.OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+    return (yield from _stream_openai_compat(client, model_id, system_text, turns, max_tokens))
+
+
+def _stream_ollama(model_id, api_key, system_text, turns, max_tokens):
+    import openai
+    base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    client = openai.OpenAI(api_key="ollama", base_url=f"{base_url}/v1")
+    return (yield from _stream_openai_compat(client, model_id, system_text, turns, max_tokens))
+
+
+def _stream_google(model_id, api_key, system_text, turns, max_tokens):
+    client, config, contents = _google_request(api_key, system_text, turns, max_tokens)
+    in_tok = out_tok = 0
+    for chunk in client.models.generate_content_stream(model=model_id, contents=contents, config=config):
+        meta = getattr(chunk, "usage_metadata", None)
+        if meta is not None:  # the last chunk carries the totals
+            in_tok  = meta.prompt_token_count or 0
+            out_tok = meta.candidates_token_count or 0
+        text = chunk.text  # None for chunks without text parts
+        if text:
+            yield text
+    return in_tok, out_tok
+
+
+_STREAMERS = {
+    "groq":   _stream_groq,
+    "ollama": _stream_ollama,
+    "google": _stream_google,
+}
+
+
+def make_chat_stream(
+    *,
+    provider:   str,
+    model_id:   str,
+    messages:   list,
+    api_key:    str,
+    system:     Optional[str] = None,
+    max_tokens: int = 2048,
+):
+    """
+    Streaming counterpart of make_chat_call: a generator that yields text chunks and
+    returns (input_tokens, output_tokens, latency_ms).
+
+    Providers without a streamer (openai, anthropic, openrouter) still work: their
+    whole reply is yielded as one chunk.
+    """
+    if provider not in _CALLERS:
+        raise ValueError(f"Unknown provider: {provider!r}. Expected one of {list(_CALLERS)}")
+
+    t0 = time.perf_counter()
+    streamer = _STREAMERS.get(provider)
+    if streamer is None:
+        text, in_tok, out_tok = _CALLERS[provider](model_id, None, api_key, system, max_tokens, messages=messages)
+        if text:
+            yield text
+    else:
+        system_text, turns = _normalize_messages(None, messages, system)
+        in_tok, out_tok = yield from streamer(model_id, api_key, system_text, turns, max_tokens)
+    return in_tok, out_tok, (time.perf_counter() - t0) * 1000
 
 
 def make_call(

@@ -210,14 +210,88 @@ class OpenPair:
         retryable error before the one that answered, in the order they were tried.
         Raises exactly as documented on call().
         """
+        last_error: Optional[Exception] = None
+        failed: list[str] = []
+
+        for candidate, cdec, api_key, can_fall_back in self._candidates(
+            route_prompt, preferred_provider, fallback_providers
+        ):
+            try:
+                text, in_tok, out_tok, latency_ms = dispatch(candidate, cdec.model_id, api_key)
+            except Exception as e:
+                last_error = e
+                if is_retryable_error(e) and can_fall_back:
+                    failed.append(candidate)
+                    continue
+                raise
+
+            return self._build_result(candidate, cdec, text, in_tok, out_tok, latency_ms), failed
+
+        raise last_error  # type: ignore[misc]
+
+    def _stream_with_fallback(
+        self,
+        *,
+        route_prompt: str,
+        preferred_provider: Optional[str],
+        fallback_providers: Optional[list[str]],
+        open_stream,
+    ):
+        """
+        Streaming twin of _call_with_fallback, as a generator: yields text chunks and
+        returns (result, failed) when the stream completes.
+
+        `open_stream(provider, model_id, api_key)` returns a generator that yields
+        text chunks and returns (input_tokens, output_tokens, latency_ms).
+
+        Fallback rule: a provider may be replaced by the next one ONLY if it failed
+        with a retryable error before the first chunk was yielded. Once any text has
+        been yielded the error is raised, so two providers' text never mixes in one reply.
+        """
+        last_error: Optional[Exception] = None
+        failed: list[str] = []
+
+        for candidate, cdec, api_key, can_fall_back in self._candidates(
+            route_prompt, preferred_provider, fallback_providers
+        ):
+            emitted = False
+            inner = open_stream(candidate, cdec.model_id, api_key)
+            parts: list[str] = []
+            try:
+                while True:
+                    try:
+                        chunk = next(inner)
+                    except StopIteration as stop:
+                        in_tok, out_tok, latency_ms = stop.value
+                        break
+                    emitted = True
+                    parts.append(chunk)
+                    yield chunk
+            except Exception as e:
+                last_error = e
+                if not emitted and is_retryable_error(e) and can_fall_back:
+                    failed.append(candidate)
+                    continue
+                raise
+            finally:
+                inner.close()  # also runs when the consumer cancels (GeneratorExit)
+
+            return self._build_result(candidate, cdec, "".join(parts), in_tok, out_tok, latency_ms), failed
+
+        raise last_error  # type: ignore[misc]
+
+    def _candidates(self, route_prompt, preferred_provider, fallback_providers):
+        """
+        Route `route_prompt` and yield (provider, decision, api_key, can_fall_back)
+        for each usable provider in the fallback chain, in order. `can_fall_back` is
+        True when another provider follows in the chain. Raises RuntimeError if
+        no provider is usable at all (no key / no model).
+        """
         provider = preferred_provider or self._preferred_provider
         decision = self._rust.route(route_prompt, provider)
 
         chain = self._build_fallback_chain(decision.provider, fallback_providers)
-
-        last_error: Optional[Exception] = None
         attempted = False
-        failed: list[str] = []
 
         for i, candidate in enumerate(chain):
             api_key = self._keys.for_provider(candidate)
@@ -230,34 +304,7 @@ class OpenPair:
                 # another provider's model, which this provider's API can't serve.
                 continue
             attempted = True
-
-            try:
-                text, in_tok, out_tok, latency_ms = dispatch(
-                    candidate,
-                    candidate_decision.model_id,
-                    api_key,
-                )
-            except Exception as e:
-                last_error = e
-                if is_retryable_error(e) and i < len(chain) - 1:
-                    failed.append(candidate)
-                    continue
-                raise
-
-            result = CallResult(
-                model_id          = candidate_decision.model_id,
-                model_name        = candidate_decision.model_name,
-                provider          = candidate,
-                tier              = candidate_decision.tier,
-                complexity_score  = candidate_decision.complexity_score,
-                routing_reason    = candidate_decision.reason,
-                cost_per_1k_input = candidate_decision.cost_per_1k_input,
-                response_text     = text,
-                input_tokens      = in_tok,
-                output_tokens     = out_tok,
-                latency_ms        = latency_ms,
-            )
-            return result, failed
+            yield candidate, candidate_decision, api_key, i < len(chain) - 1
 
         if not attempted:
             raise RuntimeError(
@@ -265,7 +312,22 @@ class OpenPair:
                 f"Set GOOGLE_API_KEY or GROQ_API_KEY, "
                 f"run Ollama locally, or pass api_keys={{...}} to OpenPair()."
             )
-        raise last_error  # type: ignore[misc]
+
+    @staticmethod
+    def _build_result(candidate, cdec, text, in_tok, out_tok, latency_ms) -> CallResult:
+        return CallResult(
+            model_id          = cdec.model_id,
+            model_name        = cdec.model_name,
+            provider          = candidate,
+            tier              = cdec.tier,
+            complexity_score  = cdec.complexity_score,
+            routing_reason    = cdec.reason,
+            cost_per_1k_input = cdec.cost_per_1k_input,
+            response_text     = text,
+            input_tokens      = in_tok,
+            output_tokens     = out_tok,
+            latency_ms        = latency_ms,
+        )
 
     def _build_fallback_chain(self, primary: str, explicit_fallbacks: Optional[list[str]]) -> list[str]:
         """

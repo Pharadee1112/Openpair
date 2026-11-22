@@ -12,9 +12,9 @@ Usage:
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Iterator, Optional
 
-from .caller import CallResult, make_chat_call
+from .caller import CallResult, make_chat_call, make_chat_stream
 from .client import OpenPair
 
 
@@ -36,7 +36,10 @@ class ChatSession:
                   "content": str}. Always alternates user, assistant, ...
         last_fallback_from: After send(), the provider that failed (with a
                   transient error) right before the one that answered, or None
-                  if the first provider tried answered. Reset on every send().
+                  if the first provider tried answered. Reset on every send()/stream().
+        last_result: After a stream() has finished successfully, the CallResult
+                  (model, provider, tier, tokens, latency, full text). None before
+                  that, and reset to None when a new stream() starts or fails.
 
     The response cache is deliberately NOT used: its key only covers a single
     prompt, so a cached answer could ignore the conversation so far.
@@ -55,6 +58,7 @@ class ChatSession:
         self.max_tokens = max_tokens
         self.messages: list[dict] = []
         self.last_fallback_from: Optional[str] = None
+        self.last_result: Optional[CallResult] = None
 
     def send(self, user_text: str) -> CallResult:
         """
@@ -98,10 +102,52 @@ class ChatSession:
         self.last_fallback_from = failed[-1] if failed else None
         return result
 
+    def stream(self, user_text: str) -> Iterator[str]:
+        """
+        Like send(), but a generator that yields the reply in text chunks as they arrive.
+
+        When it is exhausted, `last_result` and `last_fallback_from` are set and the
+        user message + full reply are appended to `messages`. If the stream fails or
+        is closed early (cancelled), `messages` is left exactly as it was.
+
+        Fallback: another provider is tried only if the first one failed before
+        yielding any text; after that, the error is raised (providers never mix in
+        one reply). Errors (including an empty user_text) surface on the first next().
+        """
+        if not isinstance(user_text, str) or not user_text.strip():
+            raise ValueError("user_text must be a non-empty string")
+
+        self.last_fallback_from = None
+        self.last_result = None
+        history = self.messages + [{"role": "user", "content": user_text}]
+
+        def open_stream(provider: str, model_id: str, api_key: str):
+            return make_chat_stream(
+                provider   = provider,
+                model_id   = model_id,
+                messages   = history,
+                api_key    = api_key,
+                system     = self.system,
+                max_tokens = self.max_tokens,
+            )
+
+        # Same routing tradeoff as send(): routed from the latest user message only.
+        result, failed = yield from self._client._stream_with_fallback(
+            route_prompt       = user_text,
+            preferred_provider = self.preferred_provider,
+            fallback_providers = None,
+            open_stream        = open_stream,
+        )
+
+        self.messages = history + [{"role": "assistant", "content": result.response_text}]
+        self.last_fallback_from = failed[-1] if failed else None
+        self.last_result = result
+
     def clear(self) -> None:
         """Forget the conversation (the system prompt and settings are kept)."""
         self.messages = []
         self.last_fallback_from = None
+        self.last_result = None
 
     def __repr__(self) -> str:
         return f"ChatSession(turns={len(self.messages) // 2}, preferred='{self.preferred_provider}')"

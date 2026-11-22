@@ -6,6 +6,7 @@ and a fake make_chat_call, so no network and no API keys are needed.
 from __future__ import annotations
 
 import copy
+import re
 from unittest.mock import patch
 
 import pytest
@@ -47,20 +48,33 @@ def script_input(monkeypatch, items):
 
 
 class FakeChat:
+    """
+    Stand-in for make_chat_stream. `handler(provider, n)` returns the reply text, a
+    list of chunks (an Exception item is raised at that point), or raises
+    (= fails before the first chunk). Records a deep copy of every call.
+    """
+
     def __init__(self, handler=None):
         self.calls = []
         self.handler = handler or (lambda provider, n: f"reply {n}")
 
     def __call__(self, *, provider, model_id, messages, api_key, system=None, max_tokens=2048):
         self.calls.append({"provider": provider, "messages": copy.deepcopy(messages)})
-        return self.handler(provider, len(self.calls)), 10, 20, 5.0
+        out = self.handler(provider, len(self.calls))
+        if isinstance(out, str):
+            out = re.findall(r"\S+\s*", out)
+        for item in out:
+            if isinstance(item, BaseException):
+                raise item
+            yield item
+        return 10, 20, 5.0
 
 
 class TestLoop:
     def test_three_turns_keep_context(self, session, monkeypatch, capsys):
         fake = FakeChat()
         script_input(monkeypatch, ["one", "two", "three", "/exit"])
-        with patch("openpair.session.make_chat_call", fake):
+        with patch("openpair.session.make_chat_stream", fake):
             assert run_chat(session) == 0
 
         assert len(fake.calls) == 3
@@ -73,7 +87,7 @@ class TestLoop:
     def test_empty_lines_are_ignored(self, session, monkeypatch):
         fake = FakeChat()
         script_input(monkeypatch, ["", "   ", "hi", "/exit"])
-        with patch("openpair.session.make_chat_call", fake):
+        with patch("openpair.session.make_chat_stream", fake):
             run_chat(session)
         assert len(fake.calls) == 1
 
@@ -81,23 +95,33 @@ class TestLoop:
     def test_clean_exit(self, session, monkeypatch, ender):
         fake = FakeChat()
         script_input(monkeypatch, ["hi", ender])
-        with patch("openpair.session.make_chat_call", fake):
+        with patch("openpair.session.make_chat_stream", fake):
             assert run_chat(session) == 0
         assert len(session.messages) == 2
 
-    def test_ctrl_c_during_send_exits_cleanly(self, session, monkeypatch):
-        def boom(provider, n):
-            raise KeyboardInterrupt
-        script_input(monkeypatch, ["hi"])
-        with patch("openpair.session.make_chat_call", FakeChat(boom)):
+    def test_ctrl_c_while_streaming_cancels_and_returns_to_prompt(self, session, monkeypatch, capsys):
+        def handler(provider, n):
+            if n == 1:
+                return ["partial ", KeyboardInterrupt()]
+            return "fine"
+        script_input(monkeypatch, ["hi", "again", "/exit"])
+        with patch("openpair.session.make_chat_stream", FakeChat(handler)):
             assert run_chat(session) == 0
-        assert session.messages == []
+        cap = capsys.readouterr()
+        assert "partial" in cap.out
+        assert "[cancelled]" in cap.err
+        assert "Traceback" not in cap.err
+        # the cancelled turn left no trace; the loop went on to the next prompt
+        assert session.messages == [
+            {"role": "user", "content": "again"},
+            {"role": "assistant", "content": "fine"},
+        ]
 
 
 class TestStatusLine:
     def test_no_fallback(self, session, monkeypatch, capsys):
         script_input(monkeypatch, ["hi", "/exit"])
-        with patch("openpair.session.make_chat_call", FakeChat()):
+        with patch("openpair.session.make_chat_stream", FakeChat()):
             run_chat(session)
         err = capsys.readouterr().err
         status = [l for l in err.splitlines() if l.startswith("model:")][0]
@@ -112,7 +136,7 @@ class TestStatusLine:
             return "from the second provider"
         script_input(monkeypatch, ["hi", "/exit"])
         fake = FakeChat(handler)
-        with patch("openpair.session.make_chat_call", fake):
+        with patch("openpair.session.make_chat_stream", fake):
             run_chat(session)
         first = fake.calls[0]["provider"]
         cap = capsys.readouterr()
@@ -127,7 +151,7 @@ class TestErrors:
                 raise ValueError("bad request\nwith detail")
             return "ok now"
         script_input(monkeypatch, ["first", "second", "/exit"])
-        with patch("openpair.session.make_chat_call", FakeChat(handler)):
+        with patch("openpair.session.make_chat_stream", FakeChat(handler)):
             assert run_chat(session) == 0
         cap = capsys.readouterr()
         assert "Error: bad request with detail" in cap.err
@@ -170,3 +194,37 @@ class TestDispatch:
             main(["--", "chat"])
         chat.assert_not_called()
         call.assert_called_once()
+
+
+class TestStreamingOutput:
+    def test_chunks_are_printed_incrementally(self, session, monkeypatch):
+        seen = []
+
+        def fake_print(*args, end="\n", flush=False, file=None, **kw):
+            seen.append((args[0] if args else "", end, flush, file))
+
+        def fake_stream(**kw):
+            yield "Hel"
+            seen.append(("--between--", None, None, None))
+            yield "lo"
+            return 1, 2, 3.0
+
+        script_input(monkeypatch, ["hi", "/exit"])
+        monkeypatch.setattr("builtins.print", fake_print)
+        with patch("openpair.session.make_chat_stream", fake_stream):
+            run_chat(session)
+
+        stdout = [x for x in seen if x[3] is None]
+        assert [x[0] for x in stdout[:3]] == ["Hel", "--between--", "lo"]
+        assert stdout[0][1:3] == ("", True)  # end="", flush=True
+
+    def test_error_mid_stream_keeps_partial_text(self, session, monkeypatch, capsys):
+        def handler(provider, n):
+            return ["half an ", ValueError("boom")]
+        script_input(monkeypatch, ["hi", "/exit"])
+        with patch("openpair.session.make_chat_stream", FakeChat(handler)):
+            assert run_chat(session) == 0
+        cap = capsys.readouterr()
+        assert "half an" in cap.out
+        assert "Error: boom" in cap.err and "Traceback" not in cap.err
+        assert session.messages == []
