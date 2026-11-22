@@ -5,8 +5,8 @@ Usage:
     openpair chat
     openpair chat --provider groq --system "Answer in Thai."
 
-Type /exit (or press Ctrl+D / Ctrl+C) to leave. Plain input()/print(), no
-streaming and no other slash commands yet.
+Type /exit (or press Ctrl+D / Ctrl+C) to leave. Replies are streamed token by token
+(Ctrl+C while a reply is streaming cancels just that reply). Plain input()/print().
 """
 
 from __future__ import annotations
@@ -59,21 +59,40 @@ def run_chat(session: ChatSession) -> int:
         if line == "/exit":
             return 0
 
-        try:
-            result = session.send(line)
-        except KeyboardInterrupt:
-            print(file=sys.stderr)
-            return 0
-        except Exception as e:  # noqa: BLE001 - REPL must survive any API failure
-            # send() leaves the history untouched on failure, so the user can retry.
-            msg = " ".join(str(e).split()) or type(e).__name__
-            if len(msg) > 200:
-                msg = msg[:197] + "..."
-            print(f"Error: {msg}", file=sys.stderr)
+        if not _stream_reply(session, line):
             continue
 
-        print(result.response_text)
-        print(format_status(result, session.last_fallback_from), file=sys.stderr)
+        print(format_status(session.last_result, session.last_fallback_from), file=sys.stderr)
+
+
+def _stream_reply(session: ChatSession, line: str) -> bool:
+    """
+    Print one streamed reply as it arrives. Returns True if it completed.
+    On cancel (Ctrl+C) or error the partial text stays on screen and the session
+    history is unchanged (ChatSession.stream only commits on success).
+    """
+    stream = session.stream(line)
+    printed = False
+    try:
+        for chunk in stream:
+            print(chunk, end="", flush=True)
+            printed = True
+    except KeyboardInterrupt:
+        stream.close()  # closes the provider stream too
+        if printed:
+            print(flush=True)  # end the partial line
+        print("[cancelled]", file=sys.stderr)
+        return False
+    except Exception as e:  # noqa: BLE001 - REPL must survive any API failure
+        msg = " ".join(str(e).split()) or type(e).__name__
+        if len(msg) > 200:
+            msg = msg[:197] + "..."
+        if printed:
+            print(flush=True)  # end the partial line
+        print(f"Error: {msg}", file=sys.stderr)
+        return False
+    print(flush=True)  # end the reply line before the status line goes to stderr
+    return True
 
 
 def chat_main(argv: Optional[Sequence[str]] = None) -> int:
