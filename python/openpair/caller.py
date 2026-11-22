@@ -7,10 +7,16 @@ Called by OpenPair.call() after routing decides which model to use.
 
 from __future__ import annotations
 
+import ipaddress
 import os
 import time
 from dataclasses import dataclass, field
 from typing import Optional
+from urllib.parse import urlparse
+
+from .errors import LocalModeError
+
+DEFAULT_OLLAMA_URL = "http://localhost:11434"
 
 
 @dataclass
@@ -336,10 +342,13 @@ def call_ollama(
     system: Optional[str] = None,
     max_tokens: int = 2048,
     messages: Optional[list] = None,
+    base_url: Optional[str] = None,
 ) -> tuple[str, int, int]:
     """
     Call a local Ollama server (OpenAI-compatible endpoint). No auth required.
     Pass a single `prompt` or a multi-turn `messages` list (not both).
+    `base_url` overrides the OLLAMA_BASE_URL environment variable (local-only mode
+    passes the exact URL it validated, so the check and the call use the same value).
     Returns (response_text, input_tokens, output_tokens).
     """
     try:
@@ -348,7 +357,7 @@ def call_ollama(
         raise ImportError("Install openai: pip install openai")
 
     system_text, turns = _normalize_messages(prompt, messages, system)
-    base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url = base_url or os.getenv("OLLAMA_BASE_URL", DEFAULT_OLLAMA_URL)
     client = openai.OpenAI(api_key="ollama", base_url=f"{base_url}/v1")
 
     resp = client.chat.completions.create(
@@ -375,6 +384,57 @@ _CALLERS = {
 }
 
 
+# ── Local-only policy ────────────────────────────────────────────────────────
+
+def is_loopback_url(url: str) -> bool:
+    """True if `url` is http(s) and its host is localhost or a loopback IP (127.x, ::1)."""
+    try:
+        parsed = urlparse(url)
+        host = parsed.hostname
+    except ValueError:
+        return False
+    if parsed.scheme not in ("http", "https") or not host:
+        return False
+    if host.lower() == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def _enforce_local_only(provider: str, ollama_base_url: Optional[str]) -> str:
+    """
+    The lowest-level guard of local-only mode, run before any network I/O.
+    Refuses every provider except Ollama and any non-loopback Ollama URL.
+    Returns the validated Ollama base URL.
+    """
+    if provider != "ollama":
+        raise LocalModeError(
+            f"Local mode is on: refusing to send a request to the cloud provider {provider!r}."
+        )
+    url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", DEFAULT_OLLAMA_URL)
+    if not is_loopback_url(url):
+        raise LocalModeError(
+            f"Local mode is on: refusing Ollama URL {url!r} because it is not a loopback "
+            f"address (localhost, 127.0.0.1 or ::1)."
+        )
+    return url
+
+
+def _friendly_ollama_error(error: Exception, url: str, model_id: str) -> Exception:
+    """Map low-level Ollama failures to short messages without a traceback."""
+    if isinstance(error, LocalModeError):
+        return error
+    if getattr(error, "status_code", None) == 404:
+        return LocalModeError(
+            f"model {model_id} not found, run `ollama pull {model_id}` or set OLLAMA_MODEL"
+        )
+    if isinstance(error, OSError) or type(error).__name__ in ("APIConnectionError", "APITimeoutError"):
+        return LocalModeError(f"Ollama was not reachable at {url}")
+    return error
+
+
 def make_chat_call(
     *,
     provider:   str,
@@ -383,18 +443,31 @@ def make_chat_call(
     api_key:    str,
     system:     Optional[str] = None,
     max_tokens: int = 2048,
+    local_only: bool = False,
+    ollama_base_url: Optional[str] = None,
 ) -> tuple[str, int, int, float]:
     """
     Dispatch a multi-turn conversation to the correct provider and measure latency.
     `messages` is a list of {"role": "user" | "assistant" | "system", "content": str}.
+    With `local_only=True` only Ollama on a loopback URL is allowed (see
+    _enforce_local_only) and `ollama_base_url` is the URL used for the call.
     Returns (response_text, input_tokens, output_tokens, latency_ms).
     """
     caller = _CALLERS.get(provider)
     if caller is None:
         raise ValueError(f"Unknown provider: {provider!r}. Expected one of {list(_CALLERS)}")
 
+    extra: dict = {}
+    if local_only:
+        extra["base_url"] = _enforce_local_only(provider, ollama_base_url)
+
     t0 = time.perf_counter()
-    text, in_tok, out_tok = caller(model_id, None, api_key, system, max_tokens, messages=messages)
+    try:
+        text, in_tok, out_tok = caller(model_id, None, api_key, system, max_tokens, messages=messages, **extra)
+    except Exception as e:
+        if local_only:
+            raise _friendly_ollama_error(e, extra["base_url"], model_id) from e
+        raise
     latency_ms = (time.perf_counter() - t0) * 1000
 
     return text, in_tok, out_tok, latency_ms
@@ -444,9 +517,9 @@ def _stream_groq(model_id, api_key, system_text, turns, max_tokens):
     return (yield from _stream_openai_compat(client, model_id, system_text, turns, max_tokens))
 
 
-def _stream_ollama(model_id, api_key, system_text, turns, max_tokens):
+def _stream_ollama(model_id, api_key, system_text, turns, max_tokens, base_url=None):
     import openai
-    base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url = base_url or os.getenv("OLLAMA_BASE_URL", DEFAULT_OLLAMA_URL)
     client = openai.OpenAI(api_key="ollama", base_url=f"{base_url}/v1")
     return (yield from _stream_openai_compat(client, model_id, system_text, turns, max_tokens))
 
@@ -480,10 +553,13 @@ def make_chat_stream(
     api_key:    str,
     system:     Optional[str] = None,
     max_tokens: int = 2048,
+    local_only: bool = False,
+    ollama_base_url: Optional[str] = None,
 ):
     """
     Streaming counterpart of make_chat_call: a generator that yields text chunks and
-    returns (input_tokens, output_tokens, latency_ms).
+    returns (input_tokens, output_tokens, latency_ms). `local_only` and
+    `ollama_base_url` behave as in make_chat_call.
 
     Providers without a streamer (openai, anthropic, openrouter) still work: their
     whole reply is yielded as one chunk.
@@ -491,15 +567,23 @@ def make_chat_stream(
     if provider not in _CALLERS:
         raise ValueError(f"Unknown provider: {provider!r}. Expected one of {list(_CALLERS)}")
 
+    url = _enforce_local_only(provider, ollama_base_url) if local_only else None
+
     t0 = time.perf_counter()
-    streamer = _STREAMERS.get(provider)
-    if streamer is None:
-        text, in_tok, out_tok = _CALLERS[provider](model_id, None, api_key, system, max_tokens, messages=messages)
-        if text:
-            yield text
-    else:
-        system_text, turns = _normalize_messages(None, messages, system)
-        in_tok, out_tok = yield from streamer(model_id, api_key, system_text, turns, max_tokens)
+    try:
+        streamer = _STREAMERS.get(provider)
+        if streamer is None:
+            text, in_tok, out_tok = _CALLERS[provider](model_id, None, api_key, system, max_tokens, messages=messages)
+            if text:
+                yield text
+        else:
+            system_text, turns = _normalize_messages(None, messages, system)
+            extra = {"base_url": url} if local_only else {}
+            in_tok, out_tok = yield from streamer(model_id, api_key, system_text, turns, max_tokens, **extra)
+    except Exception as e:
+        if local_only:
+            raise _friendly_ollama_error(e, url, model_id) from e
+        raise
     return in_tok, out_tok, (time.perf_counter() - t0) * 1000
 
 

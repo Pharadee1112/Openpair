@@ -30,6 +30,9 @@ class ChatSession:
         preferred_provider: Pin routing to one provider for this session
                             (falls back to the client's own pin if None).
         max_tokens: Maximum tokens per response.
+        local_only: Local-only mode. When True, requests can only go to Ollama on a
+                    loopback URL: cloud keys are ignored, there is no cloud fallback,
+                    and anything else is refused with a LocalModeError. Default False.
 
     Attributes:
         messages: The history as a list of {"role": "user" | "assistant",
@@ -51,11 +54,13 @@ class ChatSession:
         system: Optional[str] = None,
         preferred_provider: Optional[str] = None,
         max_tokens: int = 2048,
+        local_only: bool = False,
     ) -> None:
         self._client = client
         self.system = system
         self.preferred_provider = preferred_provider
         self.max_tokens = max_tokens
+        self.local_only = local_only
         self.messages: list[dict] = []
         self.last_fallback_from: Optional[str] = None
         self.last_result: Optional[CallResult] = None
@@ -84,6 +89,7 @@ class ChatSession:
                 api_key    = api_key,
                 system     = self.system,
                 max_tokens = self.max_tokens,
+                **self._policy_kwargs(),
             )
 
         # Tradeoff: routing looks only at the latest user message. Complexity,
@@ -96,6 +102,7 @@ class ChatSession:
             preferred_provider = self.preferred_provider,
             fallback_providers = None,
             dispatch           = dispatch,
+            local_only         = self.local_only,
         )
 
         self.messages = history + [{"role": "assistant", "content": result.response_text}]
@@ -129,6 +136,7 @@ class ChatSession:
                 api_key    = api_key,
                 system     = self.system,
                 max_tokens = self.max_tokens,
+                **self._policy_kwargs(),
             )
 
         # Same routing tradeoff as send(): routed from the latest user message only.
@@ -137,11 +145,26 @@ class ChatSession:
             preferred_provider = self.preferred_provider,
             fallback_providers = None,
             open_stream        = open_stream,
+            local_only         = self.local_only,
         )
 
         self.messages = history + [{"role": "assistant", "content": result.response_text}]
         self.last_fallback_from = failed[-1] if failed else None
         self.last_result = result
+
+    def route(self, text: str):
+        """
+        Dry run: the routing decision for `text` (honouring the provider pin) without
+        any API call and without touching the history. In local mode the request would
+        still run on Ollama; this only shows what the router itself would pick.
+        """
+        return self._client.route(text, preferred_provider=self.preferred_provider)
+
+    def _policy_kwargs(self) -> dict:
+        """Extra arguments for the low-level dispatchers; empty when local mode is off."""
+        if not self.local_only:
+            return {}
+        return {"local_only": True, "ollama_base_url": self._client.local_ollama_url()}
 
     def clear(self) -> None:
         """Forget the conversation (the system prompt and settings are kept)."""
