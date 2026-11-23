@@ -24,7 +24,9 @@ from typing import Optional, Sequence
 from .attach import AttachError, TOKEN_WARN, estimate_tokens, validate_attachment
 from .caller import is_loopback_url
 from .client import OpenPair
+from .errors import NoProviderError
 from .session import ChatSession, ConfirmationRequired
+from . import setup_wizard
 from .session_store import (
     AmbiguousSession,
     NoSuchSession,
@@ -252,6 +254,30 @@ def run_chat(session: ChatSession, recorder: Optional[SessionRecorder] = None) -
               file=sys.stderr)
 
 
+NO_PROVIDER_HELP = (
+    "Error: No API key found for any provider, and Ollama is not running.\n"
+    "  To fix it, do one of these:\n"
+    "    - quit (/exit) and run `openpair chat` again: it offers a guided setup\n"
+    "    - start Ollama (ollama serve), then send your message again\n"
+    "    - put GROQ_API_KEY=... or GOOGLE_API_KEY=... in ~/.openpair/.env or the environment"
+)
+
+
+def _error_text(e: Exception) -> str:
+    """One-line (or, for 'no provider at all', a short how-to-fix) text for a failed send."""
+    if isinstance(e, NoProviderError):
+        return NO_PROVIDER_HELP
+    msg = " ".join(str(e).split()) or type(e).__name__
+    return f"Error: {msg}"
+
+
+def _stdout_is_tty() -> bool:
+    try:
+        return bool(sys.stdout.isatty())
+    except Exception:  # noqa: BLE001 - closed or replaced stdout
+        return False
+
+
 def _stdin_is_tty() -> bool:
     try:
         return bool(sys.stdin.isatty())
@@ -282,7 +308,7 @@ def _confirm_cloud_send(session: ChatSession, line: str) -> bool:
     try:
         need = session.cloud_confirmation_needed(line)
     except Exception as e:  # noqa: BLE001 - e.g. no usable provider at all
-        print(f"Error: {' '.join(str(e).split()) or type(e).__name__}", file=sys.stderr)
+        print(_error_text(e), file=sys.stderr)
         return False
     if need is None:
         return True
@@ -320,12 +346,12 @@ def _stream_reply(session: ChatSession, line: str) -> bool:
         print(f"Error: not sent; {e}", file=sys.stderr)
         return False
     except Exception as e:  # noqa: BLE001 - REPL must survive any API failure
-        msg = " ".join(str(e).split()) or type(e).__name__
-        if len(msg) > 200:
-            msg = msg[:197] + "..."
+        text = _error_text(e)
+        if len(text) > 200 and not isinstance(e, NoProviderError):
+            text = text[:197] + "..."
         if printed:
             print(flush=True)  # end the partial line
-        print(f"Error: {msg}", file=sys.stderr)
+        print(text, file=sys.stderr)
         return False
     print(flush=True)  # end the reply line before the status line goes to stderr
     return True
@@ -348,6 +374,12 @@ def chat_main(argv: Optional[Sequence[str]] = None) -> int:
     if args.resume == "list":
         print(format_listing(list_sessions()))
         return 0
+
+    # First run: no key and no Ollama, on a terminal. Runs BEFORE OpenPair() is built, so the
+    # key it puts in os.environ is what ApiKeys reads. Never runs for piped input or output.
+    if setup_wizard.setup_needed(stdin_tty=_stdin_is_tty(), stdout_tty=_stdout_is_tty()):
+        if setup_wizard.run_first_run_setup() == setup_wizard.CANCELLED:
+            return 130
 
     # The pin lives only on the session (so /provider auto can really unpin).
     session = ChatSession(

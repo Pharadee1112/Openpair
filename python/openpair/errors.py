@@ -30,3 +30,12 @@ class LocalModeError(RuntimeError):
     unreachable, or the local model is missing. Never retried and never falls back
     to a cloud provider.
     """
+
+
+class NoProviderError(RuntimeError):
+    """
+    Raised when no provider can serve a request: no GOOGLE_API_KEY / GROQ_API_KEY and no
+    reachable Ollama. A RuntimeError subclass with the same message as before, so existing
+    `except RuntimeError` code keeps working; `openpair chat` uses the type to print a
+    friendlier, actionable message.
+    """
