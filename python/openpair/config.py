@@ -6,6 +6,7 @@ Loads API keys from (in order of priority):
   2. Environment variables: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, GROQ_API_KEY,
      OPENROUTER_API_KEY
   3. .env file in the current directory (via python-dotenv)
+  4. ~/.openpair/.env (written by `openpair chat` first-run setup; never overrides 1-3)
 """
 
 from __future__ import annotations
@@ -15,12 +16,36 @@ import urllib.request
 from pathlib import Path
 from typing import Optional
 
-# Try to load .env from cwd if python-dotenv is available
+
+def user_env_path(home: Optional[Path] = None) -> Path:
+    """~/.openpair/.env: where `openpair chat` first-run setup saves keys."""
+    return Path(home if home is not None else Path.home()) / ".openpair" / ".env"
+
+
+def load_user_env(home: Optional[Path] = None) -> None:
+    """
+    Load ~/.openpair/.env into os.environ WITHOUT overriding anything already set, so a real
+    environment variable and a .env in the current folder both win. A name that is present
+    but empty (e.g. a bare `GROQ_API_KEY=` line in the cwd .env) counts as unset and is filled
+    from this file. Missing file, unreadable file or no python-dotenv: silently nothing.
+    """
+    try:
+        from dotenv import dotenv_values
+        values = dotenv_values(user_env_path(home), encoding="utf-8")
+    except Exception:  # noqa: BLE001 - ImportError, no home folder, unreadable file
+        return
+    for name, value in values.items():
+        if value and not os.environ.get(name, "").strip():
+            os.environ[name] = value
+
+
+# Load .env from cwd if python-dotenv is available, then ~/.openpair/.env (lower priority).
 try:
     from dotenv import load_dotenv
     load_dotenv(Path.cwd() / ".env", override=False)
 except ImportError:
     pass  # dotenv optional — env vars still work
+load_user_env()
 
 
 class ApiKeys:
