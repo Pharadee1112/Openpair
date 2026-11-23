@@ -6,6 +6,7 @@ Usage:
     openpair chat --provider groq --system "Answer in Thai."
     openpair chat --resume              # continue the latest saved session
     openpair chat --resume list         # list saved sessions
+    openpair chat --no-save             # write nothing to ~/.openpair/sessions/
     openpair chat --resume 20261123     # continue the session whose id starts with this
 
 Replies are streamed token by token (Ctrl+C while a reply is streaming cancels just
@@ -50,6 +51,9 @@ def build_chat_parser() -> argparse.ArgumentParser:
     parser.add_argument("--system", default=None, help="Optional system prompt.")
     parser.add_argument("--max-tokens", type=int, default=2048,
                         help="Maximum tokens per response (default: 2048).")
+    parser.add_argument("--no-save", action="store_true",
+                        help="Do not save this chat: nothing is written to ~/.openpair/sessions/. "
+                             "Cannot be combined with --resume.")
     parser.add_argument("--resume", nargs="?", const="latest", default=None, metavar="ID",
                         help="Continue a saved session from ~/.openpair/sessions/: no value = "
                              "the latest, an id or unique id prefix = that one, 'list' = show "
@@ -336,6 +340,11 @@ def chat_main(argv: Optional[Sequence[str]] = None) -> int:
 
     args = build_chat_parser().parse_args(argv)
 
+    if args.no_save and args.resume is not None:
+        print("Error: --no-save cannot be used with --resume (resuming means saving).",
+              file=sys.stderr)
+        return 2
+
     if args.resume == "list":
         print(format_listing(list_sessions()))
         return 0
@@ -353,6 +362,9 @@ def chat_main(argv: Optional[Sequence[str]] = None) -> int:
         code = _resume(session, args, recorder_args)
         if code is not None:
             return code
+    if args.no_save:
+        print("not saving this chat (--no-save)", file=sys.stderr)
+        return run_chat(session, None)   # no recorder: nothing is ever written
     recorder = SessionRecorder(session, **recorder_args)
     print(f"session {recorder.id} (saved as plain text after each reply; "
           f"'openpair chat --resume' continues it)", file=sys.stderr)

@@ -532,8 +532,8 @@ class TestResumeAttachments:
         f = session_with_attachment(proj, home, monkeypatch)
         chat(monkeypatch, ["--resume"], ["/clear", "fresh"])
         assert read(f)["attachments"]                   # old file untouched
-        newest = files(home)[-1]
-        assert newest != f and read(newest)["attachments"] == []
+        (newest,) = [p for p in files(home) if p != f]   # ids made in the same second differ only by suffix
+        assert read(newest)["attachments"] == []
 
     def test_thai_file_round_trips_through_resume(self, env, monkeypatch):
         proj, home = env
@@ -618,3 +618,47 @@ class TestWindowsHome:
         _, home = env
         assert store.sessions_dir() == home / ".openpair" / "sessions"
         assert "\\" in str(store.sessions_dir())          # native separators, no colons in names
+
+
+# ── --no-save ────────────────────────────────────────────────────────────────
+
+
+class TestNoSave:
+    def test_full_chat_writes_nothing_at_all(self, env, monkeypatch, capsys):
+        proj, home = env
+        put(proj / "a.md", "FILE BODY")
+        code, fake, _ = chat(monkeypatch, ["--no-save"],
+                             ["one", "/add a.md", "/local on", "two about the file", "/clear", "three"])
+        assert code == 0 and len(fake.calls) == 3             # the chat itself works
+        assert not (home / ".openpair").exists()              # no folder, no file, no temp file
+        assert list(home.rglob("*")) == []
+        assert "not saving this chat" in capsys.readouterr().err
+
+    def test_no_save_does_not_touch_existing_sessions(self, env, monkeypatch):
+        _, home = env
+        p = craft(home, "20260101-100000-aaaa")
+        before = p.read_bytes()
+        chat(monkeypatch, ["--no-save"], ["hello", "/clear", "again"])
+        assert p.read_bytes() == before and files(home) == [p]
+        assert sorted(x.name for x in (home / ".openpair").rglob("*")) == ["20260101-100000-aaaa.json", "sessions"]
+
+    def test_no_save_with_resume_is_an_error(self, env, monkeypatch, capsys):
+        _, home = env
+        craft(home, "20260101-100000-aaaa")
+        for argv in (["--no-save", "--resume"], ["--resume", "--no-save"],
+                     ["--no-save", "--resume", "list"]):
+            code, fake, _ = chat(monkeypatch, argv, ["hi"])
+            err = capsys.readouterr().err
+            assert code == 2 and fake.calls == []
+            assert len(err.strip().splitlines()) == 1 and "--no-save" in err and "--resume" in err
+
+    def test_default_still_saves_and_says_so(self, env, monkeypatch, capsys):
+        _, home = env
+        chat(monkeypatch, [], ["hi"])
+        err = capsys.readouterr().err
+        assert len(files(home)) == 1 and "saved as plain text" in err and "not saving" not in err
+
+    def test_help_mentions_the_flag(self, capsys):
+        with pytest.raises(SystemExit):
+            chat_cli.build_chat_parser().parse_args(["--help"])
+        assert "--no-save" in capsys.readouterr().out
