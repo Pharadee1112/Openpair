@@ -14,8 +14,22 @@ from __future__ import annotations
 
 from typing import Iterator, Optional
 
-from .caller import CallResult, make_chat_call, make_chat_stream
+from .attach import Attachment, check_pending_caps, render_attachments
+from .caller import CallResult, is_loopback_url, make_chat_call, make_chat_stream
 from .client import OpenPair
+
+
+class ConfirmationRequired(Exception):
+    """
+    Attached-file text would be sent to a cloud provider the user has not approved.
+    Raised before anything is sent. `provider` is the provider that would receive it.
+    The chat REPL asks y/N and calls ChatSession.confirm_cloud(provider) on "y".
+    """
+
+    def __init__(self, provider: str, label: str) -> None:
+        super().__init__(f"sending attached file text to {label} needs confirmation")
+        self.provider = provider
+        self.label = label
 
 
 class ChatSession:
@@ -65,6 +79,100 @@ class ChatSession:
         self.last_fallback_from: Optional[str] = None
         self.last_result: Optional[CallResult] = None
 
+        # -- Attachments (see openpair.attach) --------------------------------
+        # `messages` is the in-memory history that is SENT to the model, so a user
+        # message that carried files contains their text. Everything that is SAVED
+        # goes through typed_messages() / sent_attachments instead and never has it.
+        self.pending_attachments: list[Attachment] = []   # buffered by /add, sent with the next turn
+        self.sent_attachments: list[dict] = []            # {path, sha256, chars} of files already sent
+        self._typed: dict[int, str] = {}                  # history index -> what the user typed
+        self._history_has_attachment_text = False
+        self._confirmed_cloud: set[str] = set()           # cloud providers the user said "y" to
+
+    # -- Attachments ---------------------------------------------------------
+
+    def add_attachment(self, att: Attachment) -> None:
+        """Buffer a validated file for the next turn (replaces the same path). Raises
+        AttachError if the 5 files / 128 KB pending caps would be exceeded. Any earlier
+        cloud confirmation is dropped: the new text has not been approved yet."""
+        check_pending_caps(self.pending_attachments, att)
+        self.pending_attachments = [a for a in self.pending_attachments if a.path != att.path]
+        self.pending_attachments.append(att)
+        self._confirmed_cloud.clear()
+
+    @property
+    def attachment_text_unconfirmed(self) -> bool:
+        """History contains attachment text and no cloud provider has been confirmed for
+        it (e.g. it was added and sent in local mode). Cloud sends ask until "y" or /clear."""
+        return self._history_has_attachment_text and not self._confirmed_cloud
+
+    def typed_messages(self) -> list[dict]:
+        """The history as the user typed it: same roles and order as `messages`, but with
+        no attachment text. This is what gets saved."""
+        return [
+            {"role": m["role"], "content": self._typed.get(i, m["content"])}
+            for i, m in enumerate(self.messages)
+        ]
+
+    def confirm_cloud(self, provider: str) -> None:
+        self._confirmed_cloud.add(provider)
+
+    def _cloud_target(self, user_text: str):
+        """
+        (provider, label, remote) that would get the next request in cloud mode: the first
+        usable provider of the router's chain, found without any API call. `remote` is
+        False only for Ollama on a loopback URL.
+        """
+        first = next(self._client._candidates(user_text, self.preferred_provider, None))
+        provider = first[0]
+        if provider == "ollama":
+            url = self._client.local_ollama_url()
+            if is_loopback_url(url):
+                return provider, "ollama (this machine)", False
+            return provider, f"ollama at {url}", True
+        return provider, provider, True
+
+    def cloud_confirmation_needed(self, user_text: str):
+        """(provider, label) if sending `user_text` now would put attachment text in front
+        of a cloud provider the user has not confirmed, else None. No API call."""
+        if self.local_only or not (self.pending_attachments or self._history_has_attachment_text):
+            return None
+        provider, label, remote = self._cloud_target(user_text)
+        if remote and provider not in self._confirmed_cloud:
+            return provider, label
+        return None
+
+    def _prepare(self, user_text: str):
+        """
+        -> (content, attachments, pin). `content` is the user message as sent (attachment
+        block first). `pin` is the provider this ONE call must be restricted to, with no
+        fallback, or None. Whenever attachment text would be in the request in cloud mode
+        the call is pinned to the confirmed provider, so no other cloud provider can get it.
+        """
+        attachments = list(self.pending_attachments)
+        content = render_attachments(attachments) + user_text if attachments else user_text
+        pin = None
+        if not self.local_only and (attachments or self._history_has_attachment_text):
+            provider, label, remote = self._cloud_target(user_text)
+            if remote and provider not in self._confirmed_cloud:
+                raise ConfirmationRequired(provider, label)
+            pin = provider
+        return content, attachments, pin
+
+    def _commit(self, history: list, user_text: str, attachments: list, reply: str) -> None:
+        index = len(self.messages)  # where the new user message lands
+        self.messages = history + [{"role": "assistant", "content": reply}]
+        if attachments:
+            self._typed[index] = user_text
+            self._history_has_attachment_text = True
+            known = {a["path"]: i for i, a in enumerate(self.sent_attachments)}
+            for a in attachments:
+                if a.path in known:
+                    self.sent_attachments[known[a.path]] = a.ref()
+                else:
+                    self.sent_attachments.append(a.ref())
+            self.pending_attachments = []
+
     def send(self, user_text: str) -> CallResult:
         """
         Add `user_text` to the conversation, get the reply, and return it.
@@ -78,8 +186,9 @@ class ChatSession:
 
         self.last_fallback_from = None
 
+        content, attachments, pin = self._prepare(user_text)
         # Work on a copy: self.messages only changes once the call has succeeded.
-        history = self.messages + [{"role": "user", "content": user_text}]
+        history = self.messages + [{"role": "user", "content": content}]
 
         def dispatch(provider: str, model_id: str, api_key: str):
             return make_chat_call(
@@ -99,13 +208,14 @@ class ChatSession:
         # deserves. The whole history is still sent to whichever model is chosen.
         result, failed = self._client._call_with_fallback(
             route_prompt       = user_text,
-            preferred_provider = self.preferred_provider,
+            preferred_provider = pin or self.preferred_provider,
             fallback_providers = None,
             dispatch           = dispatch,
             local_only         = self.local_only,
+            no_fallback        = pin is not None,
         )
 
-        self.messages = history + [{"role": "assistant", "content": result.response_text}]
+        self._commit(history, user_text, attachments, result.response_text)
         self.last_fallback_from = failed[-1] if failed else None
         return result
 
@@ -126,7 +236,8 @@ class ChatSession:
 
         self.last_fallback_from = None
         self.last_result = None
-        history = self.messages + [{"role": "user", "content": user_text}]
+        content, attachments, pin = self._prepare(user_text)
+        history = self.messages + [{"role": "user", "content": content}]
 
         def open_stream(provider: str, model_id: str, api_key: str):
             return make_chat_stream(
@@ -142,13 +253,14 @@ class ChatSession:
         # Same routing tradeoff as send(): routed from the latest user message only.
         result, failed = yield from self._client._stream_with_fallback(
             route_prompt       = user_text,
-            preferred_provider = self.preferred_provider,
+            preferred_provider = pin or self.preferred_provider,
             fallback_providers = None,
             open_stream        = open_stream,
             local_only         = self.local_only,
+            no_fallback        = pin is not None,
         )
 
-        self.messages = history + [{"role": "assistant", "content": result.response_text}]
+        self._commit(history, user_text, attachments, result.response_text)
         self.last_fallback_from = failed[-1] if failed else None
         self.last_result = result
 
@@ -167,10 +279,15 @@ class ChatSession:
         return {"local_only": True, "ollama_base_url": self._client.local_ollama_url()}
 
     def clear(self) -> None:
-        """Forget the conversation (the system prompt and settings are kept)."""
+        """Forget the conversation, attachments and cloud confirmations (system prompt and settings are kept)."""
         self.messages = []
         self.last_fallback_from = None
         self.last_result = None
+        self.pending_attachments = []
+        self.sent_attachments = []
+        self._typed = {}
+        self._history_has_attachment_text = False
+        self._confirmed_cloud = set()
 
     def __repr__(self) -> str:
         return f"ChatSession(turns={len(self.messages) // 2}, preferred='{self.preferred_provider}')"

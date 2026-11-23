@@ -199,6 +199,7 @@ class OpenPair:
         fallback_providers: Optional[list[str]],
         dispatch,
         local_only: bool = False,
+        no_fallback: bool = False,
     ) -> tuple[CallResult, list[str]]:
         """
         Route `route_prompt`, then walk the fallback chain until one provider answers.
@@ -216,7 +217,7 @@ class OpenPair:
         failed: list[str] = []
 
         for candidate, cdec, api_key, can_fall_back in self._candidates(
-            route_prompt, preferred_provider, fallback_providers, local_only
+            route_prompt, preferred_provider, fallback_providers, local_only, no_fallback
         ):
             try:
                 text, in_tok, out_tok, latency_ms = dispatch(candidate, cdec.model_id, api_key)
@@ -239,6 +240,7 @@ class OpenPair:
         fallback_providers: Optional[list[str]],
         open_stream,
         local_only: bool = False,
+        no_fallback: bool = False,
     ):
         """
         Streaming twin of _call_with_fallback, as a generator: yields text chunks and
@@ -255,7 +257,7 @@ class OpenPair:
         failed: list[str] = []
 
         for candidate, cdec, api_key, can_fall_back in self._candidates(
-            route_prompt, preferred_provider, fallback_providers, local_only
+            route_prompt, preferred_provider, fallback_providers, local_only, no_fallback
         ):
             emitted = False
             inner = open_stream(candidate, cdec.model_id, api_key)
@@ -283,7 +285,8 @@ class OpenPair:
 
         raise last_error  # type: ignore[misc]
 
-    def _candidates(self, route_prompt, preferred_provider, fallback_providers, local_only=False):
+    def _candidates(self, route_prompt, preferred_provider, fallback_providers, local_only=False,
+                    no_fallback=False):
         """
         Route `route_prompt` and yield (provider, decision, api_key, can_fall_back)
         for each usable provider in the fallback chain, in order. `can_fall_back` is
@@ -294,6 +297,10 @@ class OpenPair:
         looked at, there is no fallback, and the Ollama URL must be a loopback address.
         The URL is read once (ApiKeys.ollama_base_url) and the same value is used for
         the availability check here and (via local_ollama_url) for the call itself.
+
+        With `no_fallback` the chain is ONLY the pinned provider (`preferred_provider`):
+        no other provider is ever yielded, so nothing can be sent anywhere else. If the
+        pinned provider has no key or no model, RuntimeError is raised.
         """
         if local_only:
             url = self.local_ollama_url()
@@ -311,7 +318,10 @@ class OpenPair:
         provider = preferred_provider or self._preferred_provider
         decision = self._rust.route(route_prompt, provider)
 
-        chain = self._build_fallback_chain(decision.provider, fallback_providers)
+        if no_fallback:
+            chain = [provider or decision.provider]
+        else:
+            chain = self._build_fallback_chain(decision.provider, fallback_providers)
         attempted = False
 
         for i, candidate in enumerate(chain):

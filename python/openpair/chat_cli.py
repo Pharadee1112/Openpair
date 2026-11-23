@@ -17,9 +17,10 @@ import argparse
 import sys
 from typing import Optional, Sequence
 
+from .attach import AttachError, TOKEN_WARN, estimate_tokens, validate_attachment
 from .caller import is_loopback_url
 from .client import OpenPair
-from .session import ChatSession
+from .session import ChatSession, ConfirmationRequired
 
 PROMPT = "you> "
 
@@ -55,7 +56,12 @@ PROVIDERS = ("google", "groq", "ollama")
 HELP_TEXT = """Commands (lines starting with "/" are never sent to the model):
   /help                  show this list
   /exit                  quit (Ctrl+D / Ctrl+C at the prompt also work)
-  /clear                 forget the conversation so far
+  /clear                 forget the conversation, attached files and cloud approvals
+  /add <file>            attach a text file (read-only) to your NEXT message. Only files
+                         inside the current folder; secrets files and keys are refused;
+                         max 64 KB per file, 5 files / 128 KB at once. Cloud: you are
+                         asked y/N, naming the provider, before the text is sent.
+  /files                 list attached files
   /route <text>          dry run: show which model would answer <text>; no API call
   /provider [name]       pin the provider: google | groq | ollama | auto (no argument: show)
   /model                 show the model used in the last reply. Display only: the router
@@ -73,6 +79,39 @@ def _cmd_help(session, arg):
 def _cmd_clear(session, arg):
     session.clear()
     print("History cleared.")
+
+
+def _cmd_add(session, arg):
+    if not arg:
+        print("Usage: /add <file>", file=sys.stderr)
+        return
+    try:
+        att = validate_attachment(arg)
+        session.add_attachment(att)
+    except AttachError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return
+    tokens = estimate_tokens(att.text)
+    print(f"Attached {att.path} ({att.chars:,} chars, ~{tokens:,} tokens). "
+          "It is sent with your next message.")
+    if tokens > TOKEN_WARN:
+        print(f"Warning: that is a lot of context (~{tokens:,} tokens, over {TOKEN_WARN:,}); "
+              "it is re-sent with every later turn and may exceed a small model's limit.",
+              file=sys.stderr)
+    if not session.local_only:
+        print("Cloud mode: you will be asked before the file leaves this machine.")
+
+
+def _cmd_files(session, arg):
+    if not session.pending_attachments and not session.sent_attachments:
+        print("No attached files.")
+        return
+    for a in session.pending_attachments:
+        print(f"  pending  {a.path}  ({a.chars:,} chars, ~{estimate_tokens(a.text):,} tokens)")
+    pending = {a.path for a in session.pending_attachments}
+    for ref in session.sent_attachments:
+        if ref["path"] not in pending:
+            print(f"  sent     {ref['path']}  ({ref['chars']:,} chars; still in the history)")
 
 
 def _cmd_route(session, arg):
@@ -133,6 +172,8 @@ def _cmd_local(session, arg):
 COMMANDS = {
     "help": _cmd_help,
     "clear": _cmd_clear,
+    "add": _cmd_add,
+    "files": _cmd_files,
     "route": _cmd_route,
     "provider": _cmd_provider,
     "model": _cmd_model,
@@ -174,11 +215,60 @@ def run_chat(session: ChatSession) -> int:
                 return 0
             continue
 
+        if not _confirm_cloud_send(session, line):
+            continue
+
         if not _stream_reply(session, line):
             continue
 
         print(format_status(session.last_result, session.last_fallback_from, session.local_only),
               file=sys.stderr)
+
+
+def _stdin_is_tty() -> bool:
+    try:
+        return bool(sys.stdin.isatty())
+    except Exception:  # noqa: BLE001 - closed or replaced stdin
+        return False
+
+
+def _ask_yes_no(question: str) -> bool:
+    """y/N. Anything but y/yes is no. Without a terminal there is nobody to ask: no."""
+    if not _stdin_is_tty():
+        print("stdin is not a terminal, so the question counts as 'n': nothing was sent.",
+              file=sys.stderr)
+        return False
+    try:
+        return input(question).strip().lower() in ("y", "yes")
+    except (EOFError, KeyboardInterrupt):
+        print(file=sys.stderr)
+        return False
+
+
+def _confirm_cloud_send(session: ChatSession, line: str) -> bool:
+    """
+    Before every send that would put attached-file text in front of a cloud provider
+    the user has not confirmed yet (a pending file, or file text already in the history
+    from an earlier turn, e.g. one sent in local mode before /local off). Returns False
+    if the send must not happen; in that case nothing was sent and attachments stay.
+    """
+    try:
+        need = session.cloud_confirmation_needed(line)
+    except Exception as e:  # noqa: BLE001 - e.g. no usable provider at all
+        print(f"Error: {' '.join(str(e).split()) or type(e).__name__}", file=sys.stderr)
+        return False
+    if need is None:
+        return True
+    provider, label = need
+    what = "attached file text" + (" (already in this conversation)"
+                                   if session.messages and not session.pending_attachments else "")
+    if _ask_yes_no(f"This request includes {what} and would be sent to {label}, "
+                   f"which is not on this machine. Send it? [y/N] "):
+        session.confirm_cloud(provider)
+        return True
+    print("Not sent. Use /local on to keep it on this machine, or /clear to drop the files.",
+          file=sys.stderr)
+    return False
 
 
 def _stream_reply(session: ChatSession, line: str) -> bool:
@@ -198,6 +288,9 @@ def _stream_reply(session: ChatSession, line: str) -> bool:
         if printed:
             print(flush=True)  # end the partial line
         print("[cancelled]", file=sys.stderr)
+        return False
+    except ConfirmationRequired as e:  # safety net: _confirm_cloud_send should have caught it
+        print(f"Error: not sent; {e}", file=sys.stderr)
         return False
     except Exception as e:  # noqa: BLE001 - REPL must survive any API failure
         msg = " ".join(str(e).split()) or type(e).__name__
