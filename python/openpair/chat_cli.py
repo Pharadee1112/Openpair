@@ -4,6 +4,9 @@ openpair.chat_cli — minimal interactive REPL: `openpair chat`
 Usage:
     openpair chat
     openpair chat --provider groq --system "Answer in Thai."
+    openpair chat --resume              # continue the latest saved session
+    openpair chat --resume list         # list saved sessions
+    openpair chat --resume 20261123     # continue the session whose id starts with this
 
 Replies are streamed token by token (Ctrl+C while a reply is streaming cancels just
 that reply; Ctrl+C or Ctrl+D at the prompt leaves). Lines starting with "/" are
@@ -21,6 +24,18 @@ from .attach import AttachError, TOKEN_WARN, estimate_tokens, validate_attachmen
 from .caller import is_loopback_url
 from .client import OpenPair
 from .session import ChatSession, ConfirmationRequired
+from .session_store import (
+    AmbiguousSession,
+    NoSuchSession,
+    SessionError,
+    SessionRecorder,
+    find_session,
+    format_listing,
+    list_sessions,
+    load_session_file,
+    restore_attachments,
+    restore_into,
+)
 
 PROMPT = "you> "
 
@@ -35,6 +50,10 @@ def build_chat_parser() -> argparse.ArgumentParser:
     parser.add_argument("--system", default=None, help="Optional system prompt.")
     parser.add_argument("--max-tokens", type=int, default=2048,
                         help="Maximum tokens per response (default: 2048).")
+    parser.add_argument("--resume", nargs="?", const="latest", default=None, metavar="ID",
+                        help="Continue a saved session from ~/.openpair/sessions/: no value = "
+                             "the latest, an id or unique id prefix = that one, 'list' = show "
+                             "the saved sessions. Sessions are saved as plain text after every reply.")
     return parser
 
 
@@ -196,8 +215,9 @@ def handle_command(session: ChatSession, line: str) -> bool:
     return False
 
 
-def run_chat(session: ChatSession) -> int:
-    """Read lines until /exit, EOF or Ctrl+C. Always returns 0 on a normal exit."""
+def run_chat(session: ChatSession, recorder: Optional[SessionRecorder] = None) -> int:
+    """Read lines until /exit, EOF or Ctrl+C. Always returns 0 on a normal exit.
+    With a `recorder`, the session is saved after every COMPLETED turn."""
     while True:
         try:
             line = input(PROMPT)
@@ -220,6 +240,9 @@ def run_chat(session: ChatSession) -> int:
 
         if not _stream_reply(session, line):
             continue
+
+        if recorder is not None:
+            recorder.save(session)
 
         print(format_status(session.last_result, session.last_fallback_from, session.local_only),
               file=sys.stderr)
@@ -312,6 +335,11 @@ def chat_main(argv: Optional[Sequence[str]] = None) -> int:
             stream.reconfigure(errors="replace")
 
     args = build_chat_parser().parse_args(argv)
+
+    if args.resume == "list":
+        print(format_listing(list_sessions()))
+        return 0
+
     # The pin lives only on the session (so /provider auto can really unpin).
     session = ChatSession(
         OpenPair(),
@@ -319,4 +347,55 @@ def chat_main(argv: Optional[Sequence[str]] = None) -> int:
         preferred_provider=args.provider,
         max_tokens=args.max_tokens,
     )
-    return run_chat(session)
+
+    recorder_args: dict = {}
+    if args.resume is not None:
+        code = _resume(session, args, recorder_args)
+        if code is not None:
+            return code
+    recorder = SessionRecorder(session, **recorder_args)
+    print(f"session {recorder.id} (saved as plain text after each reply; "
+          f"'openpair chat --resume' continues it)", file=sys.stderr)
+    return run_chat(session, recorder)
+
+
+def _resume(session: ChatSession, args, recorder_args: dict) -> Optional[int]:
+    """
+    Load the saved session named by --resume into `session`. Returns an exit code if the
+    program should stop (ambiguous or unknown id), or None to go on (resumed, or a fresh
+    chat after a one-line explanation). A bad session file is never deleted or changed.
+    """
+    try:
+        path = find_session(args.resume)
+    except AmbiguousSession as e:
+        print(f"Error: {e}. Use a longer prefix:", file=sys.stderr)
+        for sid in e.matches:
+            print(f"  {sid}", file=sys.stderr)
+        return 2
+    except NoSuchSession as e:
+        if args.resume == "latest":
+            print("No saved sessions; starting a new chat.", file=sys.stderr)
+            return None
+        print(f"Error: {e}. Run 'openpair chat --resume list' to see them.", file=sys.stderr)
+        return 2
+
+    try:
+        data = load_session_file(path)
+    except SessionError as e:
+        print(f"Could not resume {path.name}: {e}. Starting a new chat (the file was left as it "
+              f"is). Run 'openpair chat --resume list' to see other sessions.", file=sys.stderr)
+        return None
+
+    warnings = restore_into(session, data,
+                            keep_system=args.system is not None,
+                            keep_pin=args.provider is not None)
+    warnings += restore_attachments(session, data["attachments"])
+    for w in warnings:
+        print(f"Warning: {w}", file=sys.stderr)
+    turns = len(data["messages"]) // 2
+    print(f"Resumed {path.stem}: {turns} turn{'s' if turns != 1 else ''}"
+          + (", local mode on" if session.local_only else "")
+          + (f", {len(session.pending_attachments)} file(s) re-attached to your next message"
+             if session.pending_attachments else "") + ".")
+    recorder_args.update(session_id=path.stem, created=data["created"] or None)
+    return None

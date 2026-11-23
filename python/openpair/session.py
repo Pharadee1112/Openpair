@@ -88,6 +88,8 @@ class ChatSession:
         self._typed: dict[int, str] = {}                  # history index -> what the user typed
         self._history_has_attachment_text = False
         self._confirmed_cloud: set[str] = set()           # cloud providers the user said "y" to
+        self.resumed_attachments: list[dict] = []         # refs loaded from a saved session (kept when saving)
+        self.clear_count = 0                              # bumped by clear(); a new saved session starts after it
 
     # -- Attachments ---------------------------------------------------------
 
@@ -288,6 +290,8 @@ class ChatSession:
         self._typed = {}
         self._history_has_attachment_text = False
         self._confirmed_cloud = set()
+        self.resumed_attachments = []
+        self.clear_count += 1
 
     def __repr__(self) -> str:
         return f"ChatSession(turns={len(self.messages) // 2}, preferred='{self.preferred_provider}')"
