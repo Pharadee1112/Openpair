@@ -49,9 +49,14 @@ The following is based on code and docs visible on `master`; it does **not** cla
 | Thai-language benchmark + checkpoint/resume | **Implemented** | `run_benchmark.py`, `python/openpair/benchmark/`, benchmark result files |
 | Automated Rust/Python test suites and CI definition | **Implemented/configured** | `src/` tests, `tests/`, `.github/workflows/ci.yml`; passing state must be checked in GitHub Actions |
 | Dynamic discovery of installed local models | **Planned** | No runtime-independent discovery/registry in current Python client |
-| Multi-turn local chat sessions and token streaming | **Planned** | Current `OpenPair.call()` makes one request and returns a full result |
+| Multi-turn chat sessions and token streaming | **Implemented** (via `openpair chat`) | `python/openpair/chat_cli.py`, `session.py`, `caller.py`; `OpenPair.call()` itself still makes one request and returns a full result |
+| Slash commands in `openpair chat` (`/help /exit /clear /route /provider /model /local /add /files`) | **Implemented** | `chat_cli.py`; `/model` only displays the model of the last reply |
+| Local-only mode (`/local`) | **Implemented** (in `openpair chat`) | `chat_cli.py`, `session.py`; Ollama on a loopback URL only, no cloud fallback |
+| Read-only file attach (`/add`, `/files`) with cloud confirmation | **Implemented** | `python/openpair/attach.py`, `session.py`, `chat_cli.py` |
+| Saved sessions, `--resume`, `--resume list`, `--no-save` | **Implemented** | `python/openpair/session_store.py`, `chat_cli.py` |
+| First-run setup for `openpair chat` | **Implemented** | `python/openpair/setup_wizard.py`, `config.py` (`load_user_env`), `chat_cli.py` |
 | Pair avatar, local browser UI, and `openpair ui` | **Planned** | No `ui` package, Flask app, or `ui` subcommand in the current tree |
-| Local-only policy / selectable local-first routing | **Planned** | Existing routing chooses from the static cloud registry first |
+| Selectable local-first routing (auto-routing among local models) | **Planned** | Existing routing chooses from the static cloud registry first; local-only mode exists only inside `openpair chat` |
 | Versioned GitHub releases / PyPI release process | **Verify** | Package version `0.1.0` is declared; tags, publishing history, and released wheels must be checked separately |
 
 **Critical technical nuance:** Current `OpenPair.call()` first asks the Rust registry for a Gemini/Groq model and may then fall back to Ollama. **Do not expose that call unchanged behind a UI labeled “local only.”** Introduce an explicit execution policy and local adapter path before the UI is connected to real user prompts.
@@ -82,8 +87,12 @@ python/openpair/client.py   [routing, cache, fallback]
 | `src/lib.rs` | PyO3 exports for Python |
 | `python/openpair/client.py` | Python client, routing, fallback, LRU cache |
 | `python/openpair/caller.py` | Provider-specific request dispatch and latency |
-| `python/openpair/config.py` | Environment API keys and Ollama settings |
-| `python/openpair/cli.py` | Current single-prompt command-line interface |
+| `python/openpair/config.py` | API keys and Ollama settings from the environment, then `.env` in the current folder, then `~/.openpair/.env` (a real environment variable wins over both files; the current-folder `.env` wins over the home file) |
+| `python/openpair/cli.py` | Single-prompt command-line interface; `openpair chat` hands over to `chat_cli.py` |
+| `python/openpair/chat_cli.py`, `session.py` | Interactive chat REPL, slash commands, streaming, local-only mode |
+| `python/openpair/attach.py` | `/add` file validation (read-only, secret and size checks) |
+| `python/openpair/session_store.py` | Saved chats under `~/.openpair/sessions/` and `--resume` |
+| `python/openpair/setup_wizard.py` | First-run setup for `openpair chat` |
 | `python/openpair/benchmark/` | Benchmark cases, checkpoint logic |
 | `run_benchmark.py` | Benchmark runner |
 | `tests/` | Mocked and live Python tests |
@@ -101,7 +110,12 @@ The historical `ARCHITECTURE.md` and SRD document may describe future features a
 
 ## 3. Current installation and commands (working baseline)
 
-**Requirements:** Python 3.9+ (declared in `pyproject.toml`), Rust toolchain, and pip/maturin. Use a newer supported Python where practical; CI currently targets Python 3.12 on Ubuntu.
+**Before you install:**
+
+- **Python 3.12** is recommended (CI uses it). 3.13 is the maximum for the current PyO3 (0.22); 3.14 is not supported yet. `pyproject.toml` declares `>=3.9`, but only 3.12 is exercised by CI.
+- **A Rust toolchain** ([rustup](https://rustup.rs)), because the routing core is compiled locally.
+- **maturin** (`python -m pip install maturin`).
+- **There are no prebuilt wheels yet**, so every install builds from source. A one-line installer is tracked in issue #9.
 
 ```bash
 git clone https://github.com/Pharadee1112/Openpair.git
@@ -135,7 +149,62 @@ result = client.call("Explain recursion")       # returns complete answer
 print(result.response_text, result.model_name, result.provider)
 ```
 
-For cloud calls, configure applicable keys in `.env` / environment variables such as `GOOGLE_API_KEY` or `GROQ_API_KEY`. For the **existing** Ollama fallback, `OLLAMA_BASE_URL` defaults to `http://localhost:11434` and `OLLAMA_MODEL` defaults to `llama3.1`; ensure the model exists on the developer machine. These baseline instructions are not the proposed local-first onboarding flow.
+For cloud calls, configure applicable keys in `.env` / environment variables such as `GOOGLE_API_KEY` or `GROQ_API_KEY`. Keys are read in this order: real environment variables, then a `.env` in the current folder, then `~/.openpair/.env` (an empty line such as `GROQ_API_KEY=` in the current-folder `.env` counts as unset, so the home file can fill it). For the **existing** Ollama fallback, `OLLAMA_BASE_URL` defaults to `http://localhost:11434` and `OLLAMA_MODEL` defaults to `llama3.1`; ensure the model exists on the developer machine. The guided first-run setup described below applies to `openpair chat` only; the one-shot CLI and the Python API never prompt, and `openpair ui` (the planned local-first browser flow) is not built.
+
+### Interactive chat: `openpair chat` (available today)
+
+```text
+$ openpair chat
+you> /local on
+mode: local (Ollama only, no cloud)
+you> /add notes.py
+Attached notes.py (<n> chars, ~<n> tokens). It is sent with your next message.
+you> What does this file do?
+<reply streams here>
+<status line: model, provider, tier, fallback, tokens, latency>
+you> /exit
+```
+
+| Command | What it does |
+|---|---|
+| `/help` | List the commands |
+| `/exit` | Quit (Ctrl+D or Ctrl+C at the prompt also quit) |
+| `/clear` | Forget the conversation, attached files and cloud approvals |
+| `/route <text>` | Dry run: show which model would answer; no API call |
+| `/provider [name]` | Pin `google`, `groq` or `ollama`, or `auto`; no argument shows the current pin |
+| `/model` | Show the model used in the last reply (display only; it cannot pin a model) |
+| `/local [on\|off]` | Local-only mode: requests go only to Ollama on this machine |
+| `/add <file>` | Attach a text file to your next message (read-only) |
+| `/files` | List attached files |
+
+Start a message with `//` to send text that begins with `/`.
+
+| Option | What it does |
+|---|---|
+| `--provider NAME` | Pin a provider: `google`, `groq` or `ollama` |
+| `--resume` | Continue the latest saved session |
+| `--resume list` | List saved sessions |
+| `--resume ID` | Continue the session whose id (or unique id prefix) matches |
+| `--no-save` | Write nothing to `~/.openpair/sessions/` (cannot be combined with `--resume`) |
+
+(Also available: `--system TEXT` and `--max-tokens N`.)
+
+**First-run setup.** If you start `openpair chat` in a terminal with no `GROQ_API_KEY` / `GOOGLE_API_KEY` and no reachable Ollama, it offers three choices: paste a cloud key (Groq or Google), use local Ollama (it shows the `ollama pull` command and the install link, then re-checks), or skip. A pasted key is read without echo, optionally checked once with the provider, and, if you agree, saved to `~/.openpair/.env`. You can also use the key for that chat only, or print `export` / `$env:` templates instead. Ctrl+C cancels and writes nothing. If you skip, your first message explains how to fix the missing setup.
+
+### Privacy and safety (`openpair chat`)
+
+- **Local mode never sends to a cloud provider.** It fails closed: if the Ollama URL is not a loopback address, requests are refused.
+- **Attached file text asks before it goes to the cloud.** In cloud mode you are asked y/N, naming the provider, before an attached file is sent.
+- **`/add` is restrictive.** It refuses secret-looking files (such as `.env*`, `*.pem`, `*.key`, `id_rsa*`, or text containing an API-key or private-key pattern) and anything outside the current folder tree. It only reads files, and the size limits are 64 KB per file and 5 files / 128 KB at once.
+- **Keys and sessions are plain text** under `~/.openpair` (`.env` and `sessions/`). Use `--no-save` for sensitive chats. Files are created owner-only (0600) where the OS supports it; on Windows, access relies on the permissions of your user-profile folder.
+
+### Known limits
+
+- The Pair UI and `openpair ui` are not built.
+- There are no prebuilt wheels yet; installation builds from source.
+- `/model` cannot pin an exact model; that needs a change in the Rust registry.
+- There is no history truncation: long chats re-send the whole conversation, so they cost more tokens.
+- Python 3.9 compatibility (declared in `pyproject.toml`) has been checked by inspection only; CI runs 3.12.
 
 **Current test commands:**
 
