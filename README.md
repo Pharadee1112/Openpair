@@ -1,7 +1,7 @@
 # OpenPair
 
 **Developer-first AI routing with Pair, a local avatar interface**  
-**Documentation revision:** 17 November 2026  
+**Documentation revision:** 24 November 2026  
 **Codebase status:** `v0.1.0` declared in `pyproject.toml`; Pair UI is a **proposed next-generation feature, not yet released**.  
 **Repository:** https://github.com/Pharadee1112/Openpair  
 **Primary users:** Developers running their own language models on personal workstations.
@@ -9,7 +9,7 @@
 > **Project abstract — proposed local-first release**  
 > OpenPair is a Python/Rust AI-routing toolkit being extended into a developer-first, local-first interaction environment. Its next interface will introduce **Pair**, an original pixel-art avatar inside a retro terminal-style web UI launched from the command line. Developers will connect models already running on their machines through Ollama, LM Studio, or configurable OpenAI-compatible local endpoints, use a code-friendly multi-turn chat, and inspect routing and fallback events without surrendering control of model execution. The project preserves OpenPair's existing Rust classification, Python client, CLI, benchmark infrastructure, and cloud-provider compatibility, while making **local models the default within the new UI**. Pair is an interface companion, not another AI model or autonomous coding agent. The goal is transparent, low-friction developer interaction with minimal extra resource use.
 
-**Read this first:** This README combines a verified inventory of the existing `master` branch (audited 17 November 2026) with an implementation specification for future releases. Status labels mean **Implemented**, **Partial**, **Planned**, or **Verify**. A planned command or API is not available today. Source inspection is not a substitute for running tests on your target platform.
+**Read this first:** This README combines a verified inventory of the existing `master` branch (audited 24 November 2026) with an implementation specification for future releases. Status labels mean **Implemented**, **Partial**, **Planned**, or **Verify**. A planned command or API is not available today. Source inspection is not a substitute for running tests on your target platform.
 
 ## 1. Product boundaries and design principles
 
@@ -155,15 +155,13 @@ For cloud calls, configure applicable keys in `.env` / environment variables suc
 
 ```text
 $ openpair chat
-you> /local on
-mode: local (Ollama only, no cloud)
-you> /add notes.py
-Attached notes.py (<n> chars, ~<n> tokens). It is sent with your next message.
-you> What does this file do?
-<reply streams here>
-<status line: model, provider, tier, fallback, tokens, latency>
+you> Hello
+Hello! 👋 How can I help you today?
+model: GPT-OSS 20B (groq) | tier small | fallback: none | 72+37 tok | 1609ms
 you> /exit
 ```
+
+Example output; your numbers will differ.
 
 | Command | What it does |
 |---|---|
