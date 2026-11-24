@@ -4,10 +4,31 @@ tests/conftest.py — shared pytest fixtures for the openpair test suite.
 
 from __future__ import annotations
 
+import os
+import tempfile
 import types
 from unittest.mock import patch
 
 import pytest
+
+# The real home folder must never be read or written by a test. openpair.config loads
+# ~/.openpair/.env when it is IMPORTED (which happens during collection, before any
+# fixture runs), so the home is redirected here, at conftest import time, before anything
+# imports openpair. The autouse fixture below then gives every test its own fresh home.
+_SESSION_HOME = tempfile.mkdtemp(prefix="openpair-test-home-")
+os.environ["HOME"] = _SESSION_HOME
+os.environ["USERPROFILE"] = _SESSION_HOME
+
+
+@pytest.fixture(autouse=True)
+def _isolated_home(tmp_path_factory, monkeypatch):
+    """HOME/USERPROFILE point into a fresh temp folder for every test (a sibling of tmp_path,
+    NOT inside it, so tests that list tmp_path see nothing extra). Tests that need a specific
+    home set their own with monkeypatch afterwards (their value wins)."""
+    home = tmp_path_factory.mktemp("home")
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))
+    yield home
 
 
 class _FakeOllamaClient:

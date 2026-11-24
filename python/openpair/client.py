@@ -19,7 +19,7 @@ from typing import Optional, TYPE_CHECKING
 from .config import ApiKeys
 from .caller import make_call, CallResult
 from .caller import is_loopback_url
-from .errors import LocalModeError, is_retryable_error
+from .errors import LocalModeError, NoProviderError, is_retryable_error
 
 if TYPE_CHECKING:
     pass
@@ -338,7 +338,7 @@ class OpenPair:
             yield candidate, candidate_decision, api_key, i < len(chain) - 1
 
         if not attempted:
-            raise RuntimeError(
+            raise NoProviderError(
                 f"No API key found for any provider. "
                 f"Set GOOGLE_API_KEY or GROQ_API_KEY, "
                 f"run Ollama locally, or pass api_keys={{...}} to OpenPair()."
